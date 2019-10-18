@@ -1,0 +1,16 @@
+#notes for cleaning
+
+#Quails Gate Notes
+
+#QG stages: From emails
+#budburst = "right after woolly bud stage"
+#flowering date = 80% flowering
+
+# Need to figure out Task.Date vs Date.Observed, which is the correct date for the event
+
+#sebfarms some vineyard names are in old emails
+
+#General Notes
+#If we have them, add columns for TA, Brix, pH
+
+#"picked date" should be coded as event = "harvest"
