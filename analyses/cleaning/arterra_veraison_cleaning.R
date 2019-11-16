@@ -2,7 +2,7 @@
 
 rm(list = ls())
 options(stringsAsFactors = FALSE)
-setwd("/Users/miragarner/Documents/git/bcvin/analyses/cleaning")
+setwd("~/Documents/git/bcvin/analyses/cleaning")
 art_veraison <- read.csv("/Users/miragarner/Documents/git/bcvin/analyses/input/Arterra_Veraison.csv")
 
 library(reshape2)
@@ -39,4 +39,4 @@ company <- "Arterra"
 veraison3 <- cbind(veraison2, company)
 
 # reorder and select only the correct columns
-clean_arterra <- select(veraison3, c("company", "vineyard", "block", "variety", "year", "month", "day", "event"))
+clean_art_veraison <- select(veraison3, c("company", "vineyard", "block", "variety", "year", "month", "day", "event"))
