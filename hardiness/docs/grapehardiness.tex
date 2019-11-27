@@ -1,0 +1,36 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{url}
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\begin{document}
+\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
+\renewcommand{\refname}{\CHead{}}
+
+{\bf Notes on winegrape hardiness work}\\
+
+Last udpated: \today\\
+
+\emph{Project aim:} Build hierarchical models of winegrape (\emph{Vitis vinifera} subsp. \emph{vinifera}) hardiness that best predict hardiness when compared to other major modeling options.
+
+\section{Work done to date}
+Carl Bogdanoff (AgCanada) has been collecting hardiness data for 7 years across several varieties and several vineyards (super cool data!) and has fit a model of hardiness for Chardonnay (he worked on this for several years) and now a model of Merlot (just completed, following his general design of the Chardonnay models). Since the summer Lizzie has \emph{slowly} been trying to translate the models from Excel to R (see \path{..\\analyses\hardiness_stab.R}). \\
+
+Meanwhile other labs have worked on this too. We should check out work by Londo (led mostly, I believe, by his former student Kovaleski) and Markus Keller's group. Also, check out the French group of Charrier. 
+
+\section{Next steps}
+
+\begin{enumerate}
+\item Finish translating Carl's models from Excel to R (keep Carl and Lizzie in the loop).
+\item If possible, code up models from Kovaleski work and Markus Keller (and Charrier if there is a published model), then compare all THREE modelling approaches using comparison metrics {\bf including cross-validation}.
+\item Code up a hierarchical modeling approach that includes the basics for hardiness but allows variation across varieties and vineyards. 
+\item If all goes well, project to future!
+\end{enumerate}
+
+\end{document}
