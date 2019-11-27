@@ -20,7 +20,7 @@ options(stringsAsFactors=FALSE)
 # Setting working directory. Add in your own path in an if statement for your file structure
 if(length(grep("Lizzie", getwd())>0)) { 
   setwd("~/Documents/git/projects/vinmisc/bcvin/hardiness") 
-} else setwd("~/Documents/git/boopboop")
+} else setwd("C:/Users/Faith Jones/Documents/ubc/github/bcvin/hardiness")
 
 # libraries
 library(reshape)
