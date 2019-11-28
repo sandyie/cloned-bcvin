@@ -2,6 +2,9 @@
 ## En route to Knoxville ##
 ## It's dark outside this plane people, it's dark ##
 
+
+##edited by Faith Jones 27th Nov 2019
+
 #######################################
 ## Notes ...
 # 'col' means column
@@ -37,10 +40,13 @@ clim$day<- format(clim$date,"%d")
 # Historical climate (pulled from Carl's Excel file)
 histclim <- read.csv("analyses/input/climhist_19812010.csv", header=TRUE)
 names(histclim) <- c("Date", "meanC", "meanC2day", "meanC3day")
+
+
 # faking a year, otherwise it assumes 2019 and the leap day=NA (and breaks my GDD loop)
 histclim$doy <- format(as.Date(paste("2016-", histclim$Date), format="%Y-%d-%b"), "%j")
 histclim$month <- format(as.Date(paste("2016-", histclim$Date), format="%Y-%d-%b"), "%b")
 histclim$day<- format(as.Date(paste("2016-", histclim$Date), format="%Y-%d-%b"), "%d")
+
 
 # hardiness data
 budhardiness2012to13 <- read.csv("analyses/input/budhardiness2012to13.csv", header=TRUE)
@@ -50,7 +56,6 @@ budhardiness2015to16 <- read.csv("analyses/input/budhardiness2015to16.csv", head
 budhardiness2016to17 <- read.csv("analyses/input/budhardiness2016to17.csv", header=TRUE)
 budhardiness2017to18 <- read.csv("analyses/input/budhardiness2017to18.csv", header=TRUE) 
 budhardiness2018to19 <- read.csv("analyses/input/budhardiness2018to19.csv", header=TRUE) 
-
 
 bh12 <- melt(budhardiness2012to13, id.var=c("X2012...2013", "Variety"))
 bh13 <- melt(budhardiness2013to14, id.var=c("X2013...2014", "Variety"))
@@ -111,7 +116,7 @@ bhall$year[bhall$years=="2018to2019" & (bhall$month=="Jan"|bhall$month=="Feb"|bh
 
 # and make a useful df
 bh <- subset(bhall, select=c("year", "month", "day", "variety", "lte", "site"))
-
+head(bh)
 
 ##
 ## some f(x)s to help calculate GDD
@@ -138,7 +143,7 @@ makestartdatecounter <- function(dater, monthcol, daycol, countercol, whatmon, w
 
 clim$seasonday <- NA
 clim <- makestartdatecounter(clim, "Month", "Day", "seasonday", 9, 1)
-
+head(clim)
 ## this f(x) adds up gdd
 ## requires data ordered by doy (I do this in the loop below)
 ## this f(x) returns the value while treating NA as zeroes
@@ -191,8 +196,16 @@ histclim$meanC2day <- c(NA, rsum)
 
 climsm <- subset(clim, select=c("Year", "month","day", "Mean.Temp..C.", "Mean.Temp.Flag", "date", "seasonday"))
 names(climsm) <- c("Year", "month","day", "meanC", "meanC.flag", "date", "seasonday")
+
+
+
 climsm$doy <- format(climsm$date, "%j")
 climsm$doynum <- as.numeric(climsm$doy)
+climsm[climsm$month == "Mar" & climsm$day == "01",]
+
+#remove the feb 29th day rows from the database now we have days of the year sorted
+climsm[!climsm$Year == 2016 & climsm$doy == ]
+
 
 # impute missing meanC data! (not using MICE since it overwrites rbind) and our imputation is easy
 meanimpute <- function(df, colname){
@@ -223,12 +236,19 @@ cx <- c(0, cumsum(climsm$meanC.imp)) # https://stackoverflow.com/questions/74381
 rsum <- (cx[(n+1):length(cx)] - cx[1:(length(cx) - n)]) / n
 climsm$meanC2day <- c(NA, rsum)
 
+
 # START here ... fix so it does all years and dates possible. Then go down to next START here ....
 
 ## Merge the climate datasets ##
-climall <- merge(climsm, histclim, by=c("month", "day", "doy"), all.x=TRUE, suffixes=c("", ".hist"))
+
+#There are leap years in some of teh data and also the historical data, so we cant include doy 
+#as a merge column because after feb teh doy are different for leap years and non leap years
+#now the only NAs for historical data are the non winter dates 
+
+climall <- merge(climsm, histclim, by=c("month", "day"), all.x=TRUE, suffixes=c("", ".hist"))
 climall <- climall[order(climall$date),]
 climall$avgTdiff <- climall$meanC2day-climall$meanC2day.hist # column CC (looks good, except where I imputed) -- created by Q-M (note that there are lots of NA since we only have historical data for mid Sept to Apr, but we only show it through end of February ... WHY?
+
 
 #############################################################
 ## Acclimation, max hardiness and de-acclimation equations ##
@@ -236,7 +256,7 @@ climall$avgTdiff <- climall$meanC2day-climall$meanC2day.hist # column CC (looks 
 
 ## Here's the spot in the code where I wondered about how to generate the acclimation, max hardiness and de-acclimatoon curves
 # see my notes on this in hardiness_questionsnotes ... we'll just type them in for now ...
-# chard <- subset(bh, variety=="Chardonnay")
+chard <- subset(bh, variety=="Chardonnay")
 
 eqacc <- function(x){
     0.121*x^2 + 0.4898*x -23.175
@@ -309,3 +329,75 @@ adjustcd <- function(df){
 }
 
 climall$adjustcd <- adjustcd(climall) # quick glance: looks fine...
+
+#Faith's attempts at the columns CD - CJ
+#---------------------------------------------------
+
+#colum CD has different if/and statements different periods of time
+#for Sep to Dec 7. (acclimation?)
+#=IF(CC27<-8,1.8,IF(CC27<-5,1.6,IF(CC27<-4,1.4,IF(CC27<-3,1.2,IF(CC27<-2,1.1,IF(CC27<0,1,0))))))
+
+#for Dec 8 to Jan 6 (Max hardiness?)
+#=IF(CC104<-4,-1.4,IF(CC104<-3,-1.3,IF(CC104<-2,-1.25,IF(CC104<-1,-1.2,IF(CC104<0,-1.15,1)))))
+
+#Jan 7 - Feb 6 (deacclimation?)
+#=IF(CC165<-9,CB165*-2,IF(CC165<-7,CB165*-1.5,IF(CC165<-5,CB165*-1.1,IF(CC165<-4,CB165*-1,
+#	IF(CC165<-3,CB165*-0.5,IF(CC165<-2,CB165*0.2,IF(CC165<-1,CB165*1.1,1)))))))
+
+
+head(climall)
+
+#select days of teh year that correspond to the different periods of time
+#this is different for leap and non leap years after Febuary 
+
+nYear <- length(unique(climall$Year))
+doyEachPeriod <- data.frame(matrix(NA,nYear , 9))
+names(doyEachPeriod ) <- c("Year", "accStart","accEnd", "maxStart", "maxEndDec", "maxStartJan", "maxEndJan", "deaccStart", "deaccEnd")
+doyEachPeriod$Year <- unique(climall$Year)
+
+doyEachPeriod$accStart <- climall$doynum[climall$month == "Sep" & climall$day == "21"]
+doyEachPeriod$accEnd <- climall$doynum[climall$month == "Dec" & climall$day == "07"]
+
+doyEachPeriod$maxStart <- climall$doynum[climall$month == "Dec" & climall$day == "08"]
+doyEachPeriod$maxStart <- as.numeric(doyEachPeriod$maxStart )
+
+doyEachPeriod$maxEndDec[!doyEachPeriod$Year == 2016] <- 365
+doyEachPeriod$maxEndDec[doyEachPeriod$Year == 2016] <- 366 #leap year
+
+doyEachPeriod$maxStartJan[!doyEachPeriod$Year == 2012] <- 1 #always start first of january. no data for 2012
+doyEachPeriod$maxEndJan[!doyEachPeriod$Year == 2012] <- 6 #always six of january . no data for 2012
+
+doyEachPeriod$deaccStart[!doyEachPeriod$Year == 2012] <- 7 #  always seven of January. no data for 2012
+
+doyEachPeriod$deaccEnd[!doyEachPeriod$Year == 2012]<- climall$doynum[climall$month == "Feb" & climall$day == "06"]#no jan 2012 data
+doyEachPeriod$deaccEnd <- as.numeric(doyEachPeriod$deaccEnd)
+
+#make a column in climall to put the period data in 
+climall$HardinessPeriod <- NA
+
+#2012 - do first because only acclimation data 
+#take the row for 2012 only 
+
+periods2012 <- doyEachPeriod[doyEachPeriod$Year == 2012, ]
+climall$HardinessPeriod[climall$doynum %in% periods2012 $accStart:periods2012 $accEnd & climall$Year == 2012] <- "Acc"
+climall$HardinessPeriod[climall$doynum %in% periods2012 $maxStart:periods2012 $maxEndDec& climall$Year == 2012] <- "Max"
+
+
+#2013 onwards 
+
+str(climall)
+str(doyEachPeriod)
+
+for (year in unique(climall$Year[!climall$Year == 2012])){
+
+	periodsYear <- doyEachPeriod[doyEachPeriod$Year == year , ]
+	climall$HardinessPeriod[climall$doynum %in% periodsYear$accStart:periodsYear$accEnd & climall$Year == year] <- "Acc"
+	climall$HardinessPeriod[climall$doynum %in% periodsYear$maxStart:periodsYear$maxEndDec & climall$Year == year] <- "Max"
+	climall$HardinessPeriod[climall$doynum %in% periodsYear$maxStartJan:periodsYear$maxEndJan & climall$Year == year] <- "Max"
+	climall$HardinessPeriod[climall$doynum %in% periodsYear$deaccStart:periodsYear$deaccEnd & climall$Year == year] <- "Deacc"
+}
+
+
+
+
+
