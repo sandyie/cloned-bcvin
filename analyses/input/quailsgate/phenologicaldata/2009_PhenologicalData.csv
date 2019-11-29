@@ -1,0 +1,80 @@
+Vineyard ,Field,Block,Variety,Planted,Plants,Acres,Row_spacing,Budburst,Flowering,Clusters,Berries,Berry.weight,Bunch.weight,Lag,Lag.date,Lag.est
+,F1,B1,Merlot,1994/97,996,0.91,2.4 x 1.2,11-May,18-Jun,10,294,.64 g,138 g,1380 g,29-Jul,3.0
+,F1,B1,Cab. Sauvignon,1994,130,0.19,2.4 x 1.2,11-May,18-Jun,,,,,,,1.5
+,F1,B2,Chardonnay,1996,2213,1.82,2.0 x 1.0,4-May,14-Jun,16,131,.5 g,66 g,1056 g,21-Jul,8.0
+,F1,B3,Optima,1982,4833,4.43,2.7 x 1.3,11-May,21-Jun,17,156,.67 g,94 g,1598 g,31-Jul,12.0
+,F1,B4,Riesling,1982,5536,5.07,2.7 x 1.3,11-May,21-Jun,23,177,.69 g,110.3 g,2537 g,31-Jul,25.0
+,F1,B5,Pinot Blanc,1997/98,5341,3.38,2.1 x 1.4,8-May,18-Jun,13,240,.6 g,72.6 g,944 g,23-Jul,18.0
+,F1,B6,Sauvig. Blanc,1997,2213,1.49,2.1 x 1.4,4-May,18-Jun,12,153,.47 g,55.3 g,664 g,23-Jul,32.0
+,F1,B7,Chasselas,1975/83,2114,4.32,3.0 x 2.1,13-May,22-Jun,75,226,1.1 g,133 g,9975 g,28-Jul,
+,F2,B1,Riesling,1987,3078,2.69,2.7 x 1.3,11-May,20-Jun,20,174,.6 g,129 g,2580 g,24-Jul,9.0
+,F2,B2,Merlot,1998,4500,2.79,2.1 x 1.4,11-May,19-Jun,16,163,.58 g,91 g,1456 g,24-Jul,10.0
+,F2,B3,Chasselas,1975/83,1590,1.92,3.0 x 2.1,13-May,22-Jun,35,159,1.1 g,172 g,6020 g,28-Jul,16.0
+,,,T-bar,,,,,,,97,147,1.1 g,131 g,12707 g,28-Jul,
+,F2,B4,Chardonnay,1987,1532,1.42,2.7 x 1.3,10-May,17-Jun,27,157,.6 g,98 g,2646 g,21-Jul,12.0
+,F2,B5,Chardonnay,1993,800,0.72,2.4 x 1.2,10-May,17-Jun,27,157,.6 g,98 g,2646 g,21-Jul,6
+,F2,B6,Chenin Blanc,1997,6500,4.04,2.1 x 1.4,4-May,19-Jun,15,262,.52 g,108.5 g,1627 g,24-Jul,30.0
+,F2,B7,Merlot,1998,4500,2.70,2.1 x 1.4,11-May,19-Jun,15,188,.51 g,91 g,1365 g,24-Jul,8.0
+,F2,B8,Merlot,1998,1600,0.85,2.1 x 1.4,11-May,,14,180,.53 g,83 g,1162 g,24-Jul,4.0
+,F2,B9,Gamay Noir,1998,1257,0.78,2.1 x 1.4,10-May,,16,209,.54 g,109.5 g,1752 g,24-Jul,4
+,F3,B1,Pinot Noir,2005,2895,1.79,2.1 x 1.1,7-May,15-Jun,12,167,.51 g,68.6 g,823 g,22-Jul,7.0
+,F3,B2,Foch,1965,780,1.09,3.1 x 2.1,1-May,12-Jun,81,164,.52 g,71 g,5751 g,21-Jul,6.0
+,F3,B3,Pinot Noir,1996,5000,2.47,2.0 x 1.0,7-May,18-Jun,15,178,.6 g,86.6 g,1299 g,22-Jul,11.0
+,F3,B4,Chardonnay,1996,5000,2.57,2.0 x 1.0,4-May,14-Jun,18,156,.52 g,86 g,1548 g,21-Jul,17.0
+,F3,B5,Pinot Noir,1990,1103,0.92,2.4 x 1.3,7-May,17-Jun,20,145,.63 g,119.2 g,2384 g,22-Jul,4.0
+,F3,B6,Pinot Noir,1987,600,0.55,2.4 x 1.3,7-May,17-Jun,23,162,.61 g,106.5 g,2449 g,22-Jul,2.0
+,F3,B7,Pinot Noir,1987,1160,0.96,2.4 x 1.3,8-May,17-Jun,21,181,.64 g,115.2 g,2419 g,22-Jul,3.0
+,F3,B8,Pinot Noir,1975/90,631,0.47,2.4 x 1.3,7-May,17-Jun,21,177,.62 g,108.7 g,2283 g,22-Jul,3.0
+,F4,B1,Grafted Chard,1982,2614,2.35,2.4 x 1.3,11-May,16-Jun,13,210,.75 g,159 g,2067 g,31-Jul,6
+,F4,B2,Pinot Noir,2005,1240,0.90,2.1 x 1.1,7-May,15-Jun,16,141,.68 g,104.4 g,1670 g,22-Jul,4.0
+,F4,B3,Pinot Noir,1990,3279,2.68,2.4 x 1.3,5-May,17-Jun,19,159,.7 g,131 g,2489 g,22-Jul,10.0
+,F4,B4,Foch,1965/98,1339,0.83,3.0 x 2.1,1-May,12-Jun,64,148,.64 g,69 g,4416 g,20-Jul,7.0
+,F4,B5,Cab Sauvignon,2003,3920,2.36,2.1 x 1.2,7-May,17-Jun,18,206,.56 g,86 g,1548 g,24-Jul,7.0
+,F4,B6,Cab Sauvignon,1997,1900,1.17,2.0 x 1.4,7-May,17-Jun,19,194,.6 g,91 g,1729 g,24-Jul,4.0
+,F4,B7,Pinot Noir,2005,965,0.53,2.1 x 1.1,4-May,16-Jun,16,170,.57 g,84.4 g,1350 g,22-Jul,3.0
+,F4,B8,Pinot Noir,2005,1990,1.25,2.1 x 1.1,7-May,16-Jun,16,193,.72 g,94 g,1504 g,22-Jul,5.0
+,F4,B9,Pinot Noir,2005,2600,1.63,2.1 x 1.1,7-May,16-Jun,15,185,.6 g,115.5 g,1733 g,22-Jul,5.0
+,F4,B10,Pinot Noir,1990,2093,1.72,2.4 x 1.3,5-May,17-Jun,23,176,.68 g,147.5 g,3393 g,22-Jul,7.0
+,F4,B11,Pinot Noir,2003,2600,1.57,2.1 x 1.1,7-May,17-Jun,16,161,.6 g,95.3 g,1525 g,22-Jul,7.0
+,F5,B1,Chardonnay,1997,3000,1.80,2.0 x 1.4,4-May,16-Jun,17,139,.6 g,96 g,1632 g,21-Jul,11.0
+,F5,B2,Chardonnay,1997,3000,1.92,2.0 x 1.4,4-May,16-Jun,14,148,.6 g,104 g,1456 g,21-Jul,11.0
+,F5,B3,Chardonnay,1997,3000,1.43,2.0 x 1.4,4-May,16-Jun,16,152,.6 g,92 g,1472 g,21-Jul,11.0
+,F5,B4,Chardonnay,1997,1000,1.03,2.0 x 1.4,4-May,16-Jun,16,150,.6 g,102 g,1632 g,21-Jul,4.5
+,F5,B5,Pinot Noir,1997,2450,1.01,2.0 x 1.1,8-May,18-Jun,17,132,.58 g,84 g,1428 g,22-Jul,6.0
+,F5,B6,Pinot Noir,1997,3200,1.50,2.0 x 1.1,8-May,18-Jun,18,160,.54 g,85 g,1530 g,22-Jul,7.0
+,F5,B7,Cab Sauvignon,1997,1716,0.95,2.0 x 1.4,7-May,19-Jun,18,250,.48 g,95.5 g,1719 g,24-Jul,4.0
+,F5,B8,Gewurztraminer,1994,632,0.52,2.4 x 1.3,4-May,,21,170,.68 g,111 g,2331 g,24-Jul,10.0
+,F5,B9,Gewurztraminer,1989,1526,1.37,2.4 x 1.3,4-May,,21,170,.68 g,111 g,2331 g,24-Jul,
+,F6,B1,Merlot,2003,4100,2.20,2.1 x 1.1,11-May,18-Jun,10,222,.55 g,92 g,920 g,23-Jul,7.0
+,F6,B2,Merlot,2003,4163,2.20,2.1 x 1.1,11-May,18-Jun,11,264,.56 g,90 g,990 g,23-Jul,7.0
+,East,Kelow,Gwrzt,1997,4221,2.92,2.4 x 1.3,?,,,,,,,,0
+,,,Pinot Blanc,1997,3661,2.03,,?,,,,,,,,0
+,Osy,,Old Foch,1978,4600,9.80,3 x 1.6,27-Apr,5-Jun,,,,,,,32
+,,,Young Foch,2006,2926,2.96,3 x 1.4,27-Apr,5-Jun,,,,,,,18
+,,,Chenin Blanc,2006,4061,1.65,2.1 x 1.1,29-Apr,12-Jun,,,,,,,16
+,,,Syrah,2006,1748,1.60,2.1 x 1.6,4-May,?,,,,,,,1.5
+,,,Patricia,2006,15885,9.20,2.1 x 1.1,4-May,?,,,,,,,0
+,,,Martyna,2008,22995,13.96,2.1 x 1.1,1-May,?,,,,,,,0
+,,,Total,,177200,127.38,,,,,,,,,,462.5
+Mannhardt-Sunnyside,F1,B1,Ehrenfelser,1986,2755,2.81,3 x 1.4,13-May,19-Jun,24,143,.66 g,93 g,2232 g,31-Jul,11.0
+Mannhardt-Sunnyside,F1,B2,Ehrenfelser,1986,2500,2.14,3 x 1.4,13-May,19-Jun,26,170,.66g,84 g,2184 g,31-Jul,9.0
+Mannhardt-Sunnyside,F1,B3,Chenin Blanc,2006,8946,5.04,2.1 x 1.1,4-May,17-Jun,9,248,.71 g,128.5 g,1156 g,29-Jul,17.0
+Mannhardt-Sunnyside,F1,B4,Pinot Noir,1997,3200,2.71,2.4 x 1.4,7-May,17-Jun,22,206,.85 g,155.7 g,3425 g,29-Jul,12.0
+Mannhardt-Sunnyside,F1,B5,Pinot Noir,2006,1838,1.04,2.1 x 1.1,7-May,16-Jun,10,210,.7 g,102.2 g,1022 g,29-Jul,4.0
+Mannhardt-Sunnyside,F2,B1,Riesling,2006,2331,1.23,2.1 x 1.1,7-May,20-Jun,11,132,.55 g,84.5 g,929 g,30-Jul,4.0
+Mannhardt-Sunnyside,F2,B2,Riesling,2006,2737,1.58,2.1 x 1.1,7-May,20-Jun,10,180,0.59,104.3 g,1043 g,30-Jul,6.0
+Mannhardt-Sunnyside,F2,B3,Gewurztraminer,2006,1040,0.58,2.1 x 1.1,4-May,19-Jun,9,250,.53 g,115 g,1035 g,29-Jul,4.0
+Mannhardt-Sunnyside,F2,B4,Riesling,2006,403,0.21,2.1 x 1.1,7-May,19-Jun,11,151,.71 g,112.5 g,1237 g,29-Jul,2.0
+Mannhardt-Sunnyside,F2,B5,Pinot Noir,2006,2461,1.31,2.1 x 1.1,7-May,17-Jun,13,229,.67 g,113.6 g,1477 g,29-Jul,3.0
+Mannhardt-Sunnyside,F2,B6,Pinot Noir,2006,2209,1.22,2.1 x 1.1,7-May,17-Jun,10,176,.68 g,104.5 g,1045 g,29-Jul,3.0
+Mannhardt-Sunnyside,F2,B7,Pinot Noir,2006,702,0.45,2.1 x 1.1,5-May,17-Jun,8,193,.71 g,138 g,1104 g,29-Jul,2.0
+Mannhardt-Sunnyside,F2,B8,Pinot Noir,2006,656,0.32,2.1 x 1.1,7-May,17-Jun,6,207,.69 g,126 g,756 g,29-Jul,1.0
+Mannhardt-Sunnyside,F3,B1,Riesling,2006,1132,0.68,2.1 x 1.1,11-May,20-Jun,13,162,.67 g,115.5 g,1501 g,30-Jul,4.0
+Mannhardt-Sunnyside,F3,B2,Riesling,2006,1266,0.74,2.1 x 1.1,11-May,20-Jun,,,,,,,2.0
+Mannhardt-Sunnyside,F3,B3,Chasselas,2006,5151,3.29,2.1 x 1.1,11-May,22-Jun,8,132,1.28 g,133 g,1064 g,30-Jul,10.0
+Mannhardt-Sunnyside,F3,B4,Ehrenfelser,1977,745,1.13,3 x 1.4,11-May,20-Jun,27,138,.69 g,99 g,2673 g,30-Jul,6.0
+Mannhardt-Sunnyside,F3,B5,Riesling,1977,946,1.13,3 x 1.4,7-May,20-Jun,23,156,.85 g,141.5 g,3254 g,30-Jul,6.0
+,,,,,,,,,,,,,,,,
+,,,Total,,41018,27.61,,,,,,,,,,106.0
+,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,

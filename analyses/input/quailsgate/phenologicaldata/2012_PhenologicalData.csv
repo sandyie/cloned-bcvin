@@ -1,0 +1,85 @@
+Vineyard ,Field,Block,Variety,Planted,Plants,Acres,Row.Spacing,Budburst,Flowering,Clust.per.Vine,Berries.per.Cluster,Av.Berry.Weight.Grams,Av.Bunch.Weight.Grams,Lag.Phase.G/Vine,Lag.Phase.Date,80%Veraison.Date,Lag.estimate.t
+,F1,B1,Merlot,1994/97,996,0.91,2.4 x 1.2,10-May,1-Jul,17.7,154,0.77,118.2,2092,9-Aug,,4.6
+,F1,B1,Cab. Sauvignon,1994,130,0.19,2.4 x 1.2,10-May,1-Jul,,,,,,,,
+,F1,B2,Chardonnay,1996,2213,1.82,2.0 x 1.0,30-Apr,27-Jun,15.8,97,0.65,62.5,988,3-Aug,,4.8
+,F1,B3,Optima,1982,4833,4.43,2.7 x 1.3,5-May,30-Jun,22.1,142,0.62,88.3,1951,8-Aug,,20.8
+,F1,B4,Riesling,1982,5536,5.07,2.7 x 1.3,7-May,29-Jun,22.2,131,0.68,89.4,1985,8-Aug,,24.2
+,F1,B5,Pinot Blanc,1997/98,5341,3.38,2.1 x 1.4,1-May,29-Jun,14.3,167,0.60,100,1430,8-Aug,,14.3
+,F1,B6,Sauvig. Blanc,1997,2213,1.49,2.1 x 1.4,1-May,29-Jun,16.3,142,0.53,75,1223,8-Aug,,5.1
+,F1,B7,Chasselas,1975/83,2114,4.32,3.0 x 2.1,4-May,1-Jul,57.5,137,0.79,108.3,6227,8-Aug,,29.0
+,F2,B1,Syrah,2010,3911,,2.1 x 1.5,28-Apr,26-Jun,16.4,155,0.47,72.7,1192,9-Aug,,10.3
+,F2,B2,Merlot,1998,4500,2.79,2.1 x 1.4,8-May,27-Jun,18.7,155,0.83,128.6,2405,9-Aug,,23.9
+,F2,B3,Chasselas,1975/83,1590,1.92,3.0 x 2.1,4-May,1-Jul,23.1,132,0.95,125,2888,8-Aug,,10.1
+,,,T-bar,,,,,,,47,87,0.92,80,3760,8-Aug,,13.2
+,F2,B4,Chardonnay,1987,1532,1.42,2.7 x 1.3,1-May,29-Jun,28.8,135,0.68,92,2650,3-Aug,,8.9
+,F2,B5,Chardonnay,1993,800,0.72,2.4 x 1.2,1-May,29-Jun,28.8,135,0.68,92,2650,3-Aug,,4.7
+,F2,B6,Chenin Blanc,1997,6500,4.04,2.1 x 1.4,3-May,30-Jun,14.5,180,0.67,120.8,1752,8-Aug,,25.1
+,F2,B7,Merlot,1998,4500,2.70,2.1 x 1.4,9-May,30-Jun,18.4,127,0.63,80,1472,9-Aug,,14.6
+,F2,B8,Merlot,1998,1600,0.85,2.1 x 1.4,9-May,30_Jun,17.1,85,0.59,50,855,9-Aug,,3.0
+,F2,B9,Grafted Merlot,2007,1257,0.78,2.1 x 1.4,8-May,27-Jun,20.9,162,0.66,107.1,2238,9-Aug,,6.2
+,F3,B1,Pinot Noir,2005,2895,1.79,2.1 x 1.1,1-May,26-Jun,17.9,106,0.49,52,931,2-Aug,,5.9
+,F3,B2,Foch,1965,780,1.09,3.1 x 2.1,29-Apr,22-Jun,58.6,124,0.42,52.2,3059,26-Jul,22-Aug,5.3
+,F3,B3,Pinot Noir,1996,5000,2.47,2.0 x 1.0,5-May,28-Jun,17,98,0.53,51.6,877,2-Aug,3-Sep,9.7
+,F3,B4,Chardonnay,1996,5000,2.57,2.0 x 1.0,1-May,25-Jun,15.6,118,0.49,57.7,900,2-Aug,,9.9
+,F3,B5,Pinot Noir,1990,1103,0.92,2.4 x 1.3,5-May,27-Jun,23.2,136,0.60,80.8,1875,2-Aug,,4.6
+,F3,B6,Pinot Noir,1987,600,0.55,2.4 x 1.3,5-May,27-Jun,24.1,114,0.55,61.9,1492,2-Aug,,2.0
+,F3,B7,Pinot Noir,1987,1160,0.96,2.4 x 1.3,5-May,27-Jun,20.7,111,0.54,59.3,1228,2-Aug,,3.1
+,F3,B8,Pinot Noir,1975/90,631,0.47,2.4 x 1.3,5-May,27-Jun,22.1,118,0.51,60,1326,2-Aug,,1.8
+,F4,B1,Grafted Chard,1982,2614,2.35,2.4 x 1.3,30-Apr,27-Jun,25,142,0.58,81.5,2038,3-Aug,,7.0
+,F4,B2,Pinot Noir,2005,1240,0.90,2.1 x 1.1,3-May,27-Jun,16.3,110,0.55,60,978,3-Aug,31-Aug,2.7
+,F4,B3,Pinot Noir,1990,3279,2.68,2.4 x 1.3,4-May,27-Jun,23,104,0.64,66.7,1534,3-Aug,27-Aug,7.8
+,F4,B4,Foch,1965/98,1339,0.83,3.0 x 2.1,29-Apr,22-Jun,42.7,104,0.42,43.5,1857,26-Jul,22-Aug,4.4
+,F4,B5,Cab Sauvignon,2003,3920,2.36,2.1 x 1.2,10-May,30-Jun,16,161,0.56,90,1410,9-Aug,,12.2
+,F4,B6,Cab Sauvignon,1997,1900,1.17,2.0 x 1.4,8-May,29-Jun,17.7,142,0.60,85,1505,9-Aug,,6.3
+,F4,B7,Pinot Noir,2005,965,0.53,2.1 x 1.1,3-May,27-Jun,17.9,133,0.76,100.7,1803,2-Aug,31-Aug,3.8
+,F4,B8,Pinot Noir,2005,1990,1.25,2.1 x 1.1,3-May,27-Jun,17.9,133,0.76,100.7,1803,2-Aug,,7.9
+,F4,B9,Pinot Noir,2005,2600,1.63,2.1 x 1.1,3-May,27-Jun,17.9,133,0.76,100.7,1803,2-Aug,,10.3
+,F4,B10,Pinot Noir,1990,2093,1.72,2.4 x 1.3,4-May,27-Jun,18.7,132,0.81,106.8,1997,2-Aug,26-Aug,9.2
+,F4,B11,Pinot Noir,2003,2600,1.57,2.1 x 1.1,2-May,27-Jun,14,127,0.64,81,1148,2-Aug,29-Aug,6.6
+,F5,B1,Chardonnay,1997,3000,1.80,2.0 x 1.4,2-May,27-Jun,15.3,124,0.86,106.5,1629,2-Aug,,10.8
+,F5,B2,Chardonnay,1997,3000,1.92,2.0 x 1.4,2-May,27-Jun,15.8,104,0.90,94,1485,2-Aug,,9.8
+,F5,B3,Chardonnay,1997,3000,1.43,2.0 x 1.4,2-May,27-Jun,18.6,145,0.82,119.2,2217,2-Aug,,14.7
+,F5,B4,Chardonnay,1997,1000,1.03,2.0 x 1.4,2-May,27-Jun,17.4,132,0.82,108.25,1884,2-Aug,,4.2
+,F5,B5,Pinot Noir,1997,2450,1.01,2.0 x 1.1,6-May,27-Jun,17.3,133,0.76,100.95,1746,2-Aug,31-Aug,9.4
+,F5,B6,Pinot Noir,1997,3200,1.50,2.0 x 1.1,6-May,27-Jun,15.2,139,0.76,105.95,1610,2-Aug,31-Aug,11.4
+,F5,B7,Cab Sauvignon,1997,1716,0.95,2.0 x 1.4,10-May,1-Jul,18.6,152,0.67,101.75,1893,9-Aug,,7.2
+,F5,B8,Gewurztraminer,1994,632,0.52,2.4 x 1.3,2-May,28_Jun,19.7,64,0.69,44,867,9-Aug,,4.1
+,F5,B9,Gewurztraminer,1989,1526,1.37,2.4 x 1.3,2-May,28-Jun,19.7,64,0.69,44,867,9-Aug,,
+,F6,B1,Merlot,2003,4100,2.20,2.1 x 1.1,7-May,29-Jun,17.9,135,0.72,97,1743,9-Aug,,15.8
+,F6,B2,Merlot,2003,4163,2.20,2.1 x 1.1,,29-Jun,18.1,112,0.78,87,1575,9-Aug,,14.5
+,Osy,,Old Foch,1978,4600,9.80,3 x 1.6,28-Apr,8-Jun,,#DIV/0!,,,,,12-Aug,0.0
+,,,Young Foch,2006,2926,2.96,3 x 1.4,28-Apr,08-Jun,,#DIV/0!,,,,,12-Aug,0.0
+,,,Chenin Blanc,2006,4061,1.65,2.1 x 1.1,7-May,15-Jun,,#DIV/0!,,,,,,0.0
+,,,Syrah,2006,1748,1.60,2.1 x 1.6,10-May,17-Jun,,#DIV/0!,,,,,,0.0
+,PAT,,Patricia,2006,15885,9.20,2.1 x 1.1,5-May,1-Jul,,#DIV/0!,,,,,,0.0
+,MRT,,Riesling,2008,22995,13.96,2.1 x 1.1,5-May,1-Jul,23,161,0.71,113.3,2606,13-Aug,,45.2
+,,,Gewurztraminer,2008,,,,3-May,1-Jul,19.2,107,0.66,70,1344,13-Aug,,27.8
+,,,Total,,170151,119.74,,,,,,,,,,,
+Mannhardt-Sunnyside,F1,B1,Ehrenfelser,1986,2755,2.81,3 x 1.4,4-May,1-Jul,34.3,128,0.62,79.2,2717,9-Aug,,16.5
+Mannhardt-Sunnyside,F1,B2,Ehrenfelser,1986,2500,2.14,3 x 1.4,4-May,1-Jul,35.7,132,0.63,83.1,2967,9-Aug,,16.4
+Mannhardt-Sunnyside,F1,B3,Chenin Blanc,2006,8946,5.04,2.1 x 1.1,4-May,30-Jun,21.2,164,0.73,119.5,2533,8-Aug,,42.5
+Mannhardt-Sunnyside,F1,B4,Pinot Noir,1997,3200,2.71,2.4 x 1.4,7-May,27-Jun,18.2,130,0.90,116.7,2124,7-Aug,31-Aug,15.0
+Mannhardt-Sunnyside,F1,B5,Pinot Noir,2006,1838,1.04,2.1 x 1.1,8-May,27-Jun,18.4,101,0.69,70,1288,7-Aug,,5.2
+Mannhardt-Sunnyside,F2,B1,Riesling,2006,2331,1.23,2.1 x 1.1,10-May,1-Jul,20.9,122,0.64,78.25,1635,8-Aug,,8.4
+Mannhardt-Sunnyside,F2,B2,Riesling,2006,2737,1.58,2.1 x 1.1,10-May,1-Jul,20.9,122,0.64,78.25,1635,8-Aug,,9.9
+Mannhardt-Sunnyside,F2,B3,Gewurztraminer,2006,1040,0.58,2.1 x 1.1,4-May,1-Jul,21.9,110,0.70,76.7,1680,8-Aug,,3.3
+Mannhardt-Sunnyside,F2,B4,Riesling,2006,403,0.21,2.1 x 1.1,8-May,1-Jul,,,,,,,,0.0
+Mannhardt-Sunnyside,F2,B5,Pinot Noir,2006,2461,1.31,2.1 x 1.1,7-May,27-Jun,18.8,143,0.64,91.7,1724,7-Aug,31-Aug,8.0
+Mannhardt-Sunnyside,F2,B6,Pinot Noir,2006,2209,1.22,2.1 x 1.1,7-May,27-Jun,17.4,113,0.64,72,1253,7-Aug,,6.1
+Mannhardt-Sunnyside,F2,B7,Pinot Noir,2006,702,0.45,2.1 x 1.1,7-May,27-Jun,19.6,111,0.69,76.5,1499,7-Aug,,2.3
+Mannhardt-Sunnyside,F2,B8,Pinot Noir,2006,656,0.32,2.1 x 1.1,7-May,27-Jun,15.8,104,0.64,66.7,1054,7-Aug,31-Aug,1.5
+Mannhardt-Sunnyside,F2,B9,Pinot Blanc,2009,3054,1.96,2.1 x 1.2,7-May,29-Jun,,,,,,,,0.0
+Mannhardt-Sunnyside,F3,B1,Riesling,2006,1132,0.68,2.1 x 1.1,10-May,1-Jul,19.8,108,0.70,75.9,1503,8-Aug,,3.8
+Mannhardt-Sunnyside,F3,B2,Riesling,2006,1266,0.74,2.1 x 1.1,10-May,1-Jul,19.8,108,0.70,75.9,1503,8-Aug,,4.2
+Mannhardt-Sunnyside,F3,B3,Chasselas,2006,5151,3.29,2.1 x 1.1,9-May,1-Jul,23.3,139,1.20,167,3891,8-Aug,,44.2
+Mannhardt-Sunnyside,F3,B4,Ehrenfelser,1977,745,1.13,3 x 1.4,8-May,1-Jul,43.3,133,0.76,101.2,4382,9-Aug,,7.2
+Mannhardt-Sunnyside,F3,B5,Riesling,1977,946,1.13,3 x 1.4,10-May,1-Jul,21.9,160,0.75,120.2,2632,8-Aug,,5.5
+,,,Total,,44072,29.57,,,,,,,,,,,
+Mannhardt-Sunnyside,DRV,,Gamay,,14000,,,,,21.6,130.9,1.1,143.4,3161,,,71.7
+Mannhardt-Sunnyside,,,Top,,7000,,,,,23.1,153,1.2,186.7,4313,10-Aug,,49.9
+Mannhardt-Sunnyside,,,Bottom,,7000,,,,,20.1,109,0.92,100,2010,10-Aug,,23.3
+Mannhardt-Sunnyside,DRV,,Pinot Noir,,6500,,,,,20.4,110,0.85,93.8,1914,10-Aug,,20.6
+Mannhardt-Sunnyside,DRV,,Pinot Gris,,4500,,,,,18.3,127,0.75,95,1739,10-Aug,,12.9
+Mannhardt-Sunnyside,ARV,,Pinot Noir,,5600,,,,,13.9,129,0.85,110,1529,10-Aug,,14.2
+Mannhardt-Sunnyside,ARV,,Pinot Gris,,8400,,,,,20.3,105,0.79,83.3,1691,10-Aug,,23.5
+Mannhardt-Sunnyside,ARV,,Gewurztraminer,,3000,,,,,16,78,0.90,70,1120,10-Aug,,5.6
