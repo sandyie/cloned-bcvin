@@ -37,6 +37,12 @@ clim$date <- as.Date(clim$Date.Time, format="%m/%d/%y")
 clim$month <- format(clim$date, "%b")
 clim$day<- format(clim$date,"%d")
 
+#extra climate data taken from the 2012-2018_PENTICTON_WEATHER_EM.xlxs file sent by Carl in 
+#an email. this tenperature is used ti till in missing temperatures in clim
+climExtra <- read.delim("analyses/input/2012-2018_PENTICTON_WEATHER_EM.csv", skip=2,sep = ",", header = TRUE)
+names(climExtra)[7] <- "meanTempExtra"
+names(climExtra)[9] <- "meanTempExtra2Day"
+
 # Historical climate (pulled from Carl's Excel file)
 histclim <- read.csv("analyses/input/climhist_19812010.csv", header=TRUE)
 names(histclim) <- c("Date", "meanC", "meanC2day", "meanC3day")
@@ -227,6 +233,26 @@ climsm <- meanimpute(climsm, "meanC.imp")
 
 plot(meanC.imp~meanC, data=climsm)
 
+# Faith trying a different method to input missing data, based on Carl's 
+#comment that he used teh oenticon data for missing data
+
+
+is.na(climsm$meanC)
+climsm$meanC.imp[is.na(climsm$meanC)]
+View(climsm)
+
+#cheating with months to math up both climate datasets
+monthNames <- c("Jan","Feb","Mar",
+              "Apr","May","Jun",
+              "Jul","Aug","Sep",
+              "Oct","Nov","Dec")
+climExtra$MonthAbb <- monthNames [ climExtra$Month ]
+
+#merge teh two datasets
+climsm2 <- climsm
+climsm <- merge(climsm, climExtra[,c(2,62,3,9)], by.x = c("month", "day"), by.y = c("MonthAbb","Day" ))
+
+
 climsm$gddtemp <- makethreshold.data(climsm, "meanC.imp", 10)
 climsm$gdd <- makegdd.data.skipNA(climsm, "gddtemp", "doynum", 1, 366) # or 1, 366
 
@@ -333,7 +359,7 @@ adjustcd <- function(df){
 }
 
 #climall$adjustcd <- adjustcd(climall) # quick glance: looks fine...
-names(climall)
+View(climall)
 
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
@@ -355,7 +381,7 @@ names(climall)
 #=IF(CC228<-9,CB228*-2,IF(CC228<-7,CB228*-1.5,IF(CC228<-5,CB228*-1.1,
 3	IF(CC228<-4,CB228*-1,IF(CC228<-3,CB228*-0.5,IF(CC228<-2,CB228*0.2,IF(CC228<-1,CB228*1.1,1)))))))
 
-#Making a column for teh different periods of time using a ridiculous amount of steps 
+#Making a column for the different periods of time using a ridiculous amount of steps 
 #--------------------------------------------------------------------------------------
 
 #select days of teh year that correspond to the different periods of time
@@ -462,16 +488,16 @@ adjustcdPerAcc <- function(hitData){
 }
 
 climAcc$CD <- adjustcdPerAcc(climAcc$avgTdiff )#seems to be working 
-names(climAcc)
 
-adjustcdPer(climAcc$HardinessPeriod, climAcc$avgTdiff, climAcc$accdiffmax)
+climAllnoNA <- climall[!is.na(climall$HardinessPeriod),]
 
-period <- climAcc$HardinessPeriod
-hitData <- climAcc$avgTdiff
-LTEchange <-  climAcc$accdiffmax
+period <- climAllnoNA $HardinessPeriod
+hitData <- climAllnoNA $avgTdiff
+LTEchange <-  climAllnoNA $accdiffmax
 
 
-#adjustcdPer <- function(period, hitData, LTEchange){
+
+adjustcdPer <- function(period, hitData, LTEchange){
     adjustcd <- c()
     for(i in c(1:length(hitData)))
 	{
@@ -480,25 +506,19 @@ LTEchange <-  climAcc$accdiffmax
 
 		if (period[i] == "Acc"){ # if it is accumilating hardiness then do the following to the value
 
-   			if(hitData[i]< - 8) {
-      		adjustcd[i] <- 1.8} else {
-   	 			if(hitData[i]< -5) {
-      			adjustcd[i] <- 1.6} else {
-    	 				if(hitData[i]< -4) {
-     	   				adjustcd[i] <- 1.4} else {
-       					if(hitData[i]< -3) {
-          					adjustcd[i] <- 1.2} else {
-    							if(hitData[i]< -2) {
-       						adjustcd[i] <- 1.1} else {
-       							if(hitData[i]< -0) {
-            						adjustcd[i] <- 1} else {
-            							 adjustcd[i] <- 0} # need to check this very last statement is correct
-           	  	 								  }	
-          	  	  }
-          	 	  }
-	   		  }
- 			}
- 		}
+   			if(hitData[i]< - 8) {adjustcd[i] <- 1.8} 
+				else {if(hitData[i]< -5) {adjustcd[i] <- 1.6} 
+				 else {if(hitData[i]< -4) {adjustcd[i] <- 1.4} 
+				  else {if(hitData[i]< -3) {adjustcd[i] <- 1.2} 
+				   else {if(hitData[i]< -2) {adjustcd[i] <- 1.1} 
+				    else {if(hitData[i]< -0) {adjustcd[i] <- 1} 
+				     else {adjustcd[i] <- 0} 
+           	  	 	}	
+          	  	     }
+          	 	    }
+	   		   }
+ 			  }
+ 		       }
 
 	else {
 		if (period[i] == "Max" ){ #if teh hardiness is at its maximum period over the heart of winter #
@@ -518,6 +538,7 @@ LTEchange <-  climAcc$accdiffmax
               }
             }
           }
+	}
 
 	else{if(period == "Max2"){
 
@@ -539,11 +560,7 @@ LTEchange <-  climAcc$accdiffmax
 	}
 
 	else{if(period == "Deacc"){
-	#=IF(CC167<-9,CB167*-2,IF(CC167<-7,CB167*-1.5,IF(CC167<-5,CB167*-1.1,IF(CC167<-4,CB167*-1,
-		#IF(CC167<-3,CB167*-0.5,IF(CC167<-2,CB167*0.2,IF(CC167<-1,CB167*1.1,1)))))))
 
-	if(is.na(hitData[i])==TRUE) {
-        adjustcd[i] <- NA} else {
    	 if(hitData[i]< -9) {
       	 adjustcd[i] <- LTEchange[i]*-2.0} else {
    	 if(hitData[i]< -7) {
@@ -567,9 +584,11 @@ LTEchange <-  climAcc$accdiffmax
 	 }
 	}
      }
-	
 
   }
+}
+}
+}
     return(adjustcd)
 }
 
@@ -603,6 +622,9 @@ adjustcdPerDeacc <- function(hitData, LTEchange){
 	 }
 	}
      }
+	}
+	}
+	}
     return(adjustcd)
 }
 
@@ -612,4 +634,5 @@ View(climDeacc)
 
 climDeacc$CD <- adjustcdPerDeacc(climDeacc$avgTdiff, climDeacc$accdiffmax)
 
+climall$CD <- adjustcdPer(climAllnoNA $HardinessPeriod, climAllnoNA $avgTdiff, climAllnoNA $accdiffmax)
 
