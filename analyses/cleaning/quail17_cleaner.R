@@ -1,5 +1,12 @@
-setwd("/User/miragarner/Documents/git/bcvin/analyses/cleaning")
-og_quail17<- read.csv("/User/miragarner/Documents/git/bcvin/analyses/input/qg_phenology2017_19COPY.csv")
+#cleaning script for Quails Gate Phenology data 2017-2019 (September 2019, Mira Garner)
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+
+setwd("~/Documents/git/bcvin/analyses/cleaning")
+quail17 <- read.csv("~/Documents/git/bcvin/analyses/input/qg_phenology2017_19COPY.csv")
+
+library(lubridate)
+library(dplyr)
 
 # add column for variety - NEED TO DO BEFORE SPLIT
 #### need to look at maps and Asset Identifier, create another spreadsheet of the asset.id with variety then match with asset.id in pheno spreadsheet?
@@ -11,8 +18,6 @@ og_quail17<- read.csv("/User/miragarner/Documents/git/bcvin/analyses/input/qg_ph
 
 # split date into columns: year, month, day
 ###Question: which date is right?? Diff btwn TaskDate and DateOfObs
-library(lubridate)
-library(dplyr)
 <<DF>>$year <- year(mdy(<<DF>>$<DATE>))
 <<DF>>$month <- month(mdy(<<DF>>$<<DATE>>))
 <<DF>>$day <- day(mdy(<<DF>>$<<DATE>>))
@@ -33,4 +38,4 @@ NEXTDATA <- cbind(<<DATA>>, company)
 # OR colnames(data)[colnames(data)=="old_name"] <- "new_name" for single columns
 
 # reorder columns
-clean_quail17 <- select(<<DATA>>, c("company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"))
+clean.quail17 <- select(<<DATA>>, c("company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"))
