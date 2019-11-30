@@ -30,6 +30,8 @@ library(reshape)
 
 #source r skripts
 source("analyses/ColumnCC_function.R")#Faith's function for making column cc
+source("analyses/ColumnCE_function.R")#Faith's function for making column ce
+
 
 ## Da data
 # 2X/month bud hardiness data
@@ -425,10 +427,12 @@ for (year in unique(climall$Year[!climall$Year == 2012])){
 	climall$HardinessPeriod[climall$doynum %in% periodsYear$deaccStart:periodsYear$deaccEnd & climall$Year == year] <- "Deacc"
 }
 
-#Add column CC to the climall dataset
+#Add column CD to the climall dataset
 #note - at teh momment it doesnt perfectly match the original spreadsheet because of teh different ways we have filled in missing temp data
 
 climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
+climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
+
 View(climall)
 
 
