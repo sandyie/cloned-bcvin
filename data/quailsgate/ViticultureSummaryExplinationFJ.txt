@@ -5,6 +5,30 @@ tab clones:
 * information on what clones are grown where, and what their ID is 
 
 tab QGV Sum:
-* detailed information on what varieties were grown where, how productive they were, how much they cost,
+* detailed information on what varieties were grown where and when, how productive they were, how much they cost,
   and berry charecteristics like Brix and pH. TA stands for total acidity, and is another way of looking at 
   acidity. Instead of the ratio of acidic vs alkaline (pH), it looks at the acid by volume.
+* There are totals for each wine variety, and also for red vs white, that will need removing during cleaning 
+
+tab Mix
+* this tab seems to show which growers are growing which winegrapes. Column names refer to wine varieties.
+  first white wines and then red wines
+* I am not sure what the number are in the rows, but they definitly show soem proporional number. At the bottom 
+  of each year block there is also the amount of each wine variety in Litres and numbers of 9 litre cases
+
+tab 02int 
+* i am not exactly sure what this tab is saying. I think it is data for 2002, from september through to October,
+  and then some weekly and grant totals for november and Febuary. The brix, pH and TA data are repeated for each 
+  blockvariety combination, as is teh grower ID and (i think?) harvest date. I think this tab is less useful than 
+  teh similar QGV tab? It might be something to do with storing and aging wine in tanks? or moving wine in tanks?
+
+tab GrwrPymnts
+* information on how much of each variety each grower produced, how much production costed and how much they were paid.
+
+tab codes
+* i think this is a guide to what the different codes mean in other tabs, but doe some reason there are two 
+  different columns of codes. I think column B refers to the vines in variety column D, and that codes G 
+  refer to varieties in column I. For some reson there is only one Acres column though. Does that mean that 
+  Varieties in the same row were drown together perhaps?
+
+ 
