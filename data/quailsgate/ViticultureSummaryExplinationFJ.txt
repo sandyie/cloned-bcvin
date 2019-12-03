@@ -1,0 +1,10 @@
+Explination for VITICULTURE_SUMMARY 
+(a work in progress)
+
+tab clones:
+* information on what clones are grown where, and what their ID is 
+
+tab QGV Sum:
+* detailed information on what varieties were grown where, how productive they were, how much they cost,
+  and berry charecteristics like Brix and pH. TA stands for total acidity, and is another way of looking at 
+  acidity. Instead of the ratio of acidic vs alkaline (pH), it looks at the acid by volume.
