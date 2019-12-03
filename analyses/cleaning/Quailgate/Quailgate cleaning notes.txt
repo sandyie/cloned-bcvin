@@ -3,10 +3,35 @@ Here is a information on the Quailsgate data and list of the cleaning tasks that
 Files
 -----
 
+Viticulture Summary History (up to 2008)
+* this is the summary of what wines were grown where, how much they prodcued and how much they cost
+* thsi file needs a fair bit of cleaning because they layout is rather unhelpful. at the end of each 
+  variety-vinyard section there is a "total" section which contains information on costsings 
+* i think that we need a column for vinyard and teh "total" data needs removing and perhaps remerging 
+  as another column in the main rows 
+
+
 Phenological Data Report 2012 - 2016
 *  this file contains data on some phenological events such as budburst (Right after wooly bud stage),
    full bloom and lag phase. 
 *  There is a column with location and sub location info, but it needs seperating out  
 *  the phenology column needs cleaning a bit because sometimes there are commenst like "Around 5% winter 
    bud damage (primary bud) Riesling BudBreak April-20th B1, B2,B4" 
+*  there is a lot of values like "E-L 24" in the phenology column - what do they mean?
+*  the different subsections need removing so it is a single cohesive spreadsheet 
+*  blank rows need removing 
 
+/vinyardmaps/vinyardMapsDataCompiled_MY 
+* information on what different blocks are, where they are and when they were planted, how big they are
+* I think the "Date" column refers to the date that the map was from i.e. Feb 11 was an accurate depiction 
+  of where the blocks where in spring 2011. 
+* this data should be clean, it just needs merging into the Phenology and Climate data files 
+
+nektar/qg_phenology2017_19
+* I think this file is dates when various phenology events took place. I think the information on which 
+  event the row refers to is in the "Stage" colun but it is numeric and I have not yet found the explination 
+  for each code
+* other than the code issue in the task column this data looks fairly clean  
+* data from 2017-2019
+
+2019May23_Full/
