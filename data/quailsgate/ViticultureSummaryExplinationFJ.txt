@@ -13,7 +13,7 @@ tab QGV Sum:
 tab Mix
 * this tab seems to show which growers are growing which winegrapes. Column names refer to wine varieties.
   first white wines and then red wines
-* I am not sure what the number are in the rows, but they definitly show soem proporional number. At the bottom 
+* I am not sure what the number are in the rows, but they definitly show some proporional number. At the bottom 
   of each year block there is also the amount of each wine variety in Litres and numbers of 9 litre cases
 
 tab 02int 
@@ -38,5 +38,5 @@ tab tab 00int
 * see tab 02int 
 
 tab blks
-* information on what teh different blocks are, including the feild ID, Block ID, clone variety, when teh block was 
-  planted, how many acres teh block is, how and many vines per acre 
+* information on what the different blocks are, including the feild ID, Block ID, clone variety, when the block was 
+  planted, how many acres the block is, how and many vines per acre 
