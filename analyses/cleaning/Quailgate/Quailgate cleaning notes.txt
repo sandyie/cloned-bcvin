@@ -32,6 +32,12 @@ Phenological Data Report 2012 - 2016
 *  the different subsections need removing so it is a single cohesive spreadsheet 
 *  blank rows need removing 
 
+PHENOLOGICAL_DATA_ed_MY
+* phenological data for 2000 - 2012 including feild id, block, planting date, and columsn for different 
+  phenological events. 
+* this fiel has already undergone a bit of manual cleaning by Mika, but needs the different tabs for each 
+  year combining and some rehsaping
+
 /vinyardmaps/vinyardMapsDataCompiled_MY 
 * information on what different blocks are, where they are and when they were planted, how big they are
 * I think the "Date" column refers to the date that the map was from i.e. Feb 11 was an accurate depiction 
