@@ -81,5 +81,5 @@ nektar/qg_phenology2017_19
 
 
 2019May23_Full/2018_Ferment info
-* fermentation information for teh 2018 grapes, like how much and what was added into the grape mix, and what tanks things were
+* fermentation information for the 2018 grapes, like how much and what was added into the grape mix, and what tanks things were
   put in 
