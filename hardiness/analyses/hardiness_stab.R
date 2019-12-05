@@ -309,41 +309,6 @@ climall[58:77,] # looking good...
 climall$accdiffmax[climall$accdiffmax < 0.1 & climall$accdiffmax > 0] <- 0.1
 climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
 
-#climall$adjustcd <- NA
-
-# Column CD tdiff less than zero
-# need to add while loop for dates ...
-# https://stackoverflow.com/questions/32610271/looping-over-dates-with-r
-adjustcd <- function(df){
-    adjustcd <- c()
-    for(i in c(1:nrow(df))){
-    if(is.na(df[["avgTdiff"]][i])==TRUE) {
-        adjustcd[i] <- NA} else {
-    if(df[["avgTdiff"]][i]< -7) {
-        adjustcd[i] <- 1.8} else {
-    if(df[["avgTdiff"]][i]< -5) {
-        adjustcd[i] <- 1.4} else {
-    if(df[["avgTdiff"]][i]< -4) {
-        adjustcd[i] <- 1.3} else {
-    if(df[["avgTdiff"]][i]< -3) {
-        adjustcd[i] <- 1.2} else {
-    if(df[["avgTdiff"]][i]< -2) {
-        adjustcd[i] <- 1.1} else {
-        if(df[["avgTdiff"]][i]< -0) {
-            adjustcd[i] <- 1} else {
-                adjustcd[i] <- 0} # need to check this very last statement is correct
-               }
-              }
-            }
-          }
-        }
-     }
-    }
-    return(adjustcd)
-}
-
-#climall$adjustcd <- adjustcd(climall) # quick glance: looks fine...
-
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
 #---------------------------------------------------
@@ -433,7 +398,7 @@ for (year in unique(climall$Year[!climall$Year == 2012])){
 climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
 climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
 
-View(climall)
+
 
 
 
