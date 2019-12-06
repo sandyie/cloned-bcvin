@@ -31,6 +31,7 @@ library(reshape)
 #source r skripts
 source("analyses/ColumnCC_function.R")#Faith's function for making column cc
 source("analyses/ColumnCE_function.R")#Faith's function for making column ce
+source("analyses/ColumnCF_function.R")#Faith's function for making column ce
 
 
 ## Da data
@@ -259,6 +260,7 @@ climall <- merge(climsm, histclim, by=c("month", "day"), all.x=TRUE, suffixes=c(
 climall <- climall[order(climall$date),]
 climall$avgTdiff <- climall$meanC2day-climall$meanC2day.hist # column CC (looks good, except where I imputed) -- created by Q-M (note that there are lots of NA since we only have historical data for mid Sept to Apr, but we only show it through end of February ... WHY?
 
+climall$day <- as.numeric(climall$day )#making sure the day so later functions and code work 
 
 #############################################################
 ## Acclimation, max hardiness and de-acclimation equations ##
@@ -339,14 +341,16 @@ doyEachPeriod <- data.frame(matrix(NA,nYear , 11))
 names(doyEachPeriod ) <- c("Year", "accStart","accEnd", "maxStart", "maxEndDec", "maxStartJan", "maxEndJan", "maxStart2Jan", "maxEnd2Jan", "deaccStart", "deaccEnd")
 doyEachPeriod$Year <- unique(climall$Year)
 
-doyEachPeriod$accStart <- climall$doynum[climall$month == "Sep" & climall$day == "21"]
-doyEachPeriod$accEnd <- climall$doynum[climall$month == "Dec" & climall$day == "07"]
+doyEachPeriod$accStart <- climall$doynum[climall$month == "Sep" & climall$day == 21]
+doyEachPeriod$accEnd <- climall$doynum[climall$month == "Dec" & climall$day == 7]
 
-doyEachPeriod$maxStart <- climall$doynum[climall$month == "Dec" & climall$day == "08"]
+doyEachPeriod$maxStart <- climall$doynum[climall$month == "Dec" & climall$day == 8]
 doyEachPeriod$maxStart <- as.numeric(doyEachPeriod$maxStart )
 
-doyEachPeriod$maxEndDec[!doyEachPeriod$Year == 2016] <- 365
-doyEachPeriod$maxEndDec[doyEachPeriod$Year == 2016] <- 366 #leap year
+# a quick little loop to get end days of the year for leap and non leap years 
+for(yearc in doyEachPeriod$Year){
+	doyEachPeriod$maxEndDec[doyEachPeriod$Year == yearc] <- max(climall$doynum[climall$Year == yearc]) 
+}
 
 doyEachPeriod$maxStartJan[!doyEachPeriod$Year == 2012] <- 1 #always start first of january. no data for 2012
 doyEachPeriod$maxStartJan<- as.numeric(doyEachPeriod$maxStartJan)
@@ -357,13 +361,13 @@ doyEachPeriod$maxEndJan<- as.numeric(doyEachPeriod$maxEndJan)
 doyEachPeriod$maxStart2Jan[!doyEachPeriod$Year == 2012] <- 7 # no data for 2012
 doyEachPeriod$maxStart2Jan<- as.numeric(doyEachPeriod$maxStart2Jan)
 
-doyEachPeriod$maxEnd2Jan[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == "06"] #always six of january . no data for 2012
+doyEachPeriod$maxEnd2Jan[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == 6] #always six of january . no data for 2012
 doyEachPeriod$maxEnd2Jan<- as.numeric(doyEachPeriod$maxEnd2Jan)
 
-doyEachPeriod$deaccStart[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == "07"]#no jan 2012 data
+doyEachPeriod$deaccStart[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == 7]#no jan 2012 data
 doyEachPeriod$deaccStart<- as.numeric(doyEachPeriod$deaccStart)
 
-doyEachPeriod$deaccEnd[!doyEachPeriod$Year == 2012]<- climall$doynum[climall$month == "Apr" & climall$day == "15"]#no jan 2012 data
+doyEachPeriod$deaccEnd[!doyEachPeriod$Year == 2012]<- climall$doynum[climall$month == "Apr" & climall$day == 15]#no jan 2012 data
 doyEachPeriod$deaccEnd<- as.numeric(doyEachPeriod$deaccEnd)
 
 #make a column in climall to put the period data in 
@@ -397,6 +401,8 @@ for (year in unique(climall$Year[!climall$Year == 2012])){
 
 climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
 climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
+climall$CF <- adjustcf(climall$HardinessPeriod, climall$meanC2day.hist,	climall$CE, climall$CD,
+	climall$Year, climall$month, climall$day,	climall$doynum)
 
 
 
