@@ -315,20 +315,6 @@ climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
 #Faith's attempts at the columns CD - CJ
 #---------------------------------------------------
 
-#colum CD has different if/and statements different periods of time
-#for Sep to Dec 7. (acclimation?)
-#=IF(CC27<-8,1.8,IF(CC27<-5,1.6,IF(CC27<-4,1.4,IF(CC27<-3,1.2,IF(CC27<-2,1.1,IF(CC27<0,1,0))))))
-
-#for Dec 8 to Jan 6 (Max hardiness?)
-#=IF(CC104<-4,-1.4,IF(CC104<-3,-1.3,IF(CC104<-2,-1.25,IF(CC104<-1,-1.2,IF(CC104<0,-1.15,1)))))
-
-#Jan 7 - Feb 6 (Max hardiness also?)
-#=IF(CC165<-9,CB165*-2,IF(CC165<-7,CB165*-1.5,IF(CC165<-5,CB165*-1.1,IF(CC165<-4,CB165*-1,
-#	IF(CC165<-3,CB165*-0.5,IF(CC165<-2,CB165*0.2,IF(CC165<-1,CB165*1.1,1))
-
-#Feb 7 - Apr 15 (Deacc?)
-#=IF(CC228<-9,CB228*-2,IF(CC228<-7,CB228*-1.5,IF(CC228<-5,CB228*-1.1,
-3	IF(CC228<-4,CB228*-1,IF(CC228<-3,CB228*-0.5,IF(CC228<-2,CB228*0.2,IF(CC228<-1,CB228*1.1,1)))))))
 
 #Making a column for the different periods of time using a ridiculous amount of steps 
 #--------------------------------------------------------------------------------------
@@ -361,7 +347,7 @@ doyEachPeriod$maxEndJan<- as.numeric(doyEachPeriod$maxEndJan)
 doyEachPeriod$maxStart2Jan[!doyEachPeriod$Year == 2012] <- 7 # no data for 2012
 doyEachPeriod$maxStart2Jan<- as.numeric(doyEachPeriod$maxStart2Jan)
 
-doyEachPeriod$maxEnd2Jan[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == 6] #always six of january . no data for 2012
+doyEachPeriod$maxEnd2Jan[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == 6] #always six of Jan. no data for 2012
 doyEachPeriod$maxEnd2Jan<- as.numeric(doyEachPeriod$maxEnd2Jan)
 
 doyEachPeriod$deaccStart[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == 7]#no jan 2012 data
@@ -380,11 +366,7 @@ periods2012 <- doyEachPeriod[doyEachPeriod$Year == 2012, ]
 climall$HardinessPeriod[climall$doynum %in% periods2012 $accStart:periods2012 $accEnd & climall$Year == 2012] <- "Acc"
 climall$HardinessPeriod[climall$doynum %in% periods2012 $maxStart:periods2012 $maxEndDec& climall$Year == 2012] <- "Max"
 
-
 #2013 onwards 
-
-str(climall)
-str(doyEachPeriod)
 
 for (year in unique(climall$Year[!climall$Year == 2012])){
 
