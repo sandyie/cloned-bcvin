@@ -2,7 +2,7 @@
 #currently untested
 
 
-adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day) 
+adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day, caEstimateLTE) 
 
 	adjustcg <- c()
 	adjustch <- c()
@@ -32,19 +32,23 @@ adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, da
 	#  hitData = this is equivalent to column CC in Carl's spreadsheet. It is the difference in temperature between
 	#  the historical and recorded 2 day average temperatures 
 	# this code assumes that there are no spring data for 2012, and that all other years have spring data	
-
+	# caEstimateLTE = column ca of the spreadsheet, calculated using the hhardiness stab eqacc function. Etimated LTE each year, 
+	# based off teh historical temperature data 
 
 
 period <- climall$HardinessPeriod
 doynum <- climall$doynum
 cf <- climall$CF 
-i <- 1
+i <- 263
 LTEchange <- climall$LTEchange
 cd <- climall$CD 
 ce <- climall$CE 
 month <- climall$month
 day <- climall$day 
 year <- climall$Year
+caEstimateLTE <- climall$acc
+hitdata <- climall$avgTdiff
+LTEchange  <- climall$accdiffmax
 
 	#get the day of teh year for teh first of march for each year 
 	yearDates <- data.frame(matrix(NA,length(unique(year)), 2))
@@ -58,26 +62,26 @@ year <- climall$Year
 
 	for(i in c(1:length(period)))
 		{
-		if( is.na(period[i]) == TRUE) { # these dont hav starter values before teh first acclimation period
+		if( is.na(period[i]) == TRUE) { # these dont have starter values before teh first acclimation period
 				adjustcg[i] <- NA
 				adjustch[i] <- NA
 				adjustci[i] <- NA
 				adjustcm[i] <- NA
 				adjustcn[i] <- NA
 
-		} else if( is.na(period[i]) == TRUE & !month == "Sep" & !day == 20) {#these do have started values before first acclimation value
+		} else if( is.na(period[i]) == TRUE & !month[i] == "Sep" & !day[i] == 20) {#these do have started values before first acclimation value
 				adjustcj[i] <- NA
 				adjustck[i] <- NA
 				adjustcl[i] <- NA
 				adjustco[i] <- NA	
 
-		#starter values for a few columns - teh values are guesses for september the 20th 
+		#starter values for a few columns - the values are guesses for september the 20th 
 		#guesses are made by carl
 
 		} else if (month[i] == "Sep" & day[i] == 20){
 			adjustcj[i] <- 0.3
 			adjustck[i] <- 0.3
-			adjustc1[i] <- 0.3
+			adjustcl[i] <- 0.3
 			adjustco[i] <- 0.3
 
 
@@ -92,21 +96,21 @@ year <- climall$Year
 
 			#CI
 			#=((CE46+CD46)*CB46)
-			adjustci [i] <- (ce[i] + cd [i]) * LTEchange
+			adjustci [i] <- (ce[i] + cd [i]) * LTEchange[i]
 
 			#CJ
 			#=(CJ31+((CD32+CE32)*CB32)*CF32)
-			adjustcj[i] <- adjustcj[i-1] + ((cd *ce)*LTEchange)* cf
+			adjustcj[i] <- adjustcj[i-1] + ((cd[i] *ce[i])*LTEchange[i])* cf[i]
 
 			#CK
 			#=IF(AND(CJ25<-23.5,CI26<0),CI26*0.5,CI26)
 			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
-				adjustck[i] <- adjustci*0.5
+				adjustck[i] <- adjustci[i]*0.5
 				} else adjustck[i] <- adjustci[i]
 
 			#CL
 			#=IF(AND(CO25<-24.5,CC26>0),(CK26+0.2),CK26)
-			if (adjustc0 [i-1] < -24.5 & hitdata [i] > 0) {
+			if (adjustco [i-1] < -24.5 & hitdata [i] > 0) {
 				adjustcl [i] <-  adjustck[i] + 0.2
 			} else adjustcl [i] <- adjustck [i]
 
@@ -162,7 +166,7 @@ year <- climall$Year
 			adjustco[i] <- adjustco[i-1] + adjustcl[i]
 		
 
-		} else period[i] == "Deacc" {
+		} else period[i] == "Deacc" 
 
 			#CG
 			#=IF(AND(CO164<-23.5,CF165<0),CF165*0.1,IF(AND(CO164<-22.5,CF165<0),CF165*0.4,IF(AND(CO164<-21.5,CF165<0),CF165*0.7,1)))
@@ -202,7 +206,16 @@ year <- climall$Year
 
 			#CM
 			#before March 2nd 
-			if (doynum < 
+		      if (doynum[i] < yearDates$dateMarch2[yearDates$Year == year[i]]){ adjustcm [i] <- NA
+
+			#after march 2nd
+			#=IF(AND(CO188<(CA189-1.8),CC189>2),(CK189+0.2),CK189)
+				} else if (doynum[i] >= yearDates$dateMarch2[yearDates$Year == year[i]]){
+					if (adjustco[i-1] < (caEstimateLTE [i] - 1.8 & hitData > 2){adjustcm[i] <- adjustck[i]+0.2
+			     		} else adjustcm[i] <- adjustck[i]
+					}
+
+			
 			
 
 
