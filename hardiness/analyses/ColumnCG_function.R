@@ -2,7 +2,7 @@
 #currently untested
 
 
-adjustcg <- function(period, doynum, LTEchange, cd, ce, month, day) 
+adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, month, day) 
 
 	adjustcg <- c()
 	adjustch <- c()
@@ -29,7 +29,8 @@ adjustcg <- function(period, doynum, LTEchange, cd, ce, month, day)
 	# LTEchange = this is equivalent to column CB in Carl's spreadsheet, and is teh change in LTE each day   
 	# cd = column cd from Carl's spreadhseet, as calculated from function ColumnCC_function.R
 	# ce = column cd from Carl's spreadhseet, as calculated from function ColumnCE_function.R
-		
+	#  hitData = this is equivalent to column CC in Carl's spreadsheet. It is the difference in temperature between
+	#  the historical and recorded 2 day average temperatures 	
 
 
 
@@ -52,7 +53,7 @@ day <- climall$day
 				adjustcm[i] <- NA
 				adjustcn[i] <- NA
 
-		if( is.na(period[i]) == TRUE & !month == "Sep" & !day = 20) {#these do have started values before first acclimation value
+		} else if( is.na(period[i]) == TRUE & !month == "Sep" & !day == 20) {#these do have started values before first acclimation value
 				adjustcj[i] <- NA
 				adjustck[i] <- NA
 				adjustcl[i] <- NA
@@ -61,40 +62,121 @@ day <- climall$day
 		#starter values for a few columns - teh values are guesses for september the 20th 
 		#guesses are made by carl
 
-		}else if (month == "Sep" & day = 20){
+		} else if (month[i] == "Sep" & day[i] == 20){
 			adjustcj[i] <- 0.3
 			adjustck[i] <- 0.3
 			adjustc1[i] <- 0.3
-			adjustc0[i] <- 0.3
+			adjustco[i] <- 0.3
 
 
 		#acclimation phase for columns cg - co
 		} else if (period[i] == "Acc"){
+			
+			#CG
 			adjustcg[i] <- NA
+			
+			#CH
 			adjustch[i] <- NA
 
+			#CI
 			#=((CE46+CD46)*CB46)
 			adjustci [i] <- (ce[i] + cd [i]) * LTEchange
 
+			#CJ
 			#=(CJ31+((CD32+CE32)*CB32)*CF32)
-			cj[i]
+			adjustcj[i] <- adjustcj[i-1] + ((cd *ce)*LTEchange)* cf
 
+			#CK
+			#=IF(AND(CJ25<-23.5,CI26<0),CI26*0.5,CI26)
+			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+				adjustck[i] <- adjustci*0.5
+				} else adjustck[i] <- adjustci[i]
 
+			#CL
+			#=IF(AND(CO25<-24.5,CC26>0),(CK26+0.2),CK26)
+			if (adjustc0 [i-1] < -24.5 & hitdata [i] > 0) {
+				adjustcl [i] <-  adjustck[i] + 0.2
+			} else adjustcl [i] <- adjustck [i]
 
+			#CM 
+			adjustcm [i] <- NA
 
-		} else if (doynum [i] == 343){adjustcf [i] <- 0.7
-		} else if (period[i] %in% c("Max", "Max2") & !doynum [i] == 343){adjustcf [i] <- (adjustcf [i-1] - 0.01)
+			#CN
+			adjustcn [i] <- NA
 
-		#=IF(AND(CO164<-23.5,CF165<0),CF165*0.1,IF(AND(CO164<-22.5,CF165<0),CF165*0.4,IF(AND(CO164<-21.5,CF165<0),CF165*0.7,1)))
+			#CO
+			#=(CO25+CL26)
+			adjustco[i] <- adjustco[i-1] + adjustcl[i]
 
-		} else period[i] == "Deacc" {adjustcf [i] <- if (co[i]  < 23.5 & cf[i] < 0){adjustcf [i] <-cf[i] * 0.1
-											} else if (co[i] < -22.5 & cf[i] < 0) {adjustcf [i] <-cf[i] * 0.4
-											} else if (co < -21.5 & cf < 0) {adjustcf [i] <-cf[i] * 0.7
-											} else adjustcf [i] <- 1
-										}
+		} else if (period[i] %in% c("Max", "Max2")) {
+
+			#CG 
+			if (month [i] == "Dec" & day [i] == 8){
+			adjustcg[i] <- 0.7
+			} else adjustcg [i] <- adjustcj [i-1] - 0.01 
+			
+			#CH 
+			adjustch[i] <- NA
+	
+			#CI
+			#=IF(CC104>2,(CB104*CD104*CE104*CG104),(CB104*CD104*CE104*CF104))
+			if (hitData[i]  > 2) {adjustci [i] <- LTEchange[i] * cd[i]*ce[i]*cg[i]
+				} else adjustci[i] <- (LTEchange[i] * cd[i]*ce[i]*cf[i])
+
+			#CK
+			#=IF(AND(CJ106<-23.5,CI107<0),CI107*0.5,CI107)
+			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+				adjustck[i] <- adjustci*0.5
+				} else adjustck[i] <- adjustci[i]
+
+			#CJ
+			#=IF((CJ103+(CI104))<-24.5,-24.5,(CJ103+(CK104)))
+			if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
+			} else adjustci[i] <- (adjustcj[i-1] + adjustck[i])  
+					
+			#CL
+			#=IF(AND(CO103<-24.5,CC104>0),(CK104+0.2),CK104)
+			if (adjustco [i-1] < -24.5 & hitData [i] > 0) {adjustcl <- (adjustck[i] + 0.2)
+			} else adjustcl[i] <- adjustck [i]
+
+			#CM
+			adjusctcm[i] <- NA
+	
+			#CN 
+			adjustcm[i]<- NA
+
+			#CO 
+			#=(CO163+CL164)
+			adjustco[i] <- adjustco[i-1] + adjustcl[i]
+		
+
+		} else period[i] == "Deacc" {
+
+			#CG
+			#=IF(AND(CO164<-23.5,CF165<0),CF165*0.1,IF(AND(CO164<-22.5,CF165<0),CF165*0.4,IF(AND(CO164<-21.5,CF165<0),CF165*0.7,1)))
+			if (adjustco[i-1]  < -23.5 & cf[i] < 0){adjustcg [i] <- cf[i] * 0.1
+			} else if (co[i-1] < -22.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.4
+			} else if (co[i-1] < -21.5 & cf < 0) {adjustcg [i] <- cf[i] * 0.7
+			} else adjustcg [i] <- 1
+			}
+
+			#CH
+			
 
 
 	return(adjustcf)
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
