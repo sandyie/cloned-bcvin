@@ -2,7 +2,7 @@
 #currently untested
 
 
-adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, month, day) 
+adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day) 
 
 	adjustcg <- c()
 	adjustch <- c()
@@ -30,7 +30,8 @@ adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, month, day)
 	# cd = column cd from Carl's spreadhseet, as calculated from function ColumnCC_function.R
 	# ce = column cd from Carl's spreadhseet, as calculated from function ColumnCE_function.R
 	#  hitData = this is equivalent to column CC in Carl's spreadsheet. It is the difference in temperature between
-	#  the historical and recorded 2 day average temperatures 	
+	#  the historical and recorded 2 day average temperatures 
+	# this code assumes that there are no spring data for 2012, and that all other years have spring data	
 
 
 
@@ -43,6 +44,17 @@ cd <- climall$CD
 ce <- climall$CE 
 month <- climall$month
 day <- climall$day 
+year <- climall$Year
+
+	#get the day of teh year for teh first of march for each year 
+	yearDates <- data.frame(matrix(NA,length(unique(year)), 2))
+	names(yearDates ) <- c("Year", "dateMarch2")
+	yearDates$Year <- unique(year)
+	
+	for(yeari in year[!year == 2012] ){#2012 has no spring data 
+	yearDates$dateMarch2[yearDates$Year == yeari] <- doynum[month == "Mar" & day == 2 & year == yeari]
+
+	}
 
 	for(i in c(1:length(period)))
 		{
@@ -161,6 +173,36 @@ day <- climall$day
 			}
 
 			#CH
+			#=IF(AND(CO164<-23.5,CF165>0),CF165*1.2,IF(AND(CO164<-22.5,CF165>0),CF165*1.1,IF(AND(CO164<-21.5,CF165>0),CF165*1.05,1)))
+			if (adjustco[i-1] < -23.5 & cf [i] > 0){adjustch [i] <- cf[i]*1.2
+			} else if (co[i-1] < -22.5 & cf [i] > 0){adjustch [i] <- cf[i] *1.1
+			} else if (co[i-1] < -21.5 & cg[i] > 0) {adjustch[i] <- cf[i]*1.05
+			} else adjustch [i] <- 1
+
+			#CI
+			#=IF(CH165*CG165=1,CF165,(CG165*CH165))
+			if ((adjustch[i] * adjustcg[i]) == 1) {adjustci[i] <- cf[i]
+			} else adjustci[i] <- adjustcg[i]*adjustch[i]
+
+			#CJ
+			#=IF((CJ164+(CI165))<-24.5,-24.5,(CJ164+(CK165)))
+			if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
+			} else adjustcj[i] <-  adjustcj[i-1] + adjustck[i]
+
+			#CK
+			#=IF(AND(CJ164<-23.5,CI165<0),CI165*0.5,CI165)
+			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+				adjustck[i] <- adjustci*0.5
+				} else adjustck[i] <- adjustci[i]
+
+			#CL
+			#=IF(AND(CO164<-24.5,CC165>-2),(CK165+0.2),CK165)
+			if (adjustco[i-l] < -24.5 & hitdata > -2) {adjustcl[i] <- adjustck[i]+0.2
+			} else adjustcl [i] <- adjustck[i]
+
+			#CM
+			#before March 2nd 
+			if (doynum < 
 			
 
 
