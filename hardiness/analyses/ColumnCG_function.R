@@ -39,7 +39,7 @@ adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, da
 period <- climall$HardinessPeriod
 doynum <- climall$doynum
 cf <- climall$CF 
-i <- 263
+i <- 1860
 LTEchange <- climall$LTEchange
 cd <- climall$CD 
 ce <- climall$CE 
@@ -47,43 +47,43 @@ month <- climall$month
 day <- climall$day 
 year <- climall$Year
 caEstimateLTE <- climall$acc
-hitdata <- climall$avgTdiff
+hitData <- climall$avgTdiff
 LTEchange  <- climall$accdiffmax
 
-	#get the day of teh year for teh first of march for each year 
-	yearDates <- data.frame(matrix(NA,length(unique(year)), 2))
-	names(yearDates ) <- c("Year", "dateMarch2")
+	#get the day of teh year for  20th of september and teh first of march for each year 
+	yearDates <- data.frame(matrix(NA,length(unique(year)), 3))
+	names(yearDates ) <- c("Year", "dateSep20", "dateMarch2")
 	yearDates$Year <- unique(year)
 	
+	yearDates$dateSep20[yearDates$Year == 2012] <- doynum[month == "Sep" & day == 20 & year == 2012]
+
 	for(yeari in year[!year == 2012] ){#2012 has no spring data 
 	yearDates$dateMarch2[yearDates$Year == yeari] <- doynum[month == "Mar" & day == 2 & year == yeari]
+	yearDates$dateSep20[yearDates$Year == yeari] <- doynum[month == "Sep" & day == 20 & year == yeari]
 
 	}
 
 	for(i in c(1:length(period)))
 		{
-		if( is.na(period[i]) == TRUE) { # these dont have starter values before teh first acclimation period
+
+		#starter values for a few columns - the values are guesses for september the 20th 
+		#guesses are made by carl
+		if(doynum[i] ==  yearDates$dateSep20[yearDates$Year == year[i]]) {#these do have started values before first acclimation value
+				adjustcj[i] <- 0.3
+				adjustck[i] <- 0.3
+				adjustcl[i] <- 0.3
+				adjustco[i] <- 0.3
+
+		} else if(is.na(period[i]) == TRUE) { # these dont have starter values before teh first acclimation period
 				adjustcg[i] <- NA
 				adjustch[i] <- NA
 				adjustci[i] <- NA
 				adjustcm[i] <- NA
 				adjustcn[i] <- NA
-
-		} else if( is.na(period[i]) == TRUE & !month[i] == "Sep" & !day[i] == 20) {#these do have started values before first acclimation value
 				adjustcj[i] <- NA
 				adjustck[i] <- NA
 				adjustcl[i] <- NA
-				adjustco[i] <- NA	
-
-		#starter values for a few columns - the values are guesses for september the 20th 
-		#guesses are made by carl
-
-		} else if (month[i] == "Sep" & day[i] == 20){
-			adjustcj[i] <- 0.3
-			adjustck[i] <- 0.3
-			adjustcl[i] <- 0.3
-			adjustco[i] <- 0.3
-
+				adjustco[i] <- NA
 
 		#acclimation phase for columns cg - co
 		} else if (period[i] == "Acc"){
