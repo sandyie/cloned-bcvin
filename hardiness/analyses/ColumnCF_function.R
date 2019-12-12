@@ -19,14 +19,14 @@ adjustcf <- function(period, hisData, cd, ce, year, month, day, doynum ){
 	# doynum - this is the day of teh year the data comes from
 	# period - this is what hardiness period the data is in 
 
-	#hisData  <- climall$meanC2day.hist
-	#ce <- climall$CE 
-	#cd <- climall$CD
-	#year <- climall$Year
-	#month <- climall$month
-	#day <- climall$day
-	#doynum <- climall$doynum
-	#period <- climall$HardinessPeriod
+	hisData  <- climall$meanC2day.hist
+	ce <- climall$CE 
+	cd <- climall$CD
+	year <- climall$Year
+	month <- climall$month
+	day <- climall$day
+	doynum <- climall$doynum
+	period <- climall$HardinessPeriod
 
 	#geting the days of the year for the different sections of the rest of teh function
 	#this needs doing because of leap years  
@@ -46,12 +46,13 @@ adjustcf <- function(period, hisData, cd, ce, year, month, day, doynum ){
 		} else if (doynum[i]  == yearDates$dateMax[yearDates$Year == year[i]]){adjustcf [i] <- 1.3
 		} else if (period[i] == "Max" & !doynum[i]  == yearDates$dateMax[yearDates$Year == year[i]] ){adjustcf [i] <- adjustcf [i-1] - 0.01
 		} else if (period [i] == "Max2") {adjustcf [i] <- adjustcf [i-1] - 0.01
-		#for Deacc there is an equation =IF(AND(BY165>3,CD165<0),0.1,(CD165*CE165))BY is teh average 2 day mean 
+		
+		#for Deacc there is an equation =IF(AND(BY165>3,CD165<0),0.1,(CD165*CE165))BY is the average 2 day mean 
 		#historical temperature data climall$meanC2day.hist
 
 
 		} else 
-			if(hisData [i]> 3 & cd[i]< 0) {adjustcf [i] <- 0.1
+			if(hisData[i]> 3 & cd[i]< 0) {adjustcf [i] <- 0.1
 				} else adjustcf [i] <- cd[i]*ce[i]
 
 		}
