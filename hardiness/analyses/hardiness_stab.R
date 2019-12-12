@@ -390,7 +390,7 @@ climall$CF <- adjustcf(climall$HardinessPeriod, climall$meanC2day.hist,	climall$
 
 View(climall)
 
-
+climall$doynum[climall$month == "Sep" & climall$day == 20]
 
 
 
