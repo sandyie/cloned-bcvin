@@ -27,6 +27,7 @@ if(length(grep("Lizzie", getwd())>0)) {
 
 # libraries
 library(reshape)
+library(tidyr)
 
 #source r skripts
 source("analyses/ColumnCC_function.R")#Faith's function for making column cc
@@ -129,6 +130,10 @@ bhall$year[bhall$years=="2018to2019" & (bhall$month=="Jan"|bhall$month=="Feb"|bh
 # and make a useful df
 bh <- subset(bhall, select=c("year", "month", "day", "variety", "lte", "site"))
 head(bh)
+
+#test data (columns CB and BY from the spreadsheet) that FJ used for troubleshooting functions
+#-----------------------------------------------------
+testData <- read.csv("C:/Users/Faith Jones/Documents/ubc/github/bcvin/hardiness/analyses/TrialTempLTEdata_fj.csv")
 
 ##
 ## some f(x)s to help calculate GDD
@@ -316,6 +321,8 @@ climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
 #---------------------------------------------------
 
 
+
+
 #Making a column for the different periods of time using a ridiculous amount of steps 
 #--------------------------------------------------------------------------------------
 
@@ -378,7 +385,24 @@ for (year in unique(climall$Year[!climall$Year == 2012])){
 	climall$HardinessPeriod[climall$doynum %in% periodsYear$deaccStart:periodsYear$deaccEnd & climall$Year == year] <- "Deacc"
 }
 
-#Add column CD to the climall dataset
+climall$HardinessPeriod[is.na(climall$HardinessPeriod)] <- "noPeriod"
+
+#preparing some test data taken from cardl spreadsheet (BY and CB) 
+#because there seems to be an issue with the LTE data in this script 
+
+climall$counter <- c(1:nrow(climall))
+testData2 <- separate(data = testData , col = date, into = c("day", "month"))
+testData2$day <- as.numeric (testData2$day)
+testData2$Date <- paste(testData2$day , testData2$month, sep = "-")
+
+climallTest <- merge(climall, testData2[,c(3,4,5)], by = "Date", all = TRUE)
+climallTest <- climallTest [order(climallTest$counter ),]
+climallTest <- climallTest[!is.na(climallTest$month),  ] 
+View(climallTest)
+
+
+
+#Add columns CD-CF to the climall dataset
 #note - at teh momment it doesnt perfectly match the original spreadsheet because of teh different ways we have filled in missing temp data
 
 climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
