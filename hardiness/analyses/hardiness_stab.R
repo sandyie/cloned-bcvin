@@ -3,7 +3,7 @@
 ## It's dark outside this plane people, it's dark ##
 
 
-##edited by Faith Jones 27th Nov 2019
+##edited by Faith Jones 27th Nov 2019- December 11th 
 
 #######################################
 ## Notes ...
@@ -388,7 +388,7 @@ climall$CF <- adjustcf(climall$HardinessPeriod, climall$meanC2day.hist,	climall$
 
 
 
-
+View(climall)
 
 
 
