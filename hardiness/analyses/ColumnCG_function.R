@@ -1,8 +1,7 @@
 #a function to replicate column CG in Carl's hardiness excel spreadsheet model
 #currently untested
 
-
-adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day, caEstimateLTE) 
+adjustcgtoco <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day, caEstimateLTE) 
 
 	adjustcg <- c()
 	adjustch <- c()
@@ -36,24 +35,24 @@ adjustcg <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, da
 	# based off teh historical temperature data 
 
 
-period <- climall$HardinessPeriod
-doynum <- climall$doynum
-cf <- climall$CF 
-i <- 1860
-LTEchange <- climall$LTEchange
-cd <- climall$CD 
-ce <- climall$CE 
-month <- climall$month
-day <- climall$day 
-year <- climall$Year
-caEstimateLTE <- climall$acc
-hitData <- climall$avgTdiff
-LTEchange  <- climall$accdiffmax
+period <- climallTest$HardinessPeriod
+doynum <- climallTest$doynum
+cf <- climallTest$CF 
+i <- 219
+LTEchange <- climallTest$Estimate.LTE.day
+cd <- climallTest$CD 
+ce <- climallTest$CE 
+month <- climallTest$month
+day <- climallTest$day 
+year <- climallTest$Year
+caEstimateLTE <- climallTest$acc
+hitData <- climallTest$avgTdiff
+date <- climallTest$Date#not needed for function. just for troubleshooting 
 
 	#get the day of teh year for  20th of september and teh first of march for each year 
-	yearDates <- data.frame(matrix(NA,length(unique(year)), 3))
+	yearDates <- data.frame(matrix(NA,length(unique(na.omit(year))), 3))
 	names(yearDates ) <- c("Year", "dateSep20", "dateMarch2")
-	yearDates$Year <- unique(year)
+	yearDates$Year <- unique(na.omit(year))
 	
 	yearDates$dateSep20[yearDates$Year == 2012] <- doynum[month == "Sep" & day == 20 & year == 2012]
 
@@ -73,7 +72,7 @@ LTEchange  <- climall$accdiffmax
 				adjustcl[i] <- 0.3
 				adjustco[i] <- 0.3
 
-		} else if(is.na(period[i]) == TRUE) { # these dont have starter values before teh first acclimation period
+		} else if(period[i] == "noPeriod") { # these dont have starter values before teh first acclimation period
 				adjustcg[i] <- NA
 				adjustch[i] <- NA
 				adjustci[i] <- NA
@@ -94,7 +93,7 @@ LTEchange  <- climall$accdiffmax
 			adjustch[i] <- NA
 
 			#CI
-			#=((CE46+CD46)*CB46)
+			#=((CE26+CD26)*CB26)
 			adjustci [i] <- (ce[i] + cd [i]) * LTEchange[i]
 
 			#CJ
@@ -109,7 +108,7 @@ LTEchange  <- climall$accdiffmax
 
 			#CL
 			#=IF(AND(CO25<-24.5,CC26>0),(CK26+0.2),CK26)
-			if (adjustco [i-1] < -24.5 & hitdata [i] > 0) {
+			if (adjustco [i-1] < -24.5 & hitData [i] > 0) {
 				adjustcl [i] <-  adjustck[i] + 0.2
 			} else adjustcl [i] <- adjustck [i]
 
@@ -128,30 +127,34 @@ LTEchange  <- climall$accdiffmax
 			#CG 
 			if (month [i] == "Dec" & day [i] == 8){
 			adjustcg[i] <- 0.7
-			} else adjustcg [i] <- adjustcj [i-1] - 0.01 
+			} else adjustcg [i] <- adjustcg[i-1] + 0.01 
 			
 			#CH 
 			adjustch[i] <- NA
 	
 			#CI
 			#=IF(CC104>2,(CB104*CD104*CE104*CG104),(CB104*CD104*CE104*CF104))
-			if (hitData[i]  > 2) {adjustci [i] <- LTEchange[i] * cd[i]*ce[i]*cg[i]
+			if (hitData[i]  > 2) {adjustci [i] <- LTEchange[i] * cd[i]*ce[i]*adjustcg[i]
 				} else adjustci[i] <- (LTEchange[i] * cd[i]*ce[i]*cf[i])
 
 			#CK
 			#=IF(AND(CJ106<-23.5,CI107<0),CI107*0.5,CI107)
-			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
-				adjustck[i] <- adjustci*0.5
+			if (i == 1) {adjustck[i] <- NA
+			} else if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+				adjustck[i] <- adjustci[i] * 0.5
 				} else adjustck[i] <- adjustci[i]
 
 			#CJ
 			#=IF((CJ103+(CI104))<-24.5,-24.5,(CJ103+(CK104)))
-			if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
-			} else adjustci[i] <- (adjustcj[i-1] + adjustck[i])  
+			if (i == 1) {adjustcj[i] <- NA
+
+			} else if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
+			} else adjustcj[i] <- (adjustcj[i-1] + adjustck[i])  
 					
 			#CL
 			#=IF(AND(CO103<-24.5,CC104>0),(CK104+0.2),CK104)
-			if (adjustco [i-1] < -24.5 & hitData [i] > 0) {adjustcl <- (adjustck[i] + 0.2)
+			if (i == 1) {adjustcl[i] <- NA
+			} else if (adjustco [i-1] < -24.5 & hitData [i] > 0) {adjustcl[i] <- (adjustck[i] + 0.2)
 			} else adjustcl[i] <- adjustck [i]
 
 			#CM
@@ -166,11 +169,13 @@ LTEchange  <- climall$accdiffmax
 			} else adjustco[i] <- adjustco[i-1] + adjustcl[i]
 		
 
-		} else period[i] == "Deacc" 
+		} else if (period[i] == "Deacc"){
 
 			#CG
 			#=IF(AND(CO164<-23.5,CF165<0),CF165*0.1,IF(AND(CO164<-22.5,CF165<0),CF165*0.4,IF(AND(CO164<-21.5,CF165<0),CF165*0.7,1)))
-			if (adjustco[i-1]  < -23.5 & cf[i] < 0){adjustcg [i] <- cf[i] * 0.1
+			if (i == 1) {adjustcg[i] <- NA
+			} else if (is.na (adjustco[i-1]  < -23.5 & cf[i] < 0)) {adjustcg[i] <- NA 
+			} else if (adjustco[i-1]  < -23.5 & cf[i] < 0){adjustcg [i] <- cf[i] * 0.1
 			} else if (adjustco[i-1] < -22.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.4
 			} else if (adjustco[i-1] < -21.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.7
 			} else adjustcg [i] <- 1
@@ -180,58 +185,66 @@ LTEchange  <- climall$accdiffmax
 			#=IF(AND(CO164<-23.5,CF165>0),CF165*1.2,IF(AND(CO164<-22.5,CF165>0),CF165*1.1,IF(AND(CO164<-21.5,CF165>0),CF165*1.05,1)))
 			if (adjustco[i-1] < -23.5 & cf [i] > 0){adjustch [i] <- cf[i]*1.2
 			} else if (adjustco[i-1] < -22.5 & cf [i] > 0){adjustch [i] <- cf[i] *1.1
-			} else if (adjustco[i-1] < -21.5 & cg[i] > 0) {adjustch[i] <- cf[i]*1.05
+			} else if (adjustco[i-1] < -21.5 & adjustcg[i] > 0) {adjustch[i] <- cf[i]*1.05
 			} else adjustch [i] <- 1
 
 			#CI
 			#=IF(CH165*CG165=1,CF165,(CG165*CH165))
-			if ((adjustch[i] * adjustcg[i]) == 1) {adjustci[i] <- cf[i]
+			if (adjustch[i] * adjustcg[i] == 1) {adjustci[i] <- cf[i]
 			} else adjustci[i] <- adjustcg[i]*adjustch[i]
+
+			#CK
+			#=IF(AND(CJ164<-23.5,CI165<0),CI165*0.5,CI165)
+			if ( i == 1) {adjustck[i] <- NA
+			} else if (is.na (adjustcj [i-1] < -23.5 & adjustci [i] < 0)) {adjustck[i] <- NA 
+			} else if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+				adjustck[i] <- adjustci[i]*0.5
+				} else adjustck[i] <- adjustci[i]
 
 			#CJ
 			#=IF((CJ164+(CI165))<-24.5,-24.5,(CJ164+(CK165)))
 			if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
 			} else adjustcj[i] <-  adjustcj[i-1] + adjustck[i]
 
-			#CK
-			#=IF(AND(CJ164<-23.5,CI165<0),CI165*0.5,CI165)
-			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
-				adjustck[i] <- adjustci*0.5
-				} else adjustck[i] <- adjustci[i]
-
 			#CL
 			#=IF(AND(CO164<-24.5,CC165>-2),(CK165+0.2),CK165)
-			if (adjustco[i-1] < -24.5 & hitdata[i] > -2) {adjustcl[i] <- adjustck[i]+0.2
+			if (is.na (adjustco[i-1] < -24.5 & hitData[i] > -2)) {adjustcl[i] <- NA 
+			} else if ( adjustco[i-1] < -24.5 & hitData[i] > -2) {adjustcl[i] <- adjustck[i]+0.2
 			} else adjustcl [i] <- adjustck[i]
 
 			#CM
-			#before March 2nd 
-		       if (year[i] == 2012){ adjustcm [i] <- NA
+			#before March 2nd
+			if (year[i] == 2012){ adjustcm[i] <- NA #there are no data for spring 2012
+			} else if (doynum[i] < yearDates$dateMarch2[yearDates$Year == year[i]]){
+			adjustcm[i] <- NA
 
 			#after march 2nd
 			#=IF(AND(CO188<(CA189-1.8),CC189>2),(CK189+0.2),CK189)
-			}else if (year[i] == 2012){ adjustcm[i] <- NA #there are no data for spring 2012
-			}else if (doynum[i] >= yearDates$dateMarch2[yearDates$Year == year[i]]){
-					if (adjustco[i-1] < (caEstimateLTE [i] - 1.8 & hitData[i] > 2)){adjustcm[i] <- adjustck[i]+0.2
+		
+			} else if (doynum[i] >= yearDates$dateMarch2[yearDates$Year == year[i]]){			#after March 2nd 
+					if (i == 1) {adjustcm[i] <- NA
+					} else if (adjustco[i-1] < (caEstimateLTE [i] - 1.8 & hitData[i] > 2)){adjustcm[i] <- adjustck[i]+0.2
 			     		} else adjustcm[i] <- adjustck[i]
-					}
+			}					
 
 			
 			#CN
 			#=IF(CO164>-11,(CL165*0.5),CL165)
-			if (adjustco[i-1] > -11) {adjustcn[i] <- adjustcl [i]*0.5
+			if ( i == 1) {adjustcn[i] <- NA
+			} else if (adjustco[i-1] > -11) {adjustcn[i] <- adjustcl[i]*0.5
 			} else adjustcn[i] <- adjustcl[i]
 
 			#CO
 			#=(CO169+CN170)
-			adjustco[i] <- adjustco[i-1] + adjustcn[i]
+			if ( i == 1) {adjustco[i] <- NA
+			} else adjustco[i] <- adjustco[i-1] + adjustcn[i]
 			
+		}
 	}
-
 	return(adjustcf)
 }
 
-
+View(data.frame(cbind(date, period,  adjustcg,  adjustch,  adjustci, adjustcj,  adjustck,  adjustcl, adjustcm,  adjustcn,adjustco)))
 
 
 
