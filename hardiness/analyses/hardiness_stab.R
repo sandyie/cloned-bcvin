@@ -33,7 +33,8 @@ library(tidyr)
 source("analyses/ColumnCC_function.R")#Faith's function for making column cc
 source("analyses/ColumnCE_function.R")#Faith's function for making column ce
 source("analyses/ColumnCF_function.R")#Faith's function for making column ce
-
+surce("analyses/ColumnCG_function.R") #Faith's function for making columns CG through to colum co. these need doing in one 
+#go because of teh interdependencies of the column if/else statements 
 
 ## Da data
 # 2X/month bud hardiness data
@@ -402,17 +403,20 @@ View(climallTest)
 
 
 
-#Add columns CD-CF to the climall dataset
+#Add columns CD-CF to the climall dataset. use teh test data for LTE change which i took from the spreadsheet 
 #note - at teh momment it doesnt perfectly match the original spreadsheet because of teh different ways we have filled in missing temp data
 
-climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
-climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax)
-climall$CF <- adjustcf(climall$HardinessPeriod, climall$meanC2day.hist,	climall$CE, climall$CD,
-	climall$Year, climall$month, climall$day,	climall$doynum)
+climallTest $CD <- adjustcd(climallTest $HardinessPeriod, climallTest $avgTdiff,climallTest$Estimate.LTE.day)
+climallTest $CE <- adjustce(climallTest $HardinessPeriod, climallTest $avgTdiff, climallTest$Estimate.LTE.day)
+climallTest $CF <- adjustcf(climallTest $HardinessPeriod, climallTest $meanC2day.hist,	climallTest $CE, climall$CD,
+	climallTest $Year, climallTest $month, climallTest $day,	climallTest $doynum)#
 
+climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, climallTest$Estimate.LTE.day,#this function makes a data table rather than a vector 
+		 climallTest$avgTdiff, climallTest$CD, climallTest$CE,  climallTest$Year, 
+		 climallTest$month, climallTest$day , climallTest$acc)
+climallinkCO <- merge(climallTest, climCGtoCO, by = c("day", "month", "Year"))
+climallinkCO<- climallinkCO [order(climallinkCO $counter ),]
 
-
-View(climall)
 
 climall$doynum[climall$month == "Sep" & climall$day == 20]
 
