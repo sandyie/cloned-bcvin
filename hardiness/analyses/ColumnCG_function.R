@@ -65,7 +65,6 @@ LTEchange  <- climall$accdiffmax
 
 	for(i in c(1:length(period)))
 		{
-
 		#starter values for a few columns - the values are guesses for september the 20th 
 		#guesses are made by carl
 		if(doynum[i] ==  yearDates$dateSep20[yearDates$Year == year[i]]) {#these do have started values before first acclimation value
@@ -100,7 +99,7 @@ LTEchange  <- climall$accdiffmax
 
 			#CJ
 			#=(CJ31+((CD32+CE32)*CB32)*CF32)
-			adjustcj[i] <- adjustcj[i-1] + ((cd[i] *ce[i])*LTEchange[i])* cf[i]
+			adjustcj[i] <- adjustcj[i-1] + ((cd[i] + ce[i])*LTEchange[i])* cf[i]
 
 			#CK
 			#=IF(AND(CJ25<-23.5,CI26<0),CI26*0.5,CI26)
@@ -156,14 +155,15 @@ LTEchange  <- climall$accdiffmax
 			} else adjustcl[i] <- adjustck [i]
 
 			#CM
-			adjusctcm[i] <- NA
+			adjustcm[i] <- NA
 	
 			#CN 
-			adjustcm[i]<- NA
+			adjustcn[i]<- NA
 
 			#CO 
 			#=(CO163+CL164)
-			adjustco[i] <- adjustco[i-1] + adjustcl[i]
+			if (i == 1) {adjustco[i] <- NA
+			} else adjustco[i] <- adjustco[i-1] + adjustcl[i]
 		
 
 		} else period[i] == "Deacc" 
@@ -171,16 +171,16 @@ LTEchange  <- climall$accdiffmax
 			#CG
 			#=IF(AND(CO164<-23.5,CF165<0),CF165*0.1,IF(AND(CO164<-22.5,CF165<0),CF165*0.4,IF(AND(CO164<-21.5,CF165<0),CF165*0.7,1)))
 			if (adjustco[i-1]  < -23.5 & cf[i] < 0){adjustcg [i] <- cf[i] * 0.1
-			} else if (co[i-1] < -22.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.4
-			} else if (co[i-1] < -21.5 & cf < 0) {adjustcg [i] <- cf[i] * 0.7
+			} else if (adjustco[i-1] < -22.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.4
+			} else if (adjustco[i-1] < -21.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.7
 			} else adjustcg [i] <- 1
-			}
+			
 
 			#CH
 			#=IF(AND(CO164<-23.5,CF165>0),CF165*1.2,IF(AND(CO164<-22.5,CF165>0),CF165*1.1,IF(AND(CO164<-21.5,CF165>0),CF165*1.05,1)))
 			if (adjustco[i-1] < -23.5 & cf [i] > 0){adjustch [i] <- cf[i]*1.2
-			} else if (co[i-1] < -22.5 & cf [i] > 0){adjustch [i] <- cf[i] *1.1
-			} else if (co[i-1] < -21.5 & cg[i] > 0) {adjustch[i] <- cf[i]*1.05
+			} else if (adjustco[i-1] < -22.5 & cf [i] > 0){adjustch [i] <- cf[i] *1.1
+			} else if (adjustco[i-1] < -21.5 & cg[i] > 0) {adjustch[i] <- cf[i]*1.05
 			} else adjustch [i] <- 1
 
 			#CI
@@ -201,23 +201,32 @@ LTEchange  <- climall$accdiffmax
 
 			#CL
 			#=IF(AND(CO164<-24.5,CC165>-2),(CK165+0.2),CK165)
-			if (adjustco[i-l] < -24.5 & hitdata > -2) {adjustcl[i] <- adjustck[i]+0.2
+			if (adjustco[i-1] < -24.5 & hitdata[i] > -2) {adjustcl[i] <- adjustck[i]+0.2
 			} else adjustcl [i] <- adjustck[i]
 
 			#CM
 			#before March 2nd 
-		      if (doynum[i] < yearDates$dateMarch2[yearDates$Year == year[i]]){ adjustcm [i] <- NA
+		       if (year[i] == 2012){ adjustcm [i] <- NA
 
 			#after march 2nd
 			#=IF(AND(CO188<(CA189-1.8),CC189>2),(CK189+0.2),CK189)
-				} else if (doynum[i] >= yearDates$dateMarch2[yearDates$Year == year[i]]){
-					if (adjustco[i-1] < (caEstimateLTE [i] - 1.8 & hitData > 2){adjustcm[i] <- adjustck[i]+0.2
+			}else if (year[i] == 2012){ adjustcm[i] <- NA #there are no data for spring 2012
+			}else if (doynum[i] >= yearDates$dateMarch2[yearDates$Year == year[i]]){
+					if (adjustco[i-1] < (caEstimateLTE [i] - 1.8 & hitData[i] > 2)){adjustcm[i] <- adjustck[i]+0.2
 			     		} else adjustcm[i] <- adjustck[i]
 					}
 
 			
-			
+			#CN
+			#=IF(CO164>-11,(CL165*0.5),CL165)
+			if (adjustco[i-1] > -11) {adjustcn[i] <- adjustcl [i]*0.5
+			} else adjustcn[i] <- adjustcl[i]
 
+			#CO
+			#=(CO169+CN170)
+			adjustco[i] <- adjustco[i-1] + adjustcn[i]
+			
+	}
 
 	return(adjustcf)
 }
