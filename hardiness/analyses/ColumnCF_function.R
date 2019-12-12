@@ -1,7 +1,7 @@
 #a function to replicate column CF in Carl's hardiness excel spreadsheet model
 
 
-adjustcf <- function(hisData, cd, ce, year, month, day, doynum, period){
+adjustcf <- function(period, hisData, cd, ce, year, month, day, doynum ){
 	yearDates <- data.frame(matrix(NA,length(unique(year)), 3))
 	names(yearDates ) <- c("Year", "dateAcc", "dateMax")
 	yearDates$Year <- unique(year)
@@ -40,7 +40,7 @@ adjustcf <- function(hisData, cd, ce, year, month, day, doynum, period){
 
 	for(i in c(1:length(hisData)))
 		{
-		if( is.na(period[i]) == TRUE) {adjustcf [i] <- NA
+		if( period[i] == "noPeriod") {adjustcf [i] <- NA
 		} else if (period[i] == "Acc" & doynum[i] <= yearDates$dateAcc[yearDates$Year == year[i]] ){adjustcf [i] <- 1
 		} else if (period[i] == "Acc" & !day[i] > yearDates$dateAcc[yearDates$Year == year[i]] ){adjustcf [i] <- adjustcf [i-1] - 0.007
 		} else if (doynum[i]  == yearDates$dateMax[yearDates$Year == year[i]]){adjustcf [i] <- 1.3

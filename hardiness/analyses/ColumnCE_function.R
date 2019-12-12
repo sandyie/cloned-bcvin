@@ -19,7 +19,7 @@ adjustce <- function(period, hitData, LTEchange){
 
       for(i in c(1:length(hitData)))
 	{
-		if(is.na(period[i]) == TRUE) {
+		if(period[i] == "noPeriod") {
 				adjustcd[i] <- NA
 			} 
 
