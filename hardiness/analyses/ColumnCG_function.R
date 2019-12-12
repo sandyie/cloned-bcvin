@@ -1,7 +1,7 @@
-#a function to replicate column CG in Carl's hardiness excel spreadsheet model
-#currently untested
+#a function to replicate column CG through CO in Carl's hardiness excel spreadsheet model
+#these columns are closly connected in teh if/else stayements so need doing together in a single function :(
 
-adjustcgtoco <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day, caEstimateLTE) 
+adjustcgtoco <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day, caEstimateLTE) {
 
 	adjustcg <- c()
 	adjustch <- c()
@@ -35,19 +35,18 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month
 	# based off teh historical temperature data 
 
 
-period <- climallTest$HardinessPeriod
-doynum <- climallTest$doynum
-cf <- climallTest$CF 
-i <- 219
-LTEchange <- climallTest$Estimate.LTE.day
-cd <- climallTest$CD 
-ce <- climallTest$CE 
-month <- climallTest$month
-day <- climallTest$day 
-year <- climallTest$Year
-caEstimateLTE <- climallTest$acc
-hitData <- climallTest$avgTdiff
-date <- climallTest$Date#not needed for function. just for troubleshooting 
+#period <- climallTest$HardinessPeriod
+#doynum <- climallTest$doynum
+#cf <- climallTest$CF 
+#LTEchange <- climallTest$Estimate.LTE.day
+#cd <- climallTest$CD 
+#ce <- climallTest$CE 
+#month <- climallTest$month
+#day <- climallTest$day 
+#year <- climallTest$Year
+#caEstimateLTE <- climallTest$acc
+#hitData <- climallTest$avgTdiff
+
 
 	#get the day of teh year for  20th of september and teh first of march for each year 
 	yearDates <- data.frame(matrix(NA,length(unique(na.omit(year))), 3))
@@ -139,22 +138,18 @@ date <- climallTest$Date#not needed for function. just for troubleshooting
 
 			#CK
 			#=IF(AND(CJ106<-23.5,CI107<0),CI107*0.5,CI107)
-			if (i == 1) {adjustck[i] <- NA
-			} else if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
 				adjustck[i] <- adjustci[i] * 0.5
 				} else adjustck[i] <- adjustci[i]
 
 			#CJ
 			#=IF((CJ103+(CI104))<-24.5,-24.5,(CJ103+(CK104)))
-			if (i == 1) {adjustcj[i] <- NA
-
-			} else if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
+			if (adjustcj[i-1] + adjustci[i] < -24.5) {adjustcj[i] <- -24.5
 			} else adjustcj[i] <- (adjustcj[i-1] + adjustck[i])  
 					
 			#CL
 			#=IF(AND(CO103<-24.5,CC104>0),(CK104+0.2),CK104)
-			if (i == 1) {adjustcl[i] <- NA
-			} else if (adjustco [i-1] < -24.5 & hitData [i] > 0) {adjustcl[i] <- (adjustck[i] + 0.2)
+			if (adjustco [i-1] < -24.5 & hitData [i] > 0) {adjustcl[i] <- (adjustck[i] + 0.2)
 			} else adjustcl[i] <- adjustck [i]
 
 			#CM
@@ -165,17 +160,14 @@ date <- climallTest$Date#not needed for function. just for troubleshooting
 
 			#CO 
 			#=(CO163+CL164)
-			if (i == 1) {adjustco[i] <- NA
-			} else adjustco[i] <- adjustco[i-1] + adjustcl[i]
+			adjustco[i] <- adjustco[i-1] + adjustcl[i]
 		
 
 		} else if (period[i] == "Deacc"){
 
 			#CG
 			#=IF(AND(CO164<-23.5,CF165<0),CF165*0.1,IF(AND(CO164<-22.5,CF165<0),CF165*0.4,IF(AND(CO164<-21.5,CF165<0),CF165*0.7,1)))
-			if (i == 1) {adjustcg[i] <- NA
-			} else if (is.na (adjustco[i-1]  < -23.5 & cf[i] < 0)) {adjustcg[i] <- NA 
-			} else if (adjustco[i-1]  < -23.5 & cf[i] < 0){adjustcg [i] <- cf[i] * 0.1
+			if (adjustco[i-1]  < -23.5 & cf[i] < 0){adjustcg [i] <- cf[i] * 0.1
 			} else if (adjustco[i-1] < -22.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.4
 			} else if (adjustco[i-1] < -21.5 & cf[i] < 0) {adjustcg [i] <- cf[i] * 0.7
 			} else adjustcg [i] <- 1
@@ -195,9 +187,7 @@ date <- climallTest$Date#not needed for function. just for troubleshooting
 
 			#CK
 			#=IF(AND(CJ164<-23.5,CI165<0),CI165*0.5,CI165)
-			if ( i == 1) {adjustck[i] <- NA
-			} else if (is.na (adjustcj [i-1] < -23.5 & adjustci [i] < 0)) {adjustck[i] <- NA 
-			} else if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
+			if (adjustcj [i-1] < -23.5 & adjustci [i] < 0){
 				adjustck[i] <- adjustci[i]*0.5
 				} else adjustck[i] <- adjustci[i]
 
@@ -208,8 +198,7 @@ date <- climallTest$Date#not needed for function. just for troubleshooting
 
 			#CL
 			#=IF(AND(CO164<-24.5,CC165>-2),(CK165+0.2),CK165)
-			if (is.na (adjustco[i-1] < -24.5 & hitData[i] > -2)) {adjustcl[i] <- NA 
-			} else if ( adjustco[i-1] < -24.5 & hitData[i] > -2) {adjustcl[i] <- adjustck[i]+0.2
+			if ( adjustco[i-1] < -24.5 & hitData[i] > -2) {adjustcl[i] <- adjustck[i]+0.2
 			} else adjustcl [i] <- adjustck[i]
 
 			#CM
@@ -230,25 +219,19 @@ date <- climallTest$Date#not needed for function. just for troubleshooting
 			
 			#CN
 			#=IF(CO164>-11,(CL165*0.5),CL165)
-			if ( i == 1) {adjustcn[i] <- NA
-			} else if (adjustco[i-1] > -11) {adjustcn[i] <- adjustcl[i]*0.5
+			if (adjustco[i-1] > -11) {adjustcn[i] <- adjustcl[i]*0.5
 			} else adjustcn[i] <- adjustcl[i]
 
 			#CO
 			#=(CO169+CN170)
-			if ( i == 1) {adjustco[i] <- NA
-			} else adjustco[i] <- adjustco[i-1] + adjustcn[i]
-			
+			adjustco[i] <- adjustco[i-1] + adjustcn[i]
 		}
-	}
-	return(adjustcf)
-}
-
-View(data.frame(cbind(date, period,  adjustcg,  adjustch,  adjustci, adjustcj,  adjustck,  adjustcl, adjustcm,  adjustcn,adjustco)))
-
-
-
-
+		}	
+		columns <- data.frame(cbind(period, month, day, year, adjustcg, adjustch, adjustci,	adjustcj,adjustck,adjustcl, adjustcm,adjustcn,adjustco))
+		names(columns ) <- c("hardynessPeriod", "month", "day", "Year", "CG", "CH", "CI", "CJ", "CK", "CL", "CM", "CN", "CO")
+		return(columns )
+		}
+	
 
 
 
