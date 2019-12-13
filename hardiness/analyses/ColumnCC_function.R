@@ -1,4 +1,4 @@
-#a function to replicate column CD in Carl's hardiness excel spreadsheet model
+1#a function to replicate column CD in Carl's hardiness excel spreadsheet model
 
 
 adjustcd <- function(period, hitData, LTEchange){
@@ -47,7 +47,7 @@ adjustcd <- function(period, hitData, LTEchange){
           			else if (hitData[i]< -2) { adjustcd[i] <- -1.25}
        		 	else if (hitData[i]< -1) { adjustcd[i] <- -1.2}
             	     	else if (hitData[i]< -0){adjustcd[i] <- -1.15}
-				else adjustcd[i] <- 0 # need to check this very last statement is correct
+				else adjustcd[i] <- 1 
 
 			} 
 

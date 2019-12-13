@@ -33,7 +33,7 @@ library(tidyr)
 source("analyses/ColumnCC_function.R")#Faith's function for making column cc
 source("analyses/ColumnCE_function.R")#Faith's function for making column ce
 source("analyses/ColumnCF_function.R")#Faith's function for making column ce
-surce("analyses/ColumnCG_function.R") #Faith's function for making columns CG through to colum co. these need doing in one 
+source("analyses/ColumnCG_function.R") #Faith's function for making columns CG through to colum co. these need doing in one 
 #go because of teh interdependencies of the column if/else statements 
 
 ## Da data
@@ -134,7 +134,7 @@ head(bh)
 
 #test data (columns CB and BY from the spreadsheet) that FJ used for troubleshooting functions
 #-----------------------------------------------------
-testData <- read.csv("C:/Users/Faith Jones/Documents/ubc/github/bcvin/hardiness/analyses/TrialTempLTEdata_fj.csv")
+testData <- read.csv("analyses/TrialTempLTEdata_fj.csv")
 
 ##
 ## some f(x)s to help calculate GDD
@@ -395,19 +395,21 @@ climall$counter <- c(1:nrow(climall))
 testData2 <- separate(data = testData , col = date, into = c("day", "month"))
 testData2$day <- as.numeric (testData2$day)
 testData2$Date <- paste(testData2$day , testData2$month, sep = "-")
+testData2 <- testData2 [!is.na(testData2$day),]
 
-climallTest <- merge(climall, testData2[,c(3,4,5)], by = "Date", all = TRUE)
+
+climallTest <- merge(climall, testData2[,c(3,4,5,6)], by = "Date", all = TRUE)
 climallTest <- climallTest [order(climallTest$counter ),]
 climallTest <- climallTest[!is.na(climallTest$month),  ] 
-View(climallTest)
+names(climallTest)
 
 
 
-#Add columns CD-CF to the climall dataset. use teh test data for LTE change which i took from the spreadsheet 
-#note - at teh momment it doesnt perfectly match the original spreadsheet because of teh different ways we have filled in missing temp data
+#Add columns CD-CF to the climall test dataset. This usees the test data for LTE change which i took from the spreadsheet 
+#note - at teh momment the results doent perfectly match the original spreadsheet because of the different ways we have filled in missing temp data
 
-climallTest $CD <- adjustcd(climallTest $HardinessPeriod, climallTest $avgTdiff,climallTest$Estimate.LTE.day)
-climallTest $CE <- adjustce(climallTest $HardinessPeriod, climallTest $avgTdiff, climallTest$Estimate.LTE.day)
+climallTest $CD <- adjustcd(climallTest $HardinessPeriod, climallTest $HistDataDiff,climallTest$Estimate.LTE.day)
+climallTest $CE <- adjustce(climallTest $HardinessPeriod, climallTest $HistDataDiff, climallTest$Estimate.LTE.day)
 climallTest $CF <- adjustcf(climallTest $HardinessPeriod, climallTest $meanC2day.hist,	climallTest $CE, climall$CD,
 	climallTest $Year, climallTest $month, climallTest $day,	climallTest $doynum)#
 
@@ -415,9 +417,9 @@ climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, clim
 		 climallTest$avgTdiff, climallTest$CD, climallTest$CE,  climallTest$Year, 
 		 climallTest$month, climallTest$day , climallTest$acc)
 climallinkCO <- merge(climallTest, climCGtoCO, by = c("day", "month", "Year"))
-climallinkCO<- climallinkCO [order(climallinkCO $counter ),]
+climallinkCO <- climallinkCO [order(climallinkCO $counter ),]
 
-
+#View(climallinkCO)
 climall$doynum[climall$month == "Sep" & climall$day == 20]
 
 
