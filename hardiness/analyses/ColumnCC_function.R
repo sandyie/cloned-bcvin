@@ -1,4 +1,4 @@
-1#a function to replicate column CD in Carl's hardiness excel spreadsheet model
+8#a function to replicate column CD in Carl's hardiness excel spreadsheet model
 
 
 adjustcd <- function(period, hitData, LTEchange){
@@ -15,7 +15,10 @@ adjustcd <- function(period, hitData, LTEchange){
 	#  the historical and recorded 2 day average temperatures 
 	#  LTEchange = this is equivalent to column CB in Carl's spreadsheet, and is teh change in LTE each day   
 
-
+	#period <- climall$HardinessPeriod
+	#hitData <- climall$avgTdiff 
+	#LTEchange <- climall$accdiffmax 
+	#i <- 47
 	adjustcd <- c()
       for(i in c(1:length(hitData)))
 	{
@@ -27,14 +30,14 @@ adjustcd <- function(period, hitData, LTEchange){
 		#=IF(CC26<-8,1.8,IF(CC26<-5,1.6,IF(CC26<-4,1.4,IF(CC26<-3,1.2,IF(CC26<-2,1.1,IF(CC26<0,1,0))))))
 		else if (period[i] == "Acc"){
 				if(is.na(hitData[i])==TRUE) {
-      			  adjustcd[i] <- NA} 
-				else if (hitData[i]< -7) {adjustcd[i] <- 1.8} 
-				else if (hitData[i]< -5) {adjustcd[i] <- 1.6} 
-				else if(hitData[i]< -4) {adjustcd[i] <- 1.4} 
-				else if(hitData[i]< -3) {adjustcd[i] <- 1.2} 
-				else if(hitData[i]< -2) {adjustcd[i] <- 1.1} 
-				else if(hitData[i]< -0) {adjustcd[i] <- 1} 
-				else adjustcd[i] <- 0 # 
+      			  adjustcd[i] <- NA 
+				} else if (hitData[i]< -8) {adjustcd[i] <- 1.8 
+				} else if (hitData[i]< -5) {adjustcd[i] <- 1.6 
+				} else if(hitData[i]< -4) {adjustcd[i] <- 1.4 
+				} else if(hitData[i]< -3) {adjustcd[i] <- 1.2 
+				} else if(hitData[i]< -2) {adjustcd[i] <- 1.1 
+				} else if(hitData[i]< 0) {adjustcd[i] <- 1
+				} else adjustcd[i] <- 0 # 
 			} 
 
 		#function for teh next subset - i think the first maximum hardiness period

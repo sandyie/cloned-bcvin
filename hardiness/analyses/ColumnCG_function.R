@@ -1,7 +1,7 @@
 #a function to replicate column CG through CO in Carl's hardiness excel spreadsheet model
 #these columns are closly connected in teh if/else stayements so need doing together in a single function :(
 
-adjustcgtoco <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month, day, caEstimateLTE) {
+adjustcgtoco <- function(period, doynum, LTEchange, hitData, cd, ce, cf, year, month, day, caEstimateLTE) {
 
 	adjustcg <- c()
 	adjustch <- c()
@@ -28,24 +28,25 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitdata, cd, ce, year, month
 	# LTEchange = this is equivalent to column CB in Carl's spreadsheet, and is teh change in LTE each day   
 	# cd = column cd from Carl's spreadhseet, as calculated from function ColumnCC_function.R
 	# ce = column cd from Carl's spreadhseet, as calculated from function ColumnCE_function.R
-	#  hitData = this is equivalent to column CC in Carl's spreadsheet. It is the difference in temperature between
+	# cf = column cf from Carl's spreadshee, as calculated from function ColumnCF_function.R
+	# hitData = this is equivalent to column CC in Carl's spreadsheet. It is the difference in temperature between
 	#  the historical and recorded 2 day average temperatures 
 	# this code assumes that there are no spring data for 2012, and that all other years have spring data	
 	# caEstimateLTE = column ca of the spreadsheet, calculated using the hhardiness stab eqacc function. Etimated LTE each year, 
 	# based off teh historical temperature data 
 
 
-period <- climallTest$HardinessPeriod
-doynum <- climallTest$doynum
-cf <- climallTest$CF 
-LTEchange <- climallTest$Estimate.LTE.day
-cd <- climallTest$CD 
-ce <- climallTest$CE 
-month <- climallTest$month
-day <- climallTest$day 
-year <- climallTest$Year
-caEstimateLTE <- climallTest$acc
-hitData <- climallTest$avgTdiff
+#period <- climallTest$HardinessPeriod
+#doynum <- climallTest$doynum
+#cf <- climallTest$CF 
+#LTEchange <- climallTest$Estimate.LTE.day
+#cd <- climallTest$CD 
+#ce <- climallTest$CE 
+#month <- climallTest$month
+#day <- climallTest$day 
+#year <- climallTest$Year
+#caEstimateLTE <- climallTest$acc
+#hitData <- climallTest$avgTdiff
 
 
 	#get the day of teh year for  20th of september and teh first of march for each year 
@@ -232,7 +233,7 @@ hitData <- climallTest$avgTdiff
 		return(columns )
 		}
 	
-
+View(columns )
 
 
 

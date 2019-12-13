@@ -19,14 +19,14 @@ adjustcf <- function(period, hisData, cd, ce, year, month, day, doynum ){
 	# doynum - this is the day of teh year the data comes from
 	# period - this is what hardiness period the data is in 
 
-	hisData  <- climall$meanC2day.hist
-	ce <- climall$CE 
-	cd <- climall$CD
-	year <- climall$Year
-	month <- climall$month
-	day <- climall$day
-	doynum <- climall$doynum
-	period <- climall$HardinessPeriod
+	#hisData  <- climallTest $meanC2day.hist
+	#ce <- climallTest $CE 
+	#cd <- climallTest $CD
+	#year <- climallTest $Year
+	#month <- climallTest $month
+	#day <- climallTest $day
+	#doynum <- climallTest $doynum
+	#period <- climallTest $HardinessPeriod
 
 	#geting the days of the year for the different sections of the rest of teh function
 	#this needs doing because of leap years  

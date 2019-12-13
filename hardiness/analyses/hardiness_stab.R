@@ -388,8 +388,18 @@ for (year in unique(climall$Year[!climall$Year == 2012])){
 
 climall$HardinessPeriod[is.na(climall$HardinessPeriod)] <- "noPeriod"
 
-#preparing some test data taken from cardl spreadsheet (BY and CB) 
-#because there seems to be an issue with the LTE data in this script 
+
+#Add columns CD-CF to the climall test dataset. This usees the test data for LTE change which i took from the spreadsheet 
+#note - at teh momment the results doent perfectly match the original spreadsheet because of the different ways we have filled in missing temp data
+
+climall$CD <- adjustcd(climall$HardinessPeriod, climall$meanC2day.hist, climall$accdiffmax )
+climall$CE <- adjustce(climall$HardinessPeriod, climall$meanC2day.hist,  climall$accdiffmax )
+climall$CF <- adjustcf(period = climall$HardinessPeriod, hisData = climall$meanC2day.hist,climall$CD, climall$CE,
+	climall$Year, climall$month, climall$day, climall$doynum)#
+
+
+#adding in teh extra columns so i can see if the next few columsn work. I needed to do thsi because for some reason teh LTEchange data is different 
+#in climall to the exel spreadsheet 
 
 climall$counter <- c(1:nrow(climall))
 testData2 <- separate(data = testData , col = date, into = c("day", "month"))
@@ -397,21 +407,11 @@ testData2$day <- as.numeric (testData2$day)
 testData2$Date <- paste(testData2$day , testData2$month, sep = "-")
 testData2 <- testData2 [!is.na(testData2$day),]
 
-
 climallTest <- merge(climall, testData2[,c(3,4,5,6)], by = "Date", all = TRUE)
 climallTest <- climallTest [order(climallTest$counter ),]
 climallTest <- climallTest[!is.na(climallTest$month),  ] 
 names(climallTest)
 
-
-
-#Add columns CD-CF to the climall test dataset. This usees the test data for LTE change which i took from the spreadsheet 
-#note - at teh momment the results doent perfectly match the original spreadsheet because of the different ways we have filled in missing temp data
-
-climallTest $CD <- adjustcd(climallTest $HardinessPeriod, climallTest $HistDataDiff,climallTest$Estimate.LTE.day)
-climallTest $CE <- adjustce(climallTest $HardinessPeriod, climallTest $HistDataDiff, climallTest$Estimate.LTE.day)
-climallTest $CF <- adjustcf(climallTest $HardinessPeriod, climallTest $meanC2day.hist,	climallTest $CE, climall$CD,
-	climallTest $Year, climallTest $month, climallTest $day,	climallTest $doynum)#
 
 climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, climallTest$Estimate.LTE.day,#this function makes a data table rather than a vector 
 		 climallTest$avgTdiff, climallTest$CD, climallTest$CE,  climallTest$Year, 
@@ -419,8 +419,6 @@ climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, clim
 climallinkCO <- merge(climallTest, climCGtoCO, by = c("day", "month", "Year"))
 climallinkCO <- climallinkCO [order(climallinkCO $counter ),]
 
-#View(climallinkCO)
-climall$doynum[climall$month == "Sep" & climall$day == 20]
 
 
 
