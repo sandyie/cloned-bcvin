@@ -312,7 +312,8 @@ climall$accdiff <-NA # change in estimated LTE each day
 climall$accdiffmax <-NA # should be same as col CB
 
 climall <- makediffs.lte(climall, "acc", "accdiff", "accdiffmax", -0.5)
-climall[58:77,] # looking good...
+climall[58:77,] # looking good... matches Excel
+climall[100:115,]
 #values for LTE/day (accdiffmax/CB) < 0.1 or > -0.1 are converted to 0.1 and -0.1 (assumption 5)   
 climall$accdiffmax[climall$accdiffmax < 0.1 & climall$accdiffmax > 0] <- 0.1
 climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
