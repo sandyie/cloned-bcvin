@@ -233,11 +233,7 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitData, cd, ce, cf, year, m
 		return(columns )
 		}
 	
-<<<<<<< HEAD
 
-=======
-
->>>>>>> 189d162f4b7c9f8293b6ecdc725c1b474072ba74
 
 
 
