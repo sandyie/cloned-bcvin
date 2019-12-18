@@ -403,7 +403,7 @@ testData2$day <- as.numeric (testData2$day)
 testData2$Date <- paste(testData2$day , testData2$month, sep = "-")
 testData2 <- testData2 [!is.na(testData2$day),]
 
-climallTest <- merge(climall, testData2[,c(3,4,5,6)], by = "Date", all = TRUE)
+climallTest <- merge(climall, testData2[,c("avg.2d.Tmean","Estimate.LTE.day","HistDataDiff","Date")], by = "Date", all = TRUE)
 climallTest <- climallTest [order(climallTest$counter ),]
 climallTest <- climallTest[!is.na(climallTest$month),  ] 
 names(climallTest)
@@ -414,7 +414,6 @@ climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, clim
 		 climallTest$month, climallTest$day , climallTest$acc)
 climallinkCO <- merge(climallTest, climCGtoCO, by = c("day", "month", "Year"))
 climallinkCO <- climallinkCO [order(climallinkCO $counter ),]
-
 
 
 
