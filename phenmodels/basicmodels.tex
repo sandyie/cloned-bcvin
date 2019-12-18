@@ -1,0 +1,86 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{mathtools}
+\usepackage{gensymb}
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\begin{document}
+\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
+\renewcommand{\refname}{\CHead{}}
+
+% This is doc, semi for Betancourt on basic crop model we want to use, the math, goals and analyses (overall)
+
+\emph{Overall goals}\\
+Build a robust, hierarchical phenological model from budburst (dormancy) to ripening for 6-11 varieties of winegrapes. Then use the models to forecast phenology in the Okanagan winegrowing region of BC. \\
+
+\emph{Phenological modeling}\\
+Currently, we model winegrape phenology for each variety according to a phenological process-based sequential model. Our approach combines model estimates of three key stages of grapevine development: budbreak, flowering and veraison. We simulate the budbreak stage using a process-based sequential model combining the Smooth-Utah model \citep{richardson1974model,bonhomme2010}, which simulates dormancy break  (accumulating chilling units) and the Wang and Engel model \citep{wang1998simulation}, which simulates the post-dormancy phase until budbreak. Then, we use the Wang and Engel model to simulate the accumulation of forcing units until flowering, and after flowering, we use it again to simulate accumulation of forcing units until veraison. \\
+
+The curvilinear structure of both the Smoothed-Utah and Wang and Engel models reproduces the known effect of a developmental slowdown at high temperatures \citep{garcia2010curvilinear}... though we often have little data at high tempeatures and thus set the $T_{min}$ to 0, and $T_{max}$ to 40$\degree$C for the Wang and Engel models.\\ 
+
+The Smoothed-Utah model \citep{richardson1974model,bonhomme2010} assumes that chilling can only occur within a given range of temperatures, and allows for negative chilling in warm days: %% I need to check that equations are included properly
+
+\begin{equation}
+F_{SmoothedUtah}  =
+\begin{dcases}
+\frac{1}{1+e^{-4\frac{T_d-T_{m1}}{T_{opt}-T_{m1}}}}      & \quad \text{if } T_d<T{m1} \\
+1+\frac{-0.5(T_d-T_{opt})^2}{(T_{m1}-T_{opt})^2}		& \quad \text{if } T_{m1} \leq T_d < T_{opt}\\
+1-\Big((1-min)\frac{(T_d-T_{opt})^2}{2(T_{n2}-T_{opt})^2})   & \quad \text{if } T_{opt} \leq T_d < T_{n2}\\
+min+\Big(\frac{1-min}{1+e^{-4\frac{T_{n2}-T_d}{T_{n2}-T_{opt}}}})  & \quad \text{if } T_d \geq T_{n2}
+\end{dcases}
+\end{equation}
+
+Where \emph{Tm1} is decrease in cold efficiency for bud endodormancy, \emph{Topt} is the optimal mean daily temperature, \emph{Tn2} is the temperature with half the efficiency of \emph{Topt} to induce endodormancy, and \emph{min} is the negative impact of high temperatures. This model yields the amount of chill units based on daily temperatures ($T_d$), which are accumulated until a threshold of accumulated chilling action (C*) is reached defining the end of endodormancy:
+
+\begin{equation}
+C^* = \sum_{i=\text{start date}}^{i=N}F_{SmoothedUtah}
+\end{equation} 
+
+Where the summation begins at some established date each year (i.e., $i=$ start date $=$ 1 September). \\
+
+The Wang and Engel model \citep{wang1998simulation} belongs to the family of beta functions, is asymmetric and has four parameters: 
+\begin{equation}
+\quad	f_{\text{Wang \& Engel}} = 
+\begin{dcases}
+\frac{2(T_d-T_{min})^\alpha(T_{opt}-T_{min})^\alpha - (T_d-T_{min})^{2\alpha}}{(T_{opt}-T_{min})^{2\alpha}}    & \quad \text{if } T_{min}<T_{d}<T_{max} \\
+0 & \quad \text{if } T_{d} \leq T_{min} \text{ or } T_d \geq T_{max}
+\end{dcases}
+\end{equation}
+
+\begin{equation}
+\quad	\alpha = \frac{ln(2)}{ln(\frac{(T_{max}-T_{min})}{(T_{opt}-T_{min})})}
+ \end{equation} 
+
+Where $T_{min}, T_{opt}, T_{max}$ represent the minimum, optimum and maximum temperature values, respectively, that are included to calculate the amount of forcing needed until a threshold of accumulated forcing units (F*), is reached for a given phenological event---i.e., budbreak, flowering or veraison---to occur:
+
+\begin{equation}
+F^* = \sum_{i=\text{date previous event}}^{i=N} F_{\text{Wang \& Engel}}
+\end{equation} 
+
+Where the summation begins at the date of the previous stage. Thus for budbreak, the date of the starting $i$ for $F^*$ would be the date when $C^*$ is reached, for flowering the date of the starting $i$ $F^*$ would be the date when $F^*$ is reached for budbreak .... through to veraison. \\
+
+
+To date \citep[and following many other crops and approaches in winegrapes][]{Parker:2011cr,parent2012}, we have considered $T_{min}, T_{opt}, T_{max}$ to be a species-level characteristic and thus define one value for each parameter that is repeated across varieties. This approach is consistent with the observation that the precocity hierarchy across varieties is generally constant within a site across years (as opposed to shifting as expected if $T_{min}, T_{opt}, T_{max}$ vary strongly across varieties), allows us to compare varieties directly, and prioritizes robustness over precision given our data limitations (i.e., at high temperatures we have very few observations for any one variety). While $T_{min}, T_{opt} and T_{max}$ were fitted at the species level, we fit the accumulated thresholds for chilling (C*) and forcing (F*) corresponding to each phenological stage at the variety-level, thus allowing for phenological variation across varieties. {\bf If feasible, we would like to estimate $T_{min}, T_{opt}, T_{max}$ for each variety.}\\
+
+\emph{What the data look like}\\
+Generally we date of event (budburst, flowering, veraison, sugar level) across years, varieties and location. For each location we have semi-local daily temperature minima and maxima. \\
+
+
+\emph{Things we need to add/do}\\
+Models are currently fit in PhenoFit software, we want to switch to Stan.\\
+
+We need to add a ripening (sugar maturity) model after veraison.\\
+
+We want the models to be hierarchical (estimate overall species-level, and also---within that---variety-level.\\
+
+Cold hardiness: currently (in our global models) we consider only pixels where each 10-year scenario had no more than two days below -20$\degree$C or one day below -30$\degree$C \citep{Mills2006,Davenport2008}. \\
+
+\emph{References}
+\bibliography{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/LizzieMainMinimal}
+
+\end{document}

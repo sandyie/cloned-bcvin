@@ -24,7 +24,7 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitData, cd, ce, cf, year, m
 	#				 "Max" teh first half of what i think is the period of max hardiness. 
 	#				 For some reason Carl uses a slightly different tranformation half way through January
 	#			       "Max2" the other half of the maximum hardiness period
-	#			 	 "Deacc" the deacclimation period in teh spring 
+	#			 "Deacc" the deacclimation period in teh spring 
 	# LTEchange = this is equivalent to column CB in Carl's spreadsheet, and is teh change in LTE each day   
 	# cd = column cd from Carl's spreadhseet, as calculated from function ColumnCC_function.R
 	# ce = column cd from Carl's spreadhseet, as calculated from function ColumnCE_function.R
@@ -214,7 +214,7 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitData, cd, ce, cf, year, m
 			} else if (doynum[i] >= yearDates$dateMarch2[yearDates$Year == year[i]]){			#after March 2nd 
 					if (i == 1) {adjustcm[i] <- NA
 					} else if (adjustco[i-1] < (caEstimateLTE [i] - 1.8 & hitData[i] > 2)){adjustcm[i] <- adjustck[i]+0.2
-			     		} else adjustcm[i] <- adjustck[i]
+			     } else adjustcm[i] <- adjustck[i]
 			}					
 
 			
@@ -233,7 +233,11 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitData, cd, ce, cf, year, m
 		return(columns )
 		}
 	
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> 189d162f4b7c9f8293b6ecdc725c1b474072ba74
 
 
 

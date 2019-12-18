@@ -3,12 +3,26 @@ By Lizzie
 Organizing my questions for Carl ...
 
 
+<><><><><><><><><><><><><>
+<> Misc notes/thoughts <> 
+<><><><><><><><><><><><><>
+- Below, I wrote, as Carl has iteratively altered the models, I wonder if he knows whether some changes at all undo other changes? --> Are there any fairly easy, logical ways we could check this?
+
+- Related to iterative changes in model, it would be good to test a simpler version of the model and see how poorly it actually performs (perhaps one simple enough that we could do LOO).
+
+- Run a hierarchical model of the hardiness data including variety and vineyard (and year) as random effects.
+
+
 <><><><><><><><><><>
 <> New questions <>
 <>  that I have  <> 
 <><><><><><><><><><>
 
-Fundamental query -- seems like the way to know what you should tweak is partly this way (what makes the equations work) and partly then you do experiments to see if your tweaks are right, has Carl done that? 
+- Fundamental query -- seems like the way to know what you should tweak is partly this way (what makes the equations work) and partly then you do experiments to see if your tweaks are right, has Carl done that? 
+- As Carl has iteratively altered the models, I wonder if he knows whether some changes at all undo other changes? 
+
+
+
 
 
 <><><><><><><><><><><><><><><>
