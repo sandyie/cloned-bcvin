@@ -21,9 +21,11 @@ rm(list=ls()) # remove everything currently held in the R memory
 options(stringsAsFactors=FALSE)
 
 # Setting working directory. Add in your own path in an if statement for your file structure
-if(length(grep("Lizzie", getwd())>0)) { 
+if (length(grep("Lizzie", getwd())>0)) { 
   setwd("~/Documents/git/projects/vinmisc/bcvin/hardiness") 
 } else setwd("C:/Users/Faith Jones/Documents/ubc/github/bcvin/hardiness")
+#setwd ("/home/faith/Documents/git/bcvin/hardiness")
+
 
 # libraries
 library(reshape)
@@ -317,9 +319,6 @@ climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
 #---------------------------------------------------
-
-
-
 
 #Making a column for the different periods of time using a ridiculous amount of steps 
 #--------------------------------------------------------------------------------------
