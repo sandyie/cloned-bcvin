@@ -219,10 +219,6 @@ climsm$doy <- format(climsm$date, "%j")
 climsm$doynum <- as.numeric(climsm$doy)
 climsm[climsm$month == "Mar" & climsm$day == "01",]
 
-#remove the feb 29th day rows from the database now we have days of the year sorted
-climsm[!climsm$Year == 2016 & climsm$doy == ]
-
-
 # impute missing meanC data! (not using MICE since it overwrites rbind) and our imputation is easy
 meanimpute <- function(df, colname){
 for (i in 1:nrow(df)){
@@ -392,9 +388,9 @@ climall$HardinessPeriod[is.na(climall$HardinessPeriod)] <- "noPeriod"
 #Add columns CD-CF to the climall test dataset. This usees the test data for LTE change which i took from the spreadsheet 
 #note - at teh momment the results doent perfectly match the original spreadsheet because of the different ways we have filled in missing temp data
 
-climall$CD <- adjustcd(climall$HardinessPeriod, climall$meanC2day.hist, climall$accdiffmax )
-climall$CE <- adjustce(climall$HardinessPeriod, climall$meanC2day.hist,  climall$accdiffmax )
-climall$CF <- adjustcf(period = climall$HardinessPeriod, hisData = climall$meanC2day.hist,climall$CD, climall$CE,
+climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax )
+climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff,  climall$accdiffmax )
+climall$CF <- adjustcf(period = climall$HardinessPeriod, hisData = climall$avgTdiff,climall$CD, climall$CE,
 	climall$Year, climall$month, climall$day, climall$doynum)#
 
 
@@ -414,7 +410,7 @@ names(climallTest)
 
 
 climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, climallTest$Estimate.LTE.day,#this function makes a data table rather than a vector 
-		 climallTest$avgTdiff, climallTest$CD, climallTest$CE,  climallTest$Year, 
+		 climallTest$avgTdiff, climallTest$CD, climallTest$CE,  climallTest$CF, climallTest$Year, 
 		 climallTest$month, climallTest$day , climallTest$acc)
 climallinkCO <- merge(climallTest, climCGtoCO, by = c("day", "month", "Year"))
 climallinkCO <- climallinkCO [order(climallinkCO $counter ),]
