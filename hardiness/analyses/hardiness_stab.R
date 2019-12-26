@@ -316,30 +316,14 @@ climall$accdiffmax <-NA # should be same as col CB
 
 climall <- makediffs.lte(climall, "acc", "accdiff", "accdiffmax", -0.5)
 climall[58:77,] # looking good... matches Excel
-climall[100:115,]
-#values for LTE/day (accdiffmax/CB) < 0.1 or > -0.1 are converted to 0.1 and -0.1 (assumption 5)   
-climall$accdiffmax[climall$accdiffmax < 0.1 & climall$accdiffmax > 0] <- 0.1
-climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
 
 #max hardiness lte curve - dates should be November 24 to feb 15th
 climall$maxlte <- eqmaxh(climall$meanC2day.hist)#should be teh same as column CA (for max period)
 climall[120:150,]#also looking ok 
-climall$maxltediff <- NA
-climall$maxltediffmax <- NA# should be the same as col CB
-
-climall <- makediffs.lte(climall, "maxlte", "maxltediff", "maxltediffmax", -0.5)
-climall$maxltediffmax [climall$maxltediffmax < 0.1 & climall$maxltediffmax > 0] <- 0.1
-climall$maxltediffmax [climall$maxltediffmax > -0.1 & climall$maxltediffmax < 0] <- -0.1
 
 #deacclimation lte curve - dates should be Feb 1st to March 30th  
 climall$deacc <- eqdeacc(climall$meanC2day.hist)
 climall[climall$HardinessPeriod == "Deacc",]# a good but not exact match 
-climall$deaccdiff <- NA
-climall$deacdiffmax <- NA 
-
-climall <- makediffs.lte(climall, "deacc", "deaccdiff", "deacdiffmax", -0.5)
-climall$deacdiffmax [climall$deacdiffmax < 0.1 & climall$deacdiffmax > 0] <- 0.1
-climall$deacdiffmax [climall$deacdiffmax > -0.1 & climall$deacdiffmax < 0] <- -0.1
 
 #splice all the hardiness periods together
 #dates overlap acc/max Nov 24th to dec 7th 
