@@ -341,6 +341,47 @@ climall <- makediffs.lte(climall, "deacc", "deaccdiff", "deacdiffmax", -0.5)
 climall$deacdiffmax [climall$deacdiffmax < 0.1 & climall$deacdiffmax > 0] <- 0.1
 climall$deacdiffmax [climall$deacdiffmax > -0.1 & climall$deacdiffmax < 0] <- -0.1
 
+#splice all the hardiness periods together
+#dates overlap acc/max Nov 24th to dec 7th 
+#		   max/deacc feb 1st to feb 15th
+
+climall$LTEsplice <- NA
+climall$LTEchange <- NA
+climall$LTEchangemax <- NA
+
+for (yearCount in unique(climall$Year)) {
+
+	#get the days of the year for each year (because of leap years)
+	climallYearData <- climall[climall$Year == yearCount,]
+	Oct15th <-  climallYearData$doynum[climallYearData$month == "Oct" & climallYearData$day == 15]
+	Nov24th <- climallYearData$doynum[climallYearData$month == "Nov" & climallYearData$day == 24]
+	Dec7th <- climallYearData$doynum[climallYearData$month == "Dec" & climallYearData$day == 7]
+	Dec31st <-  climallYearData$doynum[climallYearData$month == "Dec" & climallYearData$day == 31]
+	Feb1st <- climallYearData$doynum[climallYearData$month == "Feb" & climallYearData$day == 1]
+	Feb15th <- climallYearData$doynum[climallYearData$month == "Feb" & climallYearData$day == 15]
+	Mar30th <- climallYearData$doynum[climallYearData$month == "Mar" & climallYearData$day == 30]
+
+	#LTE EACH DAY
+	climallYearData$LTEsplice[climallYearData$doynum >= Oct15th & climallYearData$doynum < Nov24th] <- climallYearData$acc[climallYearData$doynum >= Oct15th & climallYearData$doynum < Nov24th]
+	climallYearData$LTEsplice[climallYearData$doynum >= Nov24th & climallYearData$doynum <= Dec7th] <- (climallYearData$acc[climallYearData$doynum >= Nov24th & climallYearData$doynum <= Dec7th] +
+																			climallYearData$maxlte[climallYearData$doynum >= Nov24th & climallYearData$doynum <= Dec7th])/2			
+	climallYearData$LTEsplice[climallYearData$doynum > Dec7th & climallYearData$doynum <= Dec31st] <- climallYearData$maxlte[climallYearData$doynum > Dec7th & climallYearData$doynum <= Dec31st]
+	climallYearData$LTEsplice[climallYearData$doynum >= 1 & climallYearData$doynum <= Feb1st] <- climallYearData$maxlte[climallYearData$doynum >= 1 & climallYearData$doynum <= Feb1st]
+	climallYearData$LTEsplice[climallYearData$doynum > Feb1st & climallYearData$doynum <= Feb15th] <- (climallYearData$maxlte[climallYearData$doynum > Feb1st & climallYearData$doynum <= Feb15th] +
+																			climallYearData$deacc[climallYearData$doynum > Feb1st & climallYearData$doynum <= Feb15th])/2			
+	climallYearData$LTEsplice[climallYearData$doynum > Feb15th & climallYearData$doynum < Mar30th] <- climallYearData$deacc[climallYearData$doynum > Feb15th & climallYearData$doynum < Mar30th]
+	
+	climall$LTEsplice[climall$Year == yearCount] <- climallYearData$LTEsplice
+
+
+}
+
+climall <- makediffs.lte(climall, "LTEsplice", "LTEchange", "LTEchangemax", -0.5)
+climall$LTEchangemax [climall$LTEchangemax < 0.1 & climall$LTEchangemax > 0] <- 0.1
+climall$LTEchangemax [climall$LTEchangemax > -0.1 & climall$LTEchangemax < 0] <- -0.1
+
+
+
 
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
