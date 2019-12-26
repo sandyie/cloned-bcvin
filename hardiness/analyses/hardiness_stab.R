@@ -31,6 +31,7 @@ if (length(grep("Lizzie", getwd())>0)) {
 library(reshape)
 library(tidyr)
 
+
 #source r skripts
 source("analyses/ColumnCC_function.R")#Faith's function for making column cc
 source("analyses/ColumnCE_function.R")#Faith's function for making column ce
@@ -280,8 +281,10 @@ eqacc <- function(x){
 eqmaxh <- function(x){
     0.5371*x - 23.229
 }
+
+#=((0.232*(BY165^2))+(0.0314*(BY165))-23.336)
 eqdeacc <- function(x){
-    0.232*x^ + 0.0314*x - 23.336
+    0.232*x^2 + 0.0314*x - 23.336
 }
 
 # If acclimation change in one day is smaller than -0.5 (e.g., if it's -2 or such) then make it max out at -0.5 ...
@@ -305,6 +308,8 @@ makediffs.lte <- function(df, colname, newcolname, maxdiffcol, maxdiff){
 
 ## START HERE! (once the above start here is done) # below looks pretty good, start trying to create CD onward (CC is okay, but off around imputed dates) ... currently on CD -- have done early part of year need to do new eqn on 8 Dec, and then ANOTHER new eqn on 7 Jan
 
+#acclimation lte curve - dates shoudl be Oct to december 7th (some overlap with max hardiness)
+
 climall$acc <- eqacc(climall$meanC2day.hist) # col CA is using the equations and the 2-day historical climate (BX)
 climall$accdiff <-NA # change in estimated LTE each day
 climall$accdiffmax <-NA # should be same as col CB
@@ -315,6 +320,27 @@ climall[100:115,]
 #values for LTE/day (accdiffmax/CB) < 0.1 or > -0.1 are converted to 0.1 and -0.1 (assumption 5)   
 climall$accdiffmax[climall$accdiffmax < 0.1 & climall$accdiffmax > 0] <- 0.1
 climall$accdiffmax[climall$accdiffmax > -0.1 & climall$accdiffmax < 0] <- -0.1
+
+#max hardiness lte curve - dates should be November 24 to feb 15th
+climall$maxlte <- eqmaxh(climall$meanC2day.hist)#should be teh same as column CA (for max period)
+climall[120:150,]#also looking ok 
+climall$maxltediff <- NA
+climall$maxltediffmax <- NA# should be the same as col CB
+
+climall <- makediffs.lte(climall, "maxlte", "maxltediff", "maxltediffmax", -0.5)
+climall$maxltediffmax [climall$maxltediffmax < 0.1 & climall$maxltediffmax > 0] <- 0.1
+climall$maxltediffmax [climall$maxltediffmax > -0.1 & climall$maxltediffmax < 0] <- -0.1
+
+#deacclimation lte curve - dates should be Feb 1st to March 30th  
+climall$deacc <- eqdeacc(climall$meanC2day.hist)
+climall[climall$HardinessPeriod == "Deacc",]# a good but not exact match 
+climall$deaccdiff <- NA
+climall$deacdiffmax <- NA 
+
+climall <- makediffs.lte(climall, "deacc", "deaccdiff", "deacdiffmax", -0.5)
+climall$deacdiffmax [climall$deacdiffmax < 0.1 & climall$deacdiffmax > 0] <- 0.1
+climall$deacdiffmax [climall$deacdiffmax > -0.1 & climall$deacdiffmax < 0] <- -0.1
+
 
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
