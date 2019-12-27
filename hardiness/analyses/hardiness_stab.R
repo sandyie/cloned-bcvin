@@ -316,6 +316,7 @@ climall$accdiffmax <-NA # should be same as col CB
 
 climall <- makediffs.lte(climall, "acc", "accdiff", "accdiffmax", -0.5)
 climall[58:77,] # looking good... matches Excel
+climall[100:115,]
 
 #max hardiness lte curve - dates should be November 24 to feb 15th
 climall$maxlte <- eqmaxh(climall$meanC2day.hist)#should be teh same as column CA (for max period)
@@ -343,17 +344,17 @@ for (yearCount in unique(climall$Year)) {
 	Dec31st <-  climallYearData$doynum[climallYearData$month == "Dec" & climallYearData$day == 31]
 	Feb1st <- climallYearData$doynum[climallYearData$month == "Feb" & climallYearData$day == 1]
 	Feb15th <- climallYearData$doynum[climallYearData$month == "Feb" & climallYearData$day == 15]
-	Mar30th <- climallYearData$doynum[climallYearData$month == "Mar" & climallYearData$day == 30]
+	Apr11th <- climallYearData$doynum[climallYearData$month == "Apr" & climallYearData$day == 11]#teh word document says march 30th but teh spreadsheet says 11th April
 
 	#LTE EACH DAY
-	climallYearData$LTEsplice[climallYearData$doynum >= Oct15th & climallYearData$doynum < Nov24th] <- climallYearData$acc[climallYearData$doynum >= Oct15th & climallYearData$doynum < Nov24th]
+	climallYearData$LTEsplice[climallYearData$doynum > Oct15th & climallYearData$doynum < Nov24th] <- climallYearData$acc[climallYearData$doynum > Oct15th & climallYearData$doynum < Nov24th]
 	climallYearData$LTEsplice[climallYearData$doynum >= Nov24th & climallYearData$doynum <= Dec7th] <- (climallYearData$acc[climallYearData$doynum >= Nov24th & climallYearData$doynum <= Dec7th] +
 																			climallYearData$maxlte[climallYearData$doynum >= Nov24th & climallYearData$doynum <= Dec7th])/2			
 	climallYearData$LTEsplice[climallYearData$doynum > Dec7th & climallYearData$doynum <= Dec31st] <- climallYearData$maxlte[climallYearData$doynum > Dec7th & climallYearData$doynum <= Dec31st]
 	climallYearData$LTEsplice[climallYearData$doynum >= 1 & climallYearData$doynum <= Feb1st] <- climallYearData$maxlte[climallYearData$doynum >= 1 & climallYearData$doynum <= Feb1st]
 	climallYearData$LTEsplice[climallYearData$doynum > Feb1st & climallYearData$doynum <= Feb15th] <- (climallYearData$maxlte[climallYearData$doynum > Feb1st & climallYearData$doynum <= Feb15th] +
 																			climallYearData$deacc[climallYearData$doynum > Feb1st & climallYearData$doynum <= Feb15th])/2			
-	climallYearData$LTEsplice[climallYearData$doynum > Feb15th & climallYearData$doynum < Mar30th] <- climallYearData$deacc[climallYearData$doynum > Feb15th & climallYearData$doynum < Mar30th]
+	climallYearData$LTEsplice[climallYearData$doynum > Feb15th & climallYearData$doynum <= Apr11th ] <- climallYearData$deacc[climallYearData$doynum > Feb15th & climallYearData$doynum <= Apr11th]
 	
 	climall$LTEsplice[climall$Year == yearCount] <- climallYearData$LTEsplice
 
@@ -364,8 +365,21 @@ climall <- makediffs.lte(climall, "LTEsplice", "LTEchange", "LTEchangemax", -0.5
 climall$LTEchangemax [climall$LTEchangemax < 0.1 & climall$LTEchangemax > 0] <- 0.1
 climall$LTEchangemax [climall$LTEchangemax > -0.1 & climall$LTEchangemax < 0] <- -0.1
 
+#add teh guessed values before the October data 
+
+for (yearCounter2 in unique(climall$Year)){
+	climallYearData2 <- climall[climall$Year == yearCounter2,]
+	Oct16th <-  climallYearData2$doynum[climallYearData2$month == "Oct" & climallYearData2$day == 16]
+	Sep15th <- climallYearData2$doynum[climallYearData2$month == "Sep" & climallYearData2$day == 15]
+	climallYearData2$LTEchangemax [climallYearData2$doynum >= Sep15th & climallYearData2$doynum <= Oct16th] <- seq(0, by = -0.025, length.out = 32)
+	climallYearData2$LTEchangemax [climallYearData2$doynum >= Sep15th & climallYearData2$doynum <= Oct16th & climallYearData2$LTEchangemax < -0.5] <- -0.5
+	climall$LTEchangemax [climall$Year == yearCounter2] <- climallYearData2$LTEchangemax 
+}
+
+climall$LTEchangemax [climall$doynum >= Sep15th & climall$doynum <= Oct15th & climall$LTEchangemax < -0.5] <- -0.5
 
 
+View(climall[,c("LTEchangemax", "accdiffmax", "month", "day")])
 
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
@@ -439,8 +453,8 @@ climall$HardinessPeriod[is.na(climall$HardinessPeriod)] <- "noPeriod"
 #Add columns CD-CF to the climall test dataset. This usees the test data for LTE change which i took from the spreadsheet 
 #note - at teh momment the results doent perfectly match the original spreadsheet because of the different ways we have filled in missing temp data
 
-climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$accdiffmax )
-climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff,  climall$accdiffmax )
+climall$CD <- adjustcd(climall$HardinessPeriod, climall$avgTdiff, climall$LTEchangemax )
+climall$CE <- adjustce(climall$HardinessPeriod, climall$avgTdiff,  climall$LTEchangemax )
 climall$CF <- adjustcf(period = climall$HardinessPeriod, hisData = climall$avgTdiff,climall$CD, climall$CE,
 	climall$Year, climall$month, climall$day, climall$doynum)#
 
@@ -457,7 +471,7 @@ testData2 <- testData2 [!is.na(testData2$day),]
 climallTest <- merge(climall, testData2[,c("avg.2d.Tmean","Estimate.LTE.day","HistDataDiff","Date")], by = "Date", all = TRUE)
 climallTest <- climallTest [order(climallTest$counter ),]
 climallTest <- climallTest[!is.na(climallTest$month),  ] 
-names(climallTest)
+names(climall)
 
 
 climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, climallTest$Estimate.LTE.day,#this function makes a data table rather than a vector 
