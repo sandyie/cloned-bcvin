@@ -36,17 +36,17 @@ adjustcgtoco <- function(period, doynum, LTEchange, hitData, cd, ce, cf, year, m
 	# based off teh historical temperature data 
 
 
-#period <- climallTest$HardinessPeriod
-#doynum <- climallTest$doynum
-#cf <- climallTest$CF 
-#LTEchange <- climallTest$Estimate.LTE.day
-#cd <- climallTest$CD 
-#ce <- climallTest$CE 
-#month <- climallTest$month
-#day <- climallTest$day 
-#year <- climallTest$Year
-#caEstimateLTE <- climallTest$acc
-#hitData <- climallTest$avgTdiff
+#period <- climall$HardinessPeriod
+#doynum <- climall$doynum
+#cf <- climall$CF 
+#LTEchange <- climall$LTEchangemax 
+#cd <- climall$CD 
+#ce <- climall$CE 
+#month <- climall$month
+#day <- climall$day 
+#year <- climall$Year
+#caEstimateLTE <- climall$LTEsplice
+#hitData <- climall$avgTdiff
 
 
 	#get the day of teh year for  20th of september and teh first of march for each year 
