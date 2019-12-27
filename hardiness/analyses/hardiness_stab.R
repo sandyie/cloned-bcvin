@@ -137,7 +137,7 @@ head(bh)
 
 #test data (columns CB and BY from the spreadsheet) that FJ used for troubleshooting functions
 #-----------------------------------------------------
-testData <- read.csv("analyses/TrialTempLTEdata_fj.csv")
+#testData <- read.csv("analyses/TrialTempLTEdata_fj.csv")
 
 ##
 ## some f(x)s to help calculate GDD
@@ -316,7 +316,6 @@ climall$accdiffmax <-NA # should be same as col CB
 
 climall <- makediffs.lte(climall, "acc", "accdiff", "accdiffmax", -0.5)
 climall[58:77,] # looking good... matches Excel
-climall[100:115,]
 
 #max hardiness lte curve - dates should be November 24 to feb 15th
 climall$maxlte <- eqmaxh(climall$meanC2day.hist)#should be teh same as column CA (for max period)
@@ -362,10 +361,12 @@ for (yearCount in unique(climall$Year)) {
 }
 
 climall <- makediffs.lte(climall, "LTEsplice", "LTEchange", "LTEchangemax", -0.5)
+
+#assumption 5
 climall$LTEchangemax [climall$LTEchangemax < 0.1 & climall$LTEchangemax > 0] <- 0.1
 climall$LTEchangemax [climall$LTEchangemax > -0.1 & climall$LTEchangemax < 0] <- -0.1
 
-#add teh guessed values before the October data 
+#add the guessed values before the October data 
 
 for (yearCounter2 in unique(climall$Year)){
 	climallYearData2 <- climall[climall$Year == yearCounter2,]
@@ -378,8 +379,6 @@ for (yearCounter2 in unique(climall$Year)){
 
 climall$LTEchangemax [climall$doynum >= Sep15th & climall$doynum <= Oct15th & climall$LTEchangemax < -0.5] <- -0.5
 
-
-View(climall[,c("LTEchangemax", "accdiffmax", "month", "day")])
 
 #-------------------------------------------------------
 #Faith's attempts at the columns CD - CJ
@@ -422,7 +421,7 @@ doyEachPeriod$maxEnd2Jan<- as.numeric(doyEachPeriod$maxEnd2Jan)
 doyEachPeriod$deaccStart[!doyEachPeriod$Year == 2012] <- climall$doynum[climall$month == "Feb" & climall$day == 7]#no jan 2012 data
 doyEachPeriod$deaccStart<- as.numeric(doyEachPeriod$deaccStart)
 
-doyEachPeriod$deaccEnd[!doyEachPeriod$Year == 2012]<- climall$doynum[climall$month == "Apr" & climall$day == 15]#no jan 2012 data
+doyEachPeriod$deaccEnd[!doyEachPeriod$Year == 2012]<- climall$doynum[climall$month == "Apr" & climall$day == 11]#no jan 2012 data
 doyEachPeriod$deaccEnd<- as.numeric(doyEachPeriod$deaccEnd)
 
 #make a column in climall to put the period data in 
@@ -463,22 +462,24 @@ climall$CF <- adjustcf(period = climall$HardinessPeriod, hisData = climall$avgTd
 #in climall to the exel spreadsheet 
 
 climall$counter <- c(1:nrow(climall))
-testData2 <- separate(data = testData , col = date, into = c("day", "month"))
-testData2$day <- as.numeric (testData2$day)
-testData2$Date <- paste(testData2$day , testData2$month, sep = "-")
-testData2 <- testData2 [!is.na(testData2$day),]
+#testData2 <- separate(data = testData , col = date, into = c("day", "month"))
+#testData2$day <- as.numeric (testData2$day)
+#testData2$Date <- paste(testData2$day , testData2$month, sep = "-")
+#testData2 <- testData2 [!is.na(testData2$day),]
 
-climallTest <- merge(climall, testData2[,c("avg.2d.Tmean","Estimate.LTE.day","HistDataDiff","Date")], by = "Date", all = TRUE)
-climallTest <- climallTest [order(climallTest$counter ),]
-climallTest <- climallTest[!is.na(climallTest$month),  ] 
-names(climall)
+#climallTest <- merge(climall, testData2[,c("avg.2d.Tmean","Estimate.LTE.day","HistDataDiff","Date")], by = "Date", all = TRUE)
+#climallTest <- climallTest [order(climallTest$counter ),]
+#climallTest <- climallTest[!is.na(climallTest$month),  ] 
 
 
-climCGtoCO <- adjustcgtoco(climallTest$HardinessPeriod, climallTest$doynum, climallTest$Estimate.LTE.day,#this function makes a data table rather than a vector 
-		 climallTest$avgTdiff, climallTest$CD, climallTest$CE,  climallTest$CF, climallTest$Year, 
-		 climallTest$month, climallTest$day , climallTest$acc)
-climallinkCO <- merge(climallTest, climCGtoCO, by = c("day", "month", "Year"))
-climallinkCO <- climallinkCO [order(climallinkCO $counter ),]
+#running the cumbersome function for the last few columns, and then merging them with climall for a final spreadsheet
+climCGtoCO <- adjustcgtoco(climall$HardinessPeriod, climall$doynum, climall$LTEchangemax ,#this function makes a data table rather than a vector 
+		 climall$avgTdiff, climall$CD, climall$CE,  climall$CF, climall$Year, 
+		 climall$month, climall$day , climall$LTEsplice)
+climallinkCO <- merge(climall, climCGtoCO, by = c("day", "month", "Year"))
+climallinkCO <- climallinkCO [order(climallinkCO$counter ),]
+
+
 
 
 
