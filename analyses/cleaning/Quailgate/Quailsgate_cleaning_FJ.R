@@ -15,7 +15,7 @@ library(dplyr)
 #read in spreadsheets
 #--------------------------------------------------
 
-setwd("/home/faith/Documents/git/bcvin/data/quailsgate")
+setwd("/home/faith/Documents/github/bcvin/data/quailsgate")
 list.files()#check what files are present 
 
 #brix and variety data 2000-2012
