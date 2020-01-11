@@ -100,6 +100,8 @@ climsm$Datestrptime <- as.POSIXct(strptime(climsm$Date.Time,format="%m/%d/%y"))
 
 #combine datasets
 bhclim <- merge(bh, climsm, by.x = "Datestrptime", by.y = "Datestrptime") 
+bhclim$Month_num <- format(as.Date(bhclim$Datestrptime), "%m")
+bhclim$month_day <- as.numeric(paste(bhclim$Month_num, bhclim$day.x, sep = "."))
 
 #set columns as factors
 bhclim$year <- as.factor(bhclim$year)
@@ -109,6 +111,8 @@ bhclim$variety <- as.factor(bhclim$variety)
 head(bhclim)
 str(bhclim)
 plot(bhclim$lte ~ bhclim$meanC)
+plot(bhclim$lte ~bhclim $Datestrptime)
+plot(bhclim$lte ~bhclim $month_day )
 
 #simple lm
 
