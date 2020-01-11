@@ -10,6 +10,7 @@ setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
 #libraries
 #install.packages("reshape2")
 library(reshape2)
+library("ggplot2")
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -94,13 +95,17 @@ head(bh)
 #make a date column 
 bh$Date <- paste(bh$month, bh$day, bh$year, sep = "/")
 bh$Datestrptime <- as.POSIXct(strptime(bh$Date ,format="%b/%d/%Y"))
-
-#select only one year's data 
 climsm$Datestrptime <- as.POSIXct(strptime(climsm$Date.Time,format="%m/%d/%y"))
 #note, dates that are in strptime format rather than as,POSIXct cannot be used to merge 
 
 #combine datasets
 bhclim <- merge(bh, climsm, by.x = "Datestrptime", by.y = "Datestrptime") 
+
+#set columns as factors
+bhclim$year <- as.factor(bhclim$year)
+bhclim$variety <- as.factor(bhclim$variety)
+
+#explore a bit 
 head(bhclim)
 str(bhclim)
 plot(bhclim$lte ~ bhclim$meanC)
@@ -113,10 +118,13 @@ abline(lmFit, col = "red")
 
 lmFit2 <- lm(lte ~ year, data = bhclim)
 summary(lmFit2)
-boxplot(bhclim$lte ~ bhclim$year)
+yearPlot <- ggplot(aes(x = year, y = lte), data = bhclim)
+yearPlot + geom_boxplot()+theme_classic()
 
 lmFit3 <- lm(lte ~ variety, data = bhclim)
 summary(lmFit3)
-boxplot(bhclim$lte ~ bhclim$variety)
-
+varietyPlot <- ggplot(aes(x = variety, y = lte), data = bhclim)
+varietyPlot + geom_boxplot()+
+	theme_classic()+
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
