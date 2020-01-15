@@ -20,7 +20,7 @@ simDays$simTemps <- predict(fit1, newdata = simDays)
 #-------------------------------
 
 i1 <- 2 # dont start on 1 becuase then the follwoing asymptotic (clogs) bounds wont work 
-tempValues <- tempData$simTemps # a set temperature values for the winter. I used data from the original manuscript  
+tempValues <- simDays$simTemps # a set temperature values for the winter. I used data from the original manuscript  
 
 #other parameters setimated by the model
 hcInit <- -10.55 # start hardiness value. mean of earliest LTE50 in the fall 
@@ -99,6 +99,12 @@ for (i in (2:length(tempValues))){
 
 plot(hcChange)
 plot(hc)
+
+# need to add some error around the values. but where?
+
+
+#Making a model to text this data
+#---------------------------------------------
 
 
 
