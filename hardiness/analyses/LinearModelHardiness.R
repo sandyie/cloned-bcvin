@@ -10,7 +10,11 @@ setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
 #libraries
 #install.packages("reshape2")
 library(reshape2)
-library("ggplot2")
+library(ggplot2)
+library(rstan)
+library(lme4)
+library(rstanarm)
+
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -123,10 +127,13 @@ climatePlot + geom_point() +
 
 plot(bhclim$lte ~bhclim $Datestrptime)
 plot(bhclim$lte ~bhclim $month_day )
+plot(bhclim$lte ~bhclim $meanC)
+
 
 #simple lm
 
 lmFit <- lm(lte ~ meanC, data = bhclim)
+summary(lmFit)
 plot(bhclim$lte ~ bhclim$meanC)
 abline(lmFit, col = "red")
 
@@ -146,4 +153,186 @@ varietyPlot <- ggplot(aes(x = site, y = lte), data = bhclim)
 varietyPlot + geom_boxplot()+
 	theme_classic()+ ylab("LTE50")+
 	theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+#simulating a linear model
+#-----------------------------
+
+#i dont knwo what thsi does, but it helps with reproducibility somehow
+set.seed(16)
+
+#parameter values taken from the linear mnodel lmFit
+alpha <- -21.4
+beta <- 0.53
+sigma <- 0.6 
+#sigma <- sqrt(sigma2)
+nrep <- 200
+
+meanTemp <- mean(bhclim$meanC)
+sigmaTemp <- sd(bhclim$meanC)
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+eps <- rnorm(nrep, 0, sigma)
+
+simLTE <- alpha + beta*simTemps + eps
+plot(simLTE ~ simTemps)
+
+
+#preparing the data
+#-----------------------------
+
+# I need to index the x values from 1 to n(x)
+
+x <- I(simTemps)
+y <- simLTE
+N <- length(simTemps)
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+stan_data <- list(N = N, x = x, y = y)
+
+#stan model 
+#--------------------
+
+
+write("// Stan model for simple linear regression including priors 
+
+data {
+ int < lower = 1 > N; // Sample size
+ 
+ vector[N] x; // Predictor
+ vector[N] y; // Outcome
+}
+
+parameters {
+ real alpha; // Intercept
+ real beta; // Slope (regression coefficients)
+ real < lower = 0 > sigma; // Error SD
+}
+
+model {
+	alpha ~ normal (0, 30); //these shoudl eb very weakly informative priors
+	beta ~ normal(0, 10);
+	sigma ~ normal(0, 10); 
+ y ~ normal(alpha + x * beta , sigma);
+}
+
+generated quantities {
+} // The posterior predictive distribution",
+
+"stan_model3.stan")
+
+stan_model3 <- "stan_model3.stan"
+
+fit3 <- stan(file = stan_model3, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 2, thin = 1)
+fit3
+
+posterior2 <- extract(fit3)
+par(mfrow = c(1,3))
+
+plot(posterior2$alpha, type = "l")
+plot(posterior2$beta, type = "l")
+plot(posterior2$sigma, type = "l")
+
+traceplot(fit3)
+
+stan_dens(fit3)
+
+#this is how it compares to the original vales for parameters (blue lines)
+plot(density(posterior2$alpha), main = "Alpha")
+abline(v = alpha, col = 4, lty = 2)
+
+plot(density(posterior2$beta), main = "Beta")
+abline(v = beta, col = 4, lty = 2)
+
+plot(density(posterior2$sigma), main = "Sigma")
+abline(v = sigma, col = 4, lty = 2)
+
+#probability of a positive relationship between temp and LTE50
+sum(posterior2$beta > 0)/length(posterior2$beta) # 1 - its definitly a positive relationship 
+
+
+#Run a hierarchical model using lme4
+#----------------------------------------------
+
+
+
+#model with varying intercepts
+lmerModel1 <- lmer(lte ~ meanC + (1 |variety) + (1|site), data = bhclim)
+summary(lmerModel1)
+
+#model with varying slopes as well
+lmerModel2 <- lmer(lte ~ meanC + (1 + meanC|variety) , data = bhclim)#error, doesnt fit
+
+
+M1_stanlmer <- stan_lmer(lte ~ meanC + (1 |variety) + (1|site), 
+	data = bhclim,
+	seed = 16)
+print(M1_stanlmer, digits = 2)
+sims <- as.matrix(M1_stanlmer)
+dim(sims)
+head(sims)
+
+#simulate data with random intercepts 
+#------------------------------------
+
+
+#i dont knwo what thsi does, but it helps with reproducibility somehow
+set.seed(16)
+
+#parameter values taken from the linear mnodel lmFit
+alpha <- -21.4
+beta <- 0.53
+sigma2 <- 0.6 #(2.7/sqrt(nrow(bhclim)) = 0.055)
+nrep <- 20*length(unique(bhclim$site))
+
+meanTemp <- mean(bhclim$meanC)
+sigmaTemp <- sd(bhclim$meanC)
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+eps <- rnorm(nrep, 0, sigma)
+
+#grouping variables 
+variety <- bhclim$variety
+site <- bhclim$site
+
+#group level effects - Parameters taken from M1_stanlmer
+#try with one random effect first (site)
+
+randomeffects <- data.frame(cbind(as.character(variety), as.character(site)))
+
+#varietySE <- 0.7/nrow(randomeffects)
+#varEffect <- rnorm(unique(variety), 0 , varietySE)
+#vareffectFrame <- data.frame(unique(variety))
+#vareffectFrame$VarEff <- varEffect
+
+
+siteSE <- 0.5/nrow(randomeffects)
+siteEffect <- rnorm(unique(site), 0 , siteSE)
+siteeffectFrame <- data.frame(unique(site))
+siteeffectFrame$SiteEff <- siteEffect
+
+lotssiteDataName <- rep(unique(site), each = 20)
+lotssiteData <- rep(unique(siteEffect), each = 20)
+length(lotssiteData)
+
+alphaSite <- lotssiteData
+
+simLTEmixed <- alpha + alphaSite + beta*simTemps + eps
+plot(simLTEmixed ~ simTemps)
+
+plottingData <- data.frame(cbind(simLTEmixed, simTemps, as.character(lotssiteDataName)))
+str(plottingData)
+head(plottingData)
+plottingData$simTemps <- as.numeric(plottingData$simTemps)
+plottingData$simLTEmixed <- as.numeric(plottingData$simLTEmixed)
+
+
+
+sitePlotSim <- ggplot(aes(x = lotssiteDataName, y = simLTEmixed), data = plottingData)
+sitePlotSim + geom_boxplot()+
+	theme_classic()+ ylab("LTE50")+
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+simModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData)
 
