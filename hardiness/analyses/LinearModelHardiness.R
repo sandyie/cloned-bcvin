@@ -111,6 +111,16 @@ bhclim$variety <- as.factor(bhclim$variety)
 head(bhclim)
 str(bhclim)
 plot(bhclim$lte ~ bhclim$meanC)
+climatehardPlot <- ggplot(aes(x = meanC, y = lte), data = bhclim)
+climatehardPlot + geom_point(aes(colour = factor(Year))) +	
+	theme_classic() + ylab("LTE50")
+
+climatePlot <- ggplot(aes(x = Datestrptime, y = lte), data = bhclim)
+climatePlot + geom_point() +
+  xlab("Date") + ylab("LTE50")	+
+	theme_classic()
+
+
 plot(bhclim$lte ~bhclim $Datestrptime)
 plot(bhclim$lte ~bhclim $month_day )
 
@@ -129,6 +139,11 @@ lmFit3 <- lm(lte ~ variety, data = bhclim)
 summary(lmFit3)
 varietyPlot <- ggplot(aes(x = variety, y = lte), data = bhclim)
 varietyPlot + geom_boxplot()+
-	theme_classic()+
+	theme_classic()+ ylab("LTE50")+
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+varietyPlot <- ggplot(aes(x = site, y = lte), data = bhclim)
+varietyPlot + geom_boxplot()+
+	theme_classic()+ ylab("LTE50")+
 	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
