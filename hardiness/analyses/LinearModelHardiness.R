@@ -149,8 +149,8 @@ varietyPlot + geom_boxplot()+
 	theme_classic()+ ylab("LTE50")+
 	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-varietyPlot <- ggplot(aes(x = site, y = lte), data = bhclim)
-varietyPlot + geom_boxplot()+
+sitePlot <- ggplot(aes(x = site, y = lte), data = bhclim)
+sitePlot + geom_boxplot()+
 	theme_classic()+ ylab("LTE50")+
 	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -284,7 +284,7 @@ set.seed(16)
 alpha <- -21.4
 beta <- 0.53
 sigma2 <- 0.6 #(2.7/sqrt(nrow(bhclim)) = 0.055)
-nrep <- 20*length(unique(bhclim$site))
+nrep <- 20*length(unique(bhclim$variety))
 
 meanTemp <- mean(bhclim$meanC)
 sigmaTemp <- sd(bhclim$meanC)
@@ -300,33 +300,69 @@ site <- bhclim$site
 
 randomeffects <- data.frame(cbind(as.character(variety), as.character(site)))
 
-#varietySE <- 0.7/nrow(randomeffects)
-#varEffect <- rnorm(unique(variety), 0 , varietySE)
-#vareffectFrame <- data.frame(unique(variety))
-#vareffectFrame$VarEff <- varEffect
+#variety 
+#-----------------
+
+varietySE <- 0.7/nrow(randomeffects)
+varietySD <- 2  # setting the standard error variation from variety , taken from lmer model
+varEffect <- rnorm(unique(variety), 0 , varietySD ) # random distribution of errors based on varietySE, oen for each variety 
+vareffectFrame <- data.frame(unique(variety)) # make a dataframe to hold this info
+vareffectFrame$VarEff <- varEffect # add variety effect to dataframe so we have variety and its effect 
+
+lotsvarDataName <- rep(unique(variety), each = 20) # have 20 data points per variety 
+lotsvarData <- rep(unique(varEffect), each = 20) # add standard error to that  
+alphaVar <- lotsvarData # name teh effect fo variety for model building 
+
+length(alphaVar)
+
+plottingData <- data.frame(cbind(simLTEmixed, simTemps, as.character(lotsvarDataName)))
+str(plottingData)
+head(plottingData)
+plottingData$simTemps <- as.numeric(as.character(plottingData$simTemps))
+plottingData$simLTEmixed <- as.numeric(as.character(plottingData$simLTEmixed))
+
+varPlotSim <- ggplot(aes(x = lotsvarDataName, y = simLTEmixed), data = plottingData)
+varPlotSim + geom_boxplot()+
+	theme_classic()+ ylab("LTE50")+
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+varModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData)
 
 
-siteSE <- 0.5/nrow(randomeffects)
-siteEffect <- rnorm(unique(site), 0 , siteSE)
+#site
+#-------------
+#parameter values taken from the linear mnodel lmFit
+alpha <- -21.4
+beta <- 0.53
+sigma2 <- 0.6 #(2.7/sqrt(nrow(bhclim)) = 0.055)
+nrep <- 20*length(unique(bhclim$site))
+
+meanTemp <- mean(bhclim$meanC)
+sigmaTemp <- sd(bhclim$meanC)
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+eps <- rnorm(nrep, 0, sigma)
+
+siteSD <- 1
+siteEffect <- rnorm(unique(site), 0 , siteSD)
 siteeffectFrame <- data.frame(unique(site))
 siteeffectFrame$SiteEff <- siteEffect
 
 lotssiteDataName <- rep(unique(site), each = 20)
 lotssiteData <- rep(unique(siteEffect), each = 20)
 length(lotssiteData)
-
 alphaSite <- lotssiteData
 
-simLTEmixed <- alpha + alphaSite + beta*simTemps + eps
+length(alphaSite)
+
+
+simLTEmixed <- alpha + alphaVar + beta*simTemps + eps
 plot(simLTEmixed ~ simTemps)
 
-plottingData <- data.frame(cbind(simLTEmixed, simTemps, as.character(lotssiteDataName)))
-str(plottingData)
-head(plottingData)
-plottingData$simTemps <- as.numeric(plottingData$simTemps)
-plottingData$simLTEmixed <- as.numeric(plottingData$simLTEmixed)
-
-
+plottingData2 <- data.frame(cbind(simLTEmixed, simTemps, as.character(lotssiteDataName)))
+str(plottingData2)
+head(plottingData2)
+plottingData2$simTemps <- as.numeric(as.character(plottingData2$simTemps))
+plottingData2$simLTEmixed <- as.numeric(as.character(plottingData2$simLTEmixed))
 
 sitePlotSim <- ggplot(aes(x = lotssiteDataName, y = simLTEmixed), data = plottingData)
 sitePlotSim + geom_boxplot()+
@@ -334,5 +370,45 @@ sitePlotSim + geom_boxplot()+
 	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
-simModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData)
+simModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData2)
 
+lm(simLTEmixed ~ simTemps, data = plottingData)
+
+#try two levels of variation, site and variety
+#------------------------------------------------------
+
+
+#group level effects - Parameters taken from M1_stanlmer
+#try with one random effect first (site)
+
+randomeffects # a dataframe of the two random effects, site and variety, from actual data
+names(randomeffects) <- c("variety", "site")
+randomeffectsSite <- merge(randomeffects, siteeffectFrame, by.x = "site", by.y = "unique.site.")
+randomeffectsALL <- merge(randomeffectsSite, vareffectFrame,  by.x = "variety", by.y = "unique.variety.")
+head(randomeffectsALL)
+
+
+nrep <- nrow(bhclim)
+alpha <- -21.4
+beta <- 0.53
+sigma2 <- 0.6 #general noise
+meanTemp <- mean(bhclim$meanC)
+sigmaTemp <- sd(bhclim$meanC)
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+
+eps <- rnorm(nrep, 0, sigma)
+
+
+siteEffectAlpha <- randomeffectsALL$SiteEff
+varEffectAlpha <- randomeffectsALL$VarEff
+
+simLTEmixed <- alpha + siteEffectAlpha + varEffectAlpha + beta*simTemps + eps
+plot(simLTEmixed ~ simTemps)
+
+#make a datagframe containing teh simulated data and levels 
+simData2level <-  randomeffects
+simData2level$simTenps <- simTemps
+simData2level$simLTEmixed <- simLTEmixed
+
+#test model - currently not working 
+simModelSiteVar <- lmer(simLTEmixed ~ simTemps + (1|site) + (1|variety), data = simData2level)
