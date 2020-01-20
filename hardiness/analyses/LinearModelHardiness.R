@@ -291,8 +291,6 @@ sum(posterior2$beta > 0)/length(posterior2$beta) # 1 - its definitly a positive 
 #Run a hierarchical model using lme4
 #----------------------------------------------
 
-
-
 #model with varying intercepts
 lmerModel1 <- lmer(lte ~ meanC + (1 |variety) + (1|site), data = bhclim)
 summary(lmerModel1)
@@ -311,6 +309,23 @@ head(sims)
 
 #simulate data with random intercepts 
 #------------------------------------
+#------------------------------------
+
+#extract the effect of each site from the M2_stanlmer model
+
+M2_stanlmer <- stan_lmer(lte ~ meanC + (1|site), 
+	data = bhclim,
+	seed = 16)
+
+print(M2_stanlmer, digits = 2)
+simsSite <- as.matrix(M2_stanlmer)
+head(simsSite)
+dens(simsSite[,3])
+siteAlpha <- colMeans(simsSite)[3:(ncol(simsSite)-2)]
+siteNames <- unique(bhclim$site)[order(unique(bhclim$site))]
+siteEffects <- data.frame(cbind(as.character(siteNames), siteAlpha))
+colnames(siteEffects)[1] <- "siteName"
+
 
 
 #i dont knwo what thsi does, but it helps with reproducibility somehow
