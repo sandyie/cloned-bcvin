@@ -14,6 +14,7 @@ library(ggplot2)
 library(rstan)
 library(lme4)
 library(rstanarm)
+library(truncnorm)
 
 
 #climate data
@@ -177,6 +178,45 @@ eps <- rnorm(nrep, 0, sigma)
 simLTE <- alpha + beta*simTemps + eps
 plot(simLTE ~ simTemps)
 
+#prior predictive check
+#------------------------------
+
+set.seed(16)
+
+#simulate over the range of simulated temperatures simTemps
+
+
+#here are teh priors used in the below stan model 
+N <- 100
+alphaPrior <- rnorm (1e4, 0, 30); #these should be weakly informative priors 
+betaPrior <-  rnorm(1e4, 0, 10);
+sigmaPrior <-  rnorm(1e4, 0, 10); 
+
+plot(NULL, xlim = range(simTemps), ylim = c(-50, 50), xlab = "Temperature",
+	ylab = "LTE50")
+xbar <- mean(simTemps)
+for ( i in 1:N ) curve( alphaPrior[i] + betaPrior[i]*(x - xbar) ,
+from=min(simTemps) , to=max(simTemps) , add=TRUE ,
+col=col.alpha("black",0.2) )
+
+#these priors look terrible! I am now going to try and make some better ones
+
+alphaPrior2 <- rtruncnorm (n=1e4, a = -Inf, b = -3, mean = -10, sd = 10) # my theory is that the LTE value starts at -3 (temperature where 
+# green tissue dies of cold) so the LTE when temp is o the highest value it can be is -3 
+dens(alphaPrior2)
+
+betaPrior2 <- rlnorm(1e4, 0 , 1) # physiologically, teh relationship between LTE50 and temoerature should be 
+#positive, so i use a lognormal distribution that onlu suggets positive numbers 
+dens( betaprior2 , xlim=c(0,5) , adj=0.1 )
+
+#plot again - still some pretty extream possibilities, but much better 
+plot(NULL, xlim = range(simTemps), ylim = c(-50, 50), xlab = "Temperature",
+	ylab = "LTE50")
+xbar <- mean(simTemps)
+for ( i in 1:N ) curve( alphaPrior2[i] + betaPrior2[i]*(x - xbar) ,
+from=min(simTemps) , to=max(simTemps) , add=TRUE ,
+col=col.alpha("black",0.2) )
+
 
 #preparing the data
 #-----------------------------
@@ -196,27 +236,23 @@ stan_data <- list(N = N, x = x, y = y)
 
 
 write("// Stan model for simple linear regression including priors 
-
 data {
  int < lower = 1 > N; // Sample size
  
  vector[N] x; // Predictor
  vector[N] y; // Outcome
 }
-
 parameters {
- real alpha; // Intercept
+ real  < upper = -3 > alpha; // Intercept - truncated at maximum LTE50 of -3 degrees C 
  real beta; // Slope (regression coefficients)
  real < lower = 0 > sigma; // Error SD
 }
-
 model {
-	alpha ~ normal (0, 30); //these shoudl eb very weakly informative priors
-	beta ~ normal(0, 10);
+	alpha ~ normal (-10, 10); //these shoudl eb very weakly informative priors
+	beta ~ lognormal(0, 1);
 	sigma ~ normal(0, 10); 
- y ~ normal(alpha + x * beta , sigma);
+	y ~ normal(alpha + x * beta , sigma);
 }
-
 generated quantities {
 } // The posterior predictive distribution",
 
@@ -305,7 +341,7 @@ randomeffects <- data.frame(cbind(as.character(variety), as.character(site)))
 
 varietySE <- 0.7/nrow(randomeffects)
 varietySD <- 2  # setting the standard error variation from variety , taken from lmer model
-varEffect <- rnorm(unique(variety), 0 , varietySD ) # random distribution of errors based on varietySE, oen for each variety 
+varEffect <- rnorm(unique(variety), mean = 0 , sd = varietySD ) # random distribution of errors based on varietySE, oen for each variety 
 vareffectFrame <- data.frame(unique(variety)) # make a dataframe to hold this info
 vareffectFrame$VarEff <- varEffect # add variety effect to dataframe so we have variety and its effect 
 
@@ -327,7 +363,7 @@ varPlotSim + geom_boxplot()+
 	theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 varModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData)
-
+summary(varModelSite)
 
 #site
 #-------------
