@@ -14,7 +14,8 @@ library(ggplot2)
 library(rstan)
 library(lme4)
 library(rstanarm)
-library(truncnorm)
+library(truncnorm) # truncated normal distribution 
+library(fitdistrplus) # fitting a gamm adsitribution 
 
 
 #climate data
@@ -248,7 +249,7 @@ parameters {
  real < lower = 0 > sigma; // Error SD
 }
 model {
-	alpha ~ normal (-10, 10); //these shoudl eb very weakly informative priors
+	alpha ~ normal (-10, 10); //these should be somewhat informative priors
 	beta ~ lognormal(0, 1);
 	sigma ~ normal(0, 10); 
 	y ~ normal(alpha + x * beta , sigma);
@@ -307,9 +308,14 @@ sims <- as.matrix(M1_stanlmer)
 dim(sims)
 head(sims)
 
+plot(bhclim$lte ~ bhclim$site)
+
 #simulate data with random intercepts 
 #------------------------------------
 #------------------------------------
+
+#Site
+#---------
 
 #extract the effect of each site from the M2_stanlmer model
 
@@ -321,35 +327,192 @@ print(M2_stanlmer, digits = 2)
 simsSite <- as.matrix(M2_stanlmer)
 head(simsSite)
 dens(simsSite[,3])
-siteAlpha <- colMeans(simsSite)[3:(ncol(simsSite)-2)]
-siteNames <- unique(bhclim$site)[order(unique(bhclim$site))]
-siteEffects <- data.frame(cbind(as.character(siteNames), siteAlpha))
+siteAlpha <- colMeans(simsSite)[3:(ncol(simsSite)-2)] # get alpha effect of each site
+siteNames <- unique(bhclim$site)[order(unique(bhclim$site))] # names of each site
+siteEffects <- data.frame(cbind(as.character(siteNames), siteAlpha)) # combine into a handy dataset 
 colnames(siteEffects)[1] <- "siteName"
 
-
-
-#i dont knwo what thsi does, but it helps with reproducibility somehow
+#thsi helps with reproducibility 
 set.seed(16)
 
-#parameter values taken from the linear mnodel lmFit
-alpha <- -21.4
-beta <- 0.53
-sigma2 <- 0.6 #(2.7/sqrt(nrow(bhclim)) = 0.055)
-nrep <- 20*length(unique(bhclim$variety))
+#parameter values taken from the m2_stanlmer model
+alpha <- colMeans(simsSite)[1]
+beta <- colMeans(simsSite)[2]
+sigma2 <- 2.776
+nrep <- 200*nrow(siteEffects)
 
+
+#simulating temperatures based on teh distribution of real temperatures 
 meanTemp <- mean(bhclim$meanC)
 sigmaTemp <- sd(bhclim$meanC)
 simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
-eps <- rnorm(nrep, 0, sigma)
+eps <- rnorm(nrep, 0, sigma2)
+
+plot(simTemps)
+
+#making a vector of hwo site effects alpha 
+siteCode <- rep(siteNames, each = 200)
+siteAlphaVar <- rep(siteAlpha, each = 200)
+
+#simulating LTE50 values based off the above parameters
+simLTEmixedSite <- alpha + siteAlphaVar + beta*simTemps + eps
+
+#put all the data into a single data frame 
+simSiteData <- data.frame(cbind(simTemps, simLTEmixedSite, as.character(siteNames)))
+names(simSiteData)[3] <- "site"
+str(simSiteData)
+head(simSiteData)
+simSiteData$simLTEmixedSite <- as.numeric(as.character(simSiteData$simLTEmixedSite))
+simSiteData$simTemps <- as.numeric(as.character(simSiteData$simTemps))
+
+#plot data to see how it looks
+plot(simLTEmixedSite ~ simTemps) # this looks ok
+plot( simSiteData$simLTEmixedSite ~ simSiteData$site)
+
+#try to model the simulated data using stanarm
+
+MsimSite_stanlmer <- stan_lmer(simLTEmixedSite ~ simTemps + (1|site), 
+	data = simSiteData,
+	seed = 16)
+
+print(MsimSite_stanlmer, digits = 2)#overestimating the effect of site, i think 
+#because in real life the lte values in each site are not normally distributed 
+plot( simSiteData$simTemps ~ simSiteData$site)
+plot(bhclim$meanC ~ bhclim$site)
+
+#playing with 
+plot(bhclim$lte ~ bhclim$site)
+plot( simSiteData$simLTEmixedSite ~ simSiteData$site)
+dens(bhclim$lte[bhclim$site == "Kelowna"])
+
+
+head(simsSite)
+dens(simsSite[,3])
+
+
+dens(bhclim$lte) # this should be a gamma distribution rather than a normal one perhaps?
+dens(simTemps)
+
+#Playing with the gamma distribution. 
+
+#tempParameters <- fitdistrplus::fitdist(bhclim$meanC+ 20, distr = "gamma", method = "mle")
+#str(tempParameters)
+#shape <- tempParameters$estimate[1]
+#rate <- tempParameters$estimate[2]
+
+#simTempsG <- rgamma(nrep, shape, rate) - 20
+#dens(simTempsG)
+
+
+#Trying Variety
+#---------------------------
+
+
+#extract the effect of each site from the M2_stanlmer model
+
+M3_stanlmer <- stan_lmer(lte ~ meanC + (1|variety), 
+	data = bhclim,
+	seed = 16)
+
+print(M3_stanlmer, digits = 2)
+simsVar <- as.matrix(M3_stanlmer)
+str(simsVar)
+dens(simsVar[,3])
+
+varAlpha <- colMeans(simsVar)[3:(ncol(simsSite)-3)]
+varNames <- unique(bhclim$variety)[order(unique(bhclim$variety))]
+varEffects <- data.frame(cbind(as.character(varNames), varAlpha))
+colnames(varEffects)[1] <- "varName"
+
+#thsi helps with reproducibility 
+set.seed(16)
+
+#parameter values taken from the m2_stanlmer model
+alpha <- colMeans(simsVar)[1]
+beta <- colMeans(simsVar)[2]
+sigma2 <- 2.753
+nrep <- 200*nrow(varEffects)
+
+
+#simulating temperatures based on teh distribution of real temperatures 
+meanTemp <- mean(bhclim$meanC)
+sigmaTemp <- sd(bhclim$meanC)
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+eps <- rnorm(nrep, 0, sigma2)
+
+plot(simTemps)
+
+#making a vector of hwo site effects alpha 
+varCode <- rep(varNames, each = 200)
+varAlphaVar <- rep(varAlpha, each = 200) # repeat alpha values for each variety 
+
+#simulating LTE50 values based off the above parameters
+simLTEmixedVar <- alpha + varAlphaVar + beta*simTemps + eps
+
+#put all the data into a single data frame 
+simVarData <- data.frame(cbind(simTemps, simLTEmixedVar, as.character(varNames)))
+names(simVarData )[3] <- "variety"
+str(simVarData)
+head(simVarData)
+simVarData$simLTEmixedVar <- as.numeric(as.character(simVarData$simLTEmixedVar))
+simVarData$simTemps <- as.numeric(as.character(simVarData$simTemps))
+
+#plot data to see how it looks
+plot(simLTEmixedVar ~ simTemps) # this looks ok
+plot( simVarData$simLTEmixedVar ~ simVarData$variety)
+
+#try to model the simulated data using stanarm
+
+MsimVar_stanlmer <- stan_lmer(simLTEmixedVar ~ simTemps + (1|variety), 
+	data = simVarData,
+	seed = 16)
+
+print(MsimVar_stanlmer, digits = 2)#overestimating the effect of site, i think 
+# again because LTE50 is not normally distributed 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #grouping variables 
 variety <- bhclim$variety
 site <- bhclim$site
 
+
+
 #group level effects - Parameters taken from M1_stanlmer
 #try with one random effect first (site)
 
 randomeffects <- data.frame(cbind(as.character(variety), as.character(site)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #variety 
 #-----------------
