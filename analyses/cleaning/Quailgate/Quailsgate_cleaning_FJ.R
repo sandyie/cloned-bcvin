@@ -10,6 +10,7 @@ options(stringsAsFactors = FALSE)
 #libraries
 library(data.table) # for binding lists together
 library(dplyr)
+library(readr) # getting numbers from strings 
 
 #read in spreadsheets
 #--------------------------------------------------
@@ -20,6 +21,7 @@ sheetNames <- list.files()#check what files are present
 
 #drop 2012 David sheet because i dont know what it is, but it doesnt seem to have phenology data?
 sheetNames <- sheetNames [!sheetNames == "David2012_PhenologicalData.csv"] 
+sheetNameList <- gsub(".csv", "", sheetNames)
 
 #make an empty list to hold the data 
 phenology0012List <- list()
@@ -47,11 +49,10 @@ str(phenology0012List)
 
 #remove "total" rows
 
-for (yearData in sheetNamesPheno00122){
+for (yearData in sheetNameList){
 	#yearData <- "2008"
 
-	sheet <- paste("phenology", yearData, sep = "") 
-	phenSheeti <- phenology0012List[[sheet]]
+	phenSheeti <- phenology0012List[[yearData]]
 
 	#remove "total" rows 
 	if("Total" %in% phenSheeti$Variety){
@@ -111,11 +112,10 @@ for (yearData in sheetNamesPheno00122){
 
 
 	#add year column 
-	phenSheeti$Year <- yearData
+	phenSheeti$Year <- gsub("_PhenologicalData", "", yearData)
 
 	
-
-	phenology0012ListCh[[sheet]] <- data.frame(lapply(phenSheeti, as.character))
+	phenology0012ListCh[[yearData]] <- data.frame(lapply(phenSheeti, as.character))
 
 }
 
@@ -123,23 +123,56 @@ for (yearData in sheetNamesPheno00122){
 phen0012AllCh <- data.table::rbindlist(phenology0012ListCh, fill = TRUE)
 phen0012AllCh$Year <- as.numeric(phen0012AllCh$Year )
 
+
 head(phen0012AllCh[order(phen0012AllCh$Year)])
 phen0012AllCh <- data.table(phen0012AllCh %>%
   mutate_all(as.character) )
 
 phen0012AllCh$Vineyard <- NULL # this column is only used for totals that we will remove anyway
+
+#date planted 
+#make a comments column 
+phen0012AllCh$CommentsPlanted <- NA
 phen0012AllCh$Planted # we need to decide what to do with years with a slash in them 
+phen0012AllCh$#make a comments column 
+phen0012AllCh$CommentsPlanted[phen0012AllCh$Planted %like% "/"] <- paste("dates planted range ", 
+	phen0012AllCh$Planted[phen0012AllCh$Planted %like% "/"], sep = " ") # add thsi infor to comments section 
+phen0012AllCh$Planted <- gsub("\\/..", "", phen0012AllCh$Planted)
+phen0012AllCh$Planted <- as.numeric(phen0012AllCh$Planted)
+
+#Acres
 phen0012AllCh$Acres <- as.numeric(phen0012AllCh$Acres)
 
 #clean flowering dates 
 #need to decide what to do with time slots
+phen0012AllCh$Flowering
+phen0012AllCh$CommentsFlowering <- paste("original flowering date was" , phen0012AllCh$Flowering, sep = " ")
+phen0012AllCh$Flowering[phen0012AllCh$Flowering %in% c("?", "n/a", "na", "Grafts")] <- NA
+phen0012AllCh$Flowering <- gsub("-Jun", " June", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("-May", " May", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("-Apr", " April", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub(" Apr", " April", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("Jun-", "June ", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("_Jun", " June", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("Jun", "June", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("ee", "e", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("-Jul", " July", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("Jul-", "July ", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("\\-..", "", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- gsub("j", "J", phen0012AllCh$Flowering)
+phen0012AllCh$Flowering <- sub("^7J ", "7 J", phen0012AllCh$Flowering)
 
-#lag dates
+floweringDate <- readr::parse_number(phen0012AllCh$Flowering) # select just teh numbers
+floweringMonth <- gsub("[[:digit:]]| ", "", phen0012AllCh$Flowering) # select just the months
+FloweringDateNoYear <- paste(floweringMonth, floweringDate, sep = "-")#make up a string of numbers for the date
+phen0012AllCh$FloweringDate <- paste(phen0012AllCh$Year, FloweringDateNoYear, sep = "-")
+phen0012AllCh$FloweringDate [phen0012AllCh$FloweringDate  %in% c("-NA", "NA-NA")] <- NA
+phen0012AllCh$FloweringDate <- as.Date(phen0012AllCh$FloweringDate, format = "%Y-%B-%d" )#convert to as.date format
+
+#lag dates - just a simple conversion to dates 
 phen0012AllCh$Lag.Phase.Date  
-longLagDates <- phen0012AllCh$Lag.Phase.Date [grep(" 00:00:00", phen0012AllCh$Lag.Phase.Date)]
-phen0012AllCh$Lag.Phase.Date  [phen0012AllCh$Lag.Phase.Date   %in% longLagDates] <- gsub(
-	" 00:00:00", "", phen0012AllCh$Lag.Phase.Date)
-phen0012AllCh$Lag.Phase.Date <- as.Date(phen0012AllCh$Lag.Phase.Date,  "%Y-%m-%d")
+longLagDates <- paste(phen0012AllCh$Year, phen0012AllCh$Lag.Phase.Date, sep = "-" )
+phen0012AllCh$Lag.Phase.Date <- as.Date(longLagDates,  "%Y-%d-%b")
 
 #lag phase gram
 
@@ -148,14 +181,25 @@ phen0012AllCh$Lag.Phase.G.Vine <- gsub("g", "", phen0012AllCh$Lag.Phase.G.Vine)
 phen0012AllCh$Lag.Phase.G.Vine [phen0012AllCh$Lag.Phase.G.Vine == "na"] <- NA
 phen0012AllCh$Lag.Phase.G.Vine  <- as.numeric(phen0012AllCh$Lag.Phase.G.Vine )
 
-#50% verasion date - need to decide what to do with date ranges 
+#50% verasion date - need modeify date ranges 
 phen0012AllCh$X50.Veraison.Date 
+phen0012AllCh$CommentsVerasion <- paste("original verasion date is ", phen0012AllCh$X50.Veraison.Date, sep = "")
+phen0012AllCh$X50.Veraison.Date <- gsub("^Aug-", "Aug ", phen0012AllCh$X50.Veraison.Date )
+phen0012AllCh$X50.Veraison.Date <- gsub("^Sep-", "Sep ", phen0012AllCh$X50.Veraison.Date )
+phen0012AllCh$X50.Veraison.Date <- gsub("-Sep", " Sep", phen0012AllCh$X50.Veraison.Date )
+phen0012AllCh$X50.Veraison.Date <- gsub("-Aug", " Aug", phen0012AllCh$X50.Veraison.Date )
+phen0012AllCh$X50.Veraison.Date <- gsub("\\-..", "", phen0012AllCh$X50.Veraison.Date )
+
+verasionDate <- readr::parse_number(phen0012AllCh$X50.Veraison.Date) # select just teh numbers
+verasionMonth <- gsub("[[:digit:]]| ", "", phen0012AllCh$X50.Veraison.Date) # select just the months
+verasionDateNoYear <- paste(verasionMonth, verasionDate, sep = "-")
+phen0012AllCh$X50.Veraison.Date <- paste(phen0012AllCh$Year, verasionDateNoYear, sep = "-")
+phen0012AllCh$X50.Veraison.Date <- as.Date(phen0012AllCh$X50.Veraison.Date, format = "%Y-%b-%d")
 
 #pick weight
 phen0012AllCh$Pick.Weight.Grams <- as.numeric(phen0012AllCh$Pick.Weight.Grams)
 
-#Year 
-phen0012AllCh$Year <- as.numeric(phen0012AllCh$Year)
+#Year - already clean 
 
 #Plants 
 phen0012AllCh$Plants <- as.numeric(phen0012AllCh$Plants)
@@ -164,6 +208,10 @@ phen0012AllCh$Plants <- as.numeric(phen0012AllCh$Plants)
 
 #Budburts - need to decide what to do with date ranges 
 phen0012AllCh$Budburst
+
+
+
+
 
 #cluster per vine
 phen0012AllCh$Clust.per.Vine <- as.numeric(phen0012AllCh$Clust.per.Vine) 
