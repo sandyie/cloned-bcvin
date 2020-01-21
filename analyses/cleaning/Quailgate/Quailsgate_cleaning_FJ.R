@@ -8,52 +8,35 @@ rm(list = ls())
 options(stringsAsFactors = FALSE)
 
 #libraries
-library(XLConnect) # for talking to excel
 library(data.table) # for binding lists together
 library(dplyr)
 
 #read in spreadsheets
 #--------------------------------------------------
 
-setwd("/home/faith/Documents/github/bcvin/data/quailsgate")
-list.files()#check what files are present 
+#phenology data 2001-2012
+setwd("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/phenologicaldata")
+sheetNames <- list.files()#check what files are present 
 
-#brix and variety data 2000-2012
-
-
-#phenology data 2000-2012
-#
-
-#connect to excel file
-phenology0012 <- XLConnect::loadWorkbook ( "PHENOLOGICAL_DATA_ed_MY.xls" , create = TRUE )
-
-sheetNamesPheno0012 <- getSheets(phenology0012)#lists the sheet names within an excel file 
-#drop 2012 David sheet because i dont know what it is 
-sheetNamesPheno00122 <- sheetNamesPheno0012 [!sheetNamesPheno0012 == "David 2012"] 
-
-#open all the year's spreadsheets containing phenology data 
-phenology2012 <- readWorksheet(phenology0012, sheet = "2012", startRow = 0, endRow = 10,
-startCol = 0, endCol = 0)
+#drop 2012 David sheet because i dont know what it is, but it doesnt seem to have phenology data?
+sheetNames <- sheetNames [!sheetNames == "David2012_PhenologicalData.csv"] 
 
 #make an empty list to hold the data 
 phenology0012List <- list()
 phenology0012ListCh <- list() # this one is all characters to help with merging 
 
 
-#loop to open up all the sheets, assign them names, and clean columns 
-for(sheetname in sheetNamesPheno00122)
+#read in all the year's spreadsheets containing phenology data 
+#loop to open up all the sheets, assign them names, and add them too the list 
+for(sheetname in sheetNames)
 
 	{
-	sheet <- paste("phenology", sheetname, sep = "") 
-	phenSheetn <- readWorksheet(phenology0012, sheet = sheetname, 
-		startRow = 0, endRow = 100, startCol = 0, endCol = 0)
-
-	phenSheetn$Year <- sheetname # make a year column 
-	phenology0012List[[sheet]] <- phenSheetn
+	nameList <- gsub(".csv", "", sheetname)
+	phenology0012List[[nameList]] <- read.csv(sheetname)
 }
 
+str(phenology0012List)
 
-# the error is because there are some cells in excel that are conveted to nas
 
 #2009 has no verasion data 
 #2008 seems to have extra verasion data that i dont understand 
