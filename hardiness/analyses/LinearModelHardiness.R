@@ -404,9 +404,8 @@ dens(simTemps)
 #dens(simTempsG)
 
 
-#Trying Variety
+# Variety
 #---------------------------
-
 
 #extract the effect of each site from the M2_stanlmer model
 
@@ -419,7 +418,7 @@ simsVar <- as.matrix(M3_stanlmer)
 str(simsVar)
 dens(simsVar[,3])
 
-varAlpha <- colMeans(simsVar)[3:(ncol(simsSite)-3)]
+varAlpha <- colMeans(simsVar)[3:(ncol(simsVar)-2)]
 varNames <- unique(bhclim$variety)[order(unique(bhclim$variety))]
 varEffects <- data.frame(cbind(as.character(varNames), varAlpha))
 colnames(varEffects)[1] <- "varName"
@@ -471,158 +470,77 @@ print(MsimVar_stanlmer, digits = 2)#overestimating the effect of site, i think
 # again because LTE50 is not normally distributed 
 
 
+#Year 
+#--------------------------------
+
+#treat year like a factor
+
+bhclim$yearFactor <- as.factor(bhclim$Year)
+#extract the effect of each site from the M2_stanlmer model
+
+M4_stanlmer <- stan_lmer(lte ~ meanC + (1|yearFactor), 
+	data = bhclim, adapt_delta = 0.98,
+	seed = 16)
+
+print(M4_stanlmer, digits = 2)
+simsYear <- as.matrix(M4_stanlmer)
+str(simsYear)
+dens(simsYear[,3])
+
+yearAlpha <- colMeans(simsYear)[3:(ncol(simsYear)-2)]
+years <- unique(bhclim$yearFactor)[order(unique(bhclim$yearFactor))]
+yearEffects <- data.frame(cbind(as.character(years), yearAlpha))
+colnames(yearEffects)[1] <- "year"
+
+#thsi helps with reproducibility 
+set.seed(16)
+
+#parameter values taken from the m2_stanlmer model
+alpha <- colMeans(simsYear)[1]
+beta <- colMeans(simsYear)[2]
+sigma2 <- 2.763
+nrep <- 200*nrow(yearEffects)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-#grouping variables 
-variety <- bhclim$variety
-site <- bhclim$site
-
-
-
-#group level effects - Parameters taken from M1_stanlmer
-#try with one random effect first (site)
-
-randomeffects <- data.frame(cbind(as.character(variety), as.character(site)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#variety 
-#-----------------
-
-varietySE <- 0.7/nrow(randomeffects)
-varietySD <- 2  # setting the standard error variation from variety , taken from lmer model
-varEffect <- rnorm(unique(variety), mean = 0 , sd = varietySD ) # random distribution of errors based on varietySE, oen for each variety 
-vareffectFrame <- data.frame(unique(variety)) # make a dataframe to hold this info
-vareffectFrame$VarEff <- varEffect # add variety effect to dataframe so we have variety and its effect 
-
-lotsvarDataName <- rep(unique(variety), each = 20) # have 20 data points per variety 
-lotsvarData <- rep(unique(varEffect), each = 20) # add standard error to that  
-alphaVar <- lotsvarData # name teh effect fo variety for model building 
-
-length(alphaVar)
-
-plottingData <- data.frame(cbind(simLTEmixed, simTemps, as.character(lotsvarDataName)))
-str(plottingData)
-head(plottingData)
-plottingData$simTemps <- as.numeric(as.character(plottingData$simTemps))
-plottingData$simLTEmixed <- as.numeric(as.character(plottingData$simLTEmixed))
-
-varPlotSim <- ggplot(aes(x = lotsvarDataName, y = simLTEmixed), data = plottingData)
-varPlotSim + geom_boxplot()+
-	theme_classic()+ ylab("LTE50")+
-	theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-varModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData)
-summary(varModelSite)
-
-#site
-#-------------
-#parameter values taken from the linear mnodel lmFit
-alpha <- -21.4
-beta <- 0.53
-sigma2 <- 0.6 #(2.7/sqrt(nrow(bhclim)) = 0.055)
-nrep <- 20*length(unique(bhclim$site))
-
+#simulating temperatures based on teh distribution of real temperatures 
 meanTemp <- mean(bhclim$meanC)
 sigmaTemp <- sd(bhclim$meanC)
 simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
-eps <- rnorm(nrep, 0, sigma)
+eps <- rnorm(nrep, 0, sigma2)
 
-siteSD <- 1
-siteEffect <- rnorm(unique(site), 0 , siteSD)
-siteeffectFrame <- data.frame(unique(site))
-siteeffectFrame$SiteEff <- siteEffect
+plot(simTemps)
 
-lotssiteDataName <- rep(unique(site), each = 20)
-lotssiteData <- rep(unique(siteEffect), each = 20)
-length(lotssiteData)
-alphaSite <- lotssiteData
+#making a vector of hwo site effects alpha 
+yearCode <- rep(years, each = 200)
 
-length(alphaSite)
+yearAlphaVar <- rep(yearAlpha, each = 200) # repeat alpha values for each variety 
 
+#simulating LTE50 values based off the above parameters
+simLTEmixedyear <- alpha + yearAlphaVar + beta*simTemps + eps
 
-simLTEmixed <- alpha + alphaVar + beta*simTemps + eps
-plot(simLTEmixed ~ simTemps)
+#put all the data into a single data frame 
+simYearData <- data.frame(cbind(simTemps, simLTEmixedyear, as.character(yearCode)))
+names(simYearData )[3] <- "year"
+str(simYearData)
+head(simYearData)
+simYearData$simLTEmixedyear <- as.numeric(as.character(simYearData$simLTEmixedyear))
+simYearData$simTemps <- as.numeric(as.character(simYearData$simTemps))
 
-plottingData2 <- data.frame(cbind(simLTEmixed, simTemps, as.character(lotssiteDataName)))
-str(plottingData2)
-head(plottingData2)
-plottingData2$simTemps <- as.numeric(as.character(plottingData2$simTemps))
-plottingData2$simLTEmixed <- as.numeric(as.character(plottingData2$simLTEmixed))
+#plot data to see how it looks
+plot(simLTEmixedyear ~ simTemps) # this looks ok
+plot( simYearData$simLTEmixedyear ~ simYearData$year)
 
-sitePlotSim <- ggplot(aes(x = lotssiteDataName, y = simLTEmixed), data = plottingData)
-sitePlotSim + geom_boxplot()+
-	theme_classic()+ ylab("LTE50")+
-	theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#try to model the simulated data using stanarm
 
+MsimYear_stanlmer <- stan_lmer(simLTEmixedyear ~ simTemps + (1|year), 
+	data = simYearData,
+	seed = 16)
 
-simModelSite <- lmer(simLTEmixed ~ simTemps + (1|V3), data = plottingData2)
-
-lm(simLTEmixed ~ simTemps, data = plottingData)
-
-#try two levels of variation, site and variety
-#------------------------------------------------------
+print(MsimVar_stanlmer, digits = 2)
 
 
-#group level effects - Parameters taken from M1_stanlmer
-#try with one random effect first (site)
-
-randomeffects # a dataframe of the two random effects, site and variety, from actual data
-names(randomeffects) <- c("variety", "site")
-randomeffectsSite <- merge(randomeffects, siteeffectFrame, by.x = "site", by.y = "unique.site.")
-randomeffectsALL <- merge(randomeffectsSite, vareffectFrame,  by.x = "variety", by.y = "unique.variety.")
-head(randomeffectsALL)
 
 
-nrep <- nrow(bhclim)
-alpha <- -21.4
-beta <- 0.53
-sigma2 <- 0.6 #general noise
-meanTemp <- mean(bhclim$meanC)
-sigmaTemp <- sd(bhclim$meanC)
-simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
-
-eps <- rnorm(nrep, 0, sigma)
 
 
-siteEffectAlpha <- randomeffectsALL$SiteEff
-varEffectAlpha <- randomeffectsALL$VarEff
 
-simLTEmixed <- alpha + siteEffectAlpha + varEffectAlpha + beta*simTemps + eps
-plot(simLTEmixed ~ simTemps)
-
-#make a datagframe containing teh simulated data and levels 
-simData2level <-  randomeffects
-simData2level$simTenps <- simTemps
-simData2level$simLTEmixed <- simLTEmixed
-
-#test model - currently not working 
-simModelSiteVar <- lmer(simLTEmixed ~ simTemps + (1|site) + (1|variety), data = simData2level)
