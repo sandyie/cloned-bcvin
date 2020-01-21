@@ -37,6 +37,11 @@ PHENOLOGICAL_DATA_ed_MY
   phenological events. 
 * this fiel has already undergone a bit of manual cleaning by Mika, but needs the different tabs for each 
   year combining and some rehsaping
+*WHen cleaning this data, FJ did teh follwoing:
+	* when there where date ranges, i used teh first date and then made a comments column for
+	  that variable where i noted the original data 
+	* i tried to match all teh column names of teh different spreadsheets, but i was not sure about one because there seemed to be two berry and bunch weight columns. I named teh second one in teh seet "Av.Berry.Weight.Grams.1"
+	* teh variables in a column of phenology events are flowering date, lag phase date, 50 and 80% verasion date, budburst and picking date   
 
 /vinyardmaps/vinyardMapsDataCompiled_MY 
 * information on what different blocks are, where they are and when they were planted, how big they are
