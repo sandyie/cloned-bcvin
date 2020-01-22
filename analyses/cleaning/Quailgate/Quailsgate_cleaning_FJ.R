@@ -11,6 +11,7 @@ options(stringsAsFactors = FALSE)
 library(data.table) # for binding lists together
 library(dplyr)
 library(readr) # getting numbers from strings 
+library(tidyr) # for reshaping data
 
 #read in spreadsheets
 #--------------------------------------------------
@@ -288,8 +289,16 @@ phen0012AllCh$X2008.Actual <- as.numeric(phen0012AllCh$X2008.Actual)
 
 names(phen0012AllCh)
 
+#make a column for phenology date and one for phenology event
+#------------------------------------
 
+phenologyColumns <- c("Flowering", "Lag.Phase.Date", "X50.Veraison.Date", "X80.Veraison.Date", "Budburst", "Pick.Date")
 
+PhenologyData<- phen0012AllCh %>%
+	gather(key = "phenologyEvent", value = "phenologyDate", phenologyColumns, na.rm = TRUE)
+
+head(PhenologyData)
+write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/Quailgate/PhenologyData2001to2012.csv")
 
 
 
