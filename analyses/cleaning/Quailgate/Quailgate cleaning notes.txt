@@ -26,8 +26,7 @@ Phenological Data Report 2012 - 2016
 *  this file contains data on some phenological events such as budburst (Right after wooly bud stage),
    full bloom and lag phase. 
 *  There is a column with location and sub location info, but it needs seperating out  
-*  the phenology column needs cleaning a bit because sometimes there are commenst like "Around 5% winter 
-   bud damage (primary bud) Riesling BudBreak April-20th B1, B2,B4" 
+*  the phenology column needs cleaning a bit because sometimes there are commenst like "Around 5% winter bud damage (primary bud) Riesling BudBreak April-20th B1, B2,B4" 
 *  there is a lot of values like "E-L 24" in the phenology column - what do they mean?
 *  the different subsections need removing so it is a single cohesive spreadsheet 
 *  blank rows need removing 
