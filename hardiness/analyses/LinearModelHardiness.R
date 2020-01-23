@@ -251,7 +251,7 @@ parameters {
 model {
 	alpha ~ normal (-10, 10); //these should be somewhat informative priors
 	beta ~ lognormal(0, 1);
-	sigma ~ normal(0, 10); 
+	sigma ~ normal(0, 10); // a trunctated normal distribution is less generative than a log normal - i should reconsider 
 	y ~ normal(alpha + x * beta , sigma);
 }
 generated quantities {
@@ -310,237 +310,53 @@ head(sims)
 
 plot(bhclim$lte ~ bhclim$site)
 
-#simulate data with random intercepts 
-#------------------------------------
-#------------------------------------
-
-#Site
-#---------
-
-#extract the effect of each site from the M2_stanlmer model
-
-M2_stanlmer <- stan_lmer(lte ~ meanC + (1|site), 
-	data = bhclim,
-	seed = 16)
-
-print(M2_stanlmer, digits = 2)
-simsSite <- as.matrix(M2_stanlmer)
-head(simsSite)
-dens(simsSite[,3])
-siteAlpha <- colMeans(simsSite)[3:(ncol(simsSite)-2)] # get alpha effect of each site
-siteNames <- unique(bhclim$site)[order(unique(bhclim$site))] # names of each site
-siteEffects <- data.frame(cbind(as.character(siteNames), siteAlpha)) # combine into a handy dataset 
-colnames(siteEffects)[1] <- "siteName"
-
-#thsi helps with reproducibility 
+#try and simulate a multi level model of hardiness against temp partially pooled by variety 
+#-------------------------------------------------------------------------------------
 set.seed(16)
+#model should be:
 
-#parameter values taken from the m2_stanlmer model
-alpha <- colMeans(simsSite)[1]
-beta <- colMeans(simsSite)[2]
-sigma2 <- 2.776
-nrep <- 200*nrow(siteEffects)
+# y ~ Normal((alpha + alphaSite) + beta * x, sigma/eps)
 
+#parameters 
+#LTE50sim (y ) is simulated using parameters
+#inputs
+meanTemp <- mean(bhclim$meanC) #2.03
+sigmaTemp <- sd(bhclim$meanC) #4.81
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
 
-#simulating temperatures based on teh distribution of real temperatures 
+varNames <- as.factor(c(1:20)) # make 20 "varieties" named "1" to "20"
+
+#parameters (mostly taken from the lmer model)
+nrep <- 20 # number of reps of each variety 
+alpha <- -21.4
+alphavar<- rep( rnorm(nrep, 0, 0.3), 20) # random 20 draws from a normal distribution with mean 0 and sd 0.3, repeated 20 times
+beta <- 0.52
+sigma <-  0.6
+eps <- rnorm(nrep*length(varNames ), 0, sigma)
+
+#sigma <- sqrt(sigma2)
+
 meanTemp <- mean(bhclim$meanC)
 sigmaTemp <- sd(bhclim$meanC)
-simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
-eps <- rnorm(nrep, 0, sigma2)
+simTemps <- rnorm(nrep*length(varNames ), meanTemp , sigmaTemp)
+eps <- rnorm(nrep*length(varNames ), 0, sigma)
 
-plot(simTemps)
+simLTEVar <- alpha + alphavar + beta*simTemps + eps
+plot(simLTEVar ~ simTemps)
 
-#making a vector of hwo site effects alpha 
-siteCode <- rep(siteNames, each = 200)
-siteAlphaVar <- rep(siteAlpha, each = 200)
+#combine into a single data table
 
-#simulating LTE50 values based off the above parameters
-simLTEmixedSite <- alpha + siteAlphaVar + beta*simTemps + eps
-
-#put all the data into a single data frame 
-simSiteData <- data.frame(cbind(simTemps, simLTEmixedSite, as.character(siteNames)))
-names(simSiteData)[3] <- "site"
-str(simSiteData)
-head(simSiteData)
-simSiteData$simLTEmixedSite <- as.numeric(as.character(simSiteData$simLTEmixedSite))
-simSiteData$simTemps <- as.numeric(as.character(simSiteData$simTemps))
-
-#plot data to see how it looks
-plot(simLTEmixedSite ~ simTemps) # this looks ok
-plot( simSiteData$simLTEmixedSite ~ simSiteData$site)
-
-#try to model the simulated data using stanarm
-
-MsimSite_stanlmer <- stan_lmer(simLTEmixedSite ~ simTemps + (1|site), 
-	data = simSiteData,
-	seed = 16)
-
-print(MsimSite_stanlmer, digits = 2)#overestimating the effect of site, i think 
-#because in real life the lte values in each site are not normally distributed 
-plot( simSiteData$simTemps ~ simSiteData$site)
-plot(bhclim$meanC ~ bhclim$site)
-
-#playing with 
-plot(bhclim$lte ~ bhclim$site)
-plot( simSiteData$simLTEmixedSite ~ simSiteData$site)
-dens(bhclim$lte[bhclim$site == "Kelowna"])
-
-
-head(simsSite)
-dens(simsSite[,3])
-
-
-dens(bhclim$lte) # this should be a gamma distribution rather than a normal one perhaps?
-dens(simTemps)
-
-#Playing with the gamma distribution. 
-
-#tempParameters <- fitdistrplus::fitdist(bhclim$meanC+ 20, distr = "gamma", method = "mle")
-#str(tempParameters)
-#shape <- tempParameters$estimate[1]
-#rate <- tempParameters$estimate[2]
-
-#simTempsG <- rgamma(nrep, shape, rate) - 20
-#dens(simTempsG)
-
-
-# Variety
-#---------------------------
-
-#extract the effect of each site from the M2_stanlmer model
-
-M3_stanlmer <- stan_lmer(lte ~ meanC + (1|variety), 
-	data = bhclim,
-	seed = 16)
-
-print(M3_stanlmer, digits = 2)
-simsVar <- as.matrix(M3_stanlmer)
-str(simsVar)
-dens(simsVar[,3])
-
-varAlpha <- colMeans(simsVar)[3:(ncol(simsVar)-2)]
-varNames <- unique(bhclim$variety)[order(unique(bhclim$variety))]
-varEffects <- data.frame(cbind(as.character(varNames), varAlpha))
-colnames(varEffects)[1] <- "varName"
-
-#thsi helps with reproducibility 
-set.seed(16)
-
-#parameter values taken from the m2_stanlmer model
-alpha <- colMeans(simsVar)[1]
-beta <- colMeans(simsVar)[2]
-sigma2 <- 2.753
-nrep <- 200*nrow(varEffects)
-
-
-#simulating temperatures based on teh distribution of real temperatures 
-meanTemp <- mean(bhclim$meanC)
-sigmaTemp <- sd(bhclim$meanC)
-simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
-eps <- rnorm(nrep, 0, sigma2)
-
-plot(simTemps)
-
-#making a vector of hwo site effects alpha 
-varCode <- rep(varNames, each = 200)
-varAlphaVar <- rep(varAlpha, each = 200) # repeat alpha values for each variety 
-
-#simulating LTE50 values based off the above parameters
-simLTEmixedVar <- alpha + varAlphaVar + beta*simTemps + eps
-
-#put all the data into a single data frame 
-simVarData <- data.frame(cbind(simTemps, simLTEmixedVar, as.character(varNames)))
-names(simVarData )[3] <- "variety"
+simVarData <- data.frame(cbind(simTemps, varNames, alphasite, simLTEVar))
 str(simVarData)
-head(simVarData)
-simVarData$simLTEmixedVar <- as.numeric(as.character(simVarData$simLTEmixedVar))
-simVarData$simTemps <- as.numeric(as.character(simVarData$simTemps))
 
-#plot data to see how it looks
-plot(simLTEmixedVar ~ simTemps) # this looks ok
-plot( simVarData$simLTEmixedVar ~ simVarData$variety)
+simVarData$varNames <- as.factor(simVarData$varNames )
 
-#try to model the simulated data using stanarm
+#try this simulated data in a model 
 
-MsimVar_stanlmer <- stan_lmer(simLTEmixedVar ~ simTemps + (1|variety), 
+varPoolM <- stan_lmer(simLTEVar ~ simTemps + (1 |varNames), 
 	data = simVarData,
 	seed = 16)
+print(varPoolM, digits = 2)
 
-print(MsimVar_stanlmer, digits = 2)#overestimating the effect of site, i think 
-# again because LTE50 is not normally distributed 
-
-
-#Year 
-#--------------------------------
-
-#treat year like a factor
-
-bhclim$yearFactor <- as.factor(bhclim$Year)
-#extract the effect of each site from the M2_stanlmer model
-
-M4_stanlmer <- stan_lmer(lte ~ meanC + (1|yearFactor), 
-	data = bhclim, adapt_delta = 0.98,
-	seed = 16)
-
-print(M4_stanlmer, digits = 2)
-simsYear <- as.matrix(M4_stanlmer)
-str(simsYear)
-dens(simsYear[,3])
-
-yearAlpha <- colMeans(simsYear)[3:(ncol(simsYear)-2)]
-years <- unique(bhclim$yearFactor)[order(unique(bhclim$yearFactor))]
-yearEffects <- data.frame(cbind(as.character(years), yearAlpha))
-colnames(yearEffects)[1] <- "year"
-
-#thsi helps with reproducibility 
-set.seed(16)
-
-#parameter values taken from the m2_stanlmer model
-alpha <- colMeans(simsYear)[1]
-beta <- colMeans(simsYear)[2]
-sigma2 <- 2.763
-nrep <- 200*nrow(yearEffects)
-
-
-#simulating temperatures based on teh distribution of real temperatures 
-meanTemp <- mean(bhclim$meanC)
-sigmaTemp <- sd(bhclim$meanC)
-simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
-eps <- rnorm(nrep, 0, sigma2)
-
-plot(simTemps)
-
-#making a vector of hwo site effects alpha 
-yearCode <- rep(years, each = 200)
-
-yearAlphaVar <- rep(yearAlpha, each = 200) # repeat alpha values for each variety 
-
-#simulating LTE50 values based off the above parameters
-simLTEmixedyear <- alpha + yearAlphaVar + beta*simTemps + eps
-
-#put all the data into a single data frame 
-simYearData <- data.frame(cbind(simTemps, simLTEmixedyear, as.character(yearCode)))
-names(simYearData )[3] <- "year"
-str(simYearData)
-head(simYearData)
-simYearData$simLTEmixedyear <- as.numeric(as.character(simYearData$simLTEmixedyear))
-simYearData$simTemps <- as.numeric(as.character(simYearData$simTemps))
-
-#plot data to see how it looks
-plot(simLTEmixedyear ~ simTemps) # this looks ok
-plot( simYearData$simLTEmixedyear ~ simYearData$year)
-
-#try to model the simulated data using stanarm
-
-MsimYear_stanlmer <- stan_lmer(simLTEmixedyear ~ simTemps + (1|year), 
-	data = simYearData,
-	seed = 16)
-
-print(MsimVar_stanlmer, digits = 2)
-
-
-
-
-
-
-
+#ok, so this model is doing an ok job of predicting - 0.25 rather than 0.3. I could
+#probably improve prediction with priors, but im going to try and do that in STAN
