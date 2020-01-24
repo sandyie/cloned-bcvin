@@ -16,7 +16,7 @@ library(lme4)
 library(rstanarm)
 library(truncnorm) # truncated normal distribution 
 library(fitdistrplus) # fitting a gamm adsitribution 
-
+library(brms)
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -346,17 +346,168 @@ plot(simLTEVar ~ simTemps)
 
 #combine into a single data table
 
-simVarData <- data.frame(cbind(simTemps, varNames, alphasite, simLTEVar))
+simVarData <- data.frame(cbind(simTemps, varNames, simLTEVar))
 str(simVarData)
 
 simVarData$varNames <- as.factor(simVarData$varNames )
 
 #try this simulated data in a model 
 
+prior1 <- prior(normal(-10,10), class="Intercept")+prior(lognormal(0, 1),class="sd")+
+prior(lognormal(0, 1),class="sigma") # sigma is overall variation, sd is variation from random effect 
+
+modelbrms <- brm(simLTEVar ~ simTemps + (1 |varNames), 
+	data = simVarData,
+	family = gaussian(),
+	prior = prior1)
+
+
 varPoolM <- stan_lmer(simLTEVar ~ simTemps + (1 |varNames), 
 	data = simVarData,
 	seed = 16)
 print(varPoolM, digits = 2)
 
+
 #ok, so this model is doing an ok job of predicting - 0.25 rather than 0.3. I could
 #probably improve prediction with priors, but im going to try and do that in STAN
+
+
+#try and write a stan model multi level on the intercept using simulated data
+#--------------------------------------
+
+
+#preparing the data
+#-----------------------------
+
+# I need to index the x values from 1 to n(x)
+
+x <- I(simVarData$simTemps)
+y <- simVarData$simLTEmixedVar
+N <- length(simVarData$simTemps)
+Variety <- as.integer(as.factor(simVarData$varNames ))
+J <- length(unique(Variety))
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+stan_data <- list(N = N, x = x, y = y, J = J, variety = Variety)
+
+
+write("//
+// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety 
+//
+// Stan model for partially pooled linear regression including priors 
+
+data {
+	int < lower = 1 > N; // Sample size - number of data points
+	int < lower = 1 > J; // number of random effect levels (varieties) 
+	int < lower = 1, upper = J > variety[N]; // id of random effect (variety)
+	vector[N] x; // Predictor
+	vector[N] y; // Outcome
+	}
+
+parameters {
+	vector[J] aj; // this is a vector of how each alpha value chnages for i[N] based on random effect 
+	real beta ; // slope
+	real < upper = -3 > alpha; // major intercept 
+	real <lower = 0 > sigma_a; //variation around a random effect (variety)
+	real <lower = 0 > sigma_y; // variation around mean y value 
+	}
+
+transformed parameters{
+	vector[N] y_hat; // this is a 
+
+	for(i in 1:N)
+		y_hat [i] <- aj[variety[i]] + x[i] * beta;
+	}
+
+
+model{
+	sigma_a ~ normal(0, 1); // prior for the variety around levels of random factor
+	aj ~ normal (alpha, sigma_a); // the intercept for each value is normally distributed  
+	// around the major alpha and has a standard deviation of sigma_a
+	beta ~ lognormal(0, 1); // prior for the slope, that says it needs to be positive 
+	sigma_y ~ normal(-10, 10)
+
+
+
+	}
+}
+
+generated quantities {
+} // The posterior predictive distribution",
+
+"stan_model4.stan")
+
+stan_modelMulti <- "stan_model4.stan"
+
+
+fit4 <- stan(file = stan_modelMulti, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 4, thin = 1)
+fit4
+
+posterior4 <- extract(fit4)
+par(mfrow = c(1,3))
+
+plot(posterior4$alpha, type = "l")
+plot(posterior4$beta, type = "l")
+plot(posterior4$sigma, type = "l")
+
+traceplot(fit3)
+
+#thsi ones isnt working yet 
+#--------------------------
+write("//
+// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety 
+//
+// Stan model for partially pooled linear regression including priors 
+
+data {
+	int < lower = 1 > N; // Sample size - number of data points
+	int < lower = 1 > J; // number of random effect levels (varieties) 
+	int < lower = 1, upper = J > variety[N]; // id of random effect (variety)
+	vector[N] x; // Predictor
+	vector[N] y; // Outcome
+	}
+
+parameters {
+	real  < upper = -3 > alpha; // Intercept - truncated at maximum LTE50 of -3 degrees C 
+	real beta; // Slope (regression coefficients)
+	vector[J] uj ; // random effect intercepts 
+	real < lower = 0 > sigma; // Error SD, constrained to be positive
+ 	real < lower = 0 > sigmaVar; // sd around the effects of random effect 
+	}
+
+model {
+	vector[N] mu;
+
+  //Priors
+	alpha ~ normal (-10, 10); //these should be somewhat informative priors
+	beta ~ lognormal(0, 1);
+	sigma ~ normal(0, 10); 
+	uj ~ normal(0, sigmaVar); // I assume variety has the same potential effect on alpha as sigma 
+	
+	//Likelihood 
+	for (i in 1:N){
+		mu = alpha + uj[variety[i]] + x * beta; // the main model equation for mean effect 
+		y[i] ~ normal(mu, sigma); // mean effect plus sigma variation 
+		}
+	}
+
+generated quantities {
+} // The posterior predictive distribution",
+
+"stan_model4.stan")
+
+stan_modelMulti <- "stan_model4.stan"
+
+
+fit4 <- stan(file = stan_modelMulti, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 4, thin = 1)
+fit4
+
+posterior4 <- extract(fit4)
+par(mfrow = c(1,3))
+
+plot(posterior4$alpha, type = "l")
+plot(posterior4$beta, type = "l")
+plot(posterior4$sigma, type = "l")
+
+traceplot(fit3)
