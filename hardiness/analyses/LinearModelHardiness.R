@@ -371,10 +371,71 @@ print(varPoolM, digits = 2)
 #ok, so this model is doing an ok job of predicting - 0.25 rather than 0.3. I could
 #probably improve prediction with priors, but im going to try and do that in STAN
 
-
-#try and write a stan model multi level on the intercept using simulated data
+#Prior predictive checks 
 #--------------------------------------
 
+#Priors - 1st level
+#
+#beta ~ lognormal(0, 1)
+#alpha_g ~ lormal(-15, 12), because -3 is minimum hardiness and few vines are going to be more hardy than -27 
+#sigma_y ~ trunnorm(0, 5), because a variation of 10 degrees C around the mean seems quite generous
+#
+#2nd level
+#
+#sigma_v ~ trunnorm(0, 5), because I assume there is teh same variation from teh random effect as from everything else 
+#
+
+#rangge of temperatures to simulate over
+Ni <- 100 #number of repeat runs of the model 
+preTemps <- rnorm(Ni, -10, 20) # i think this is a sensible range of winter temps
+
+#1st level parameters 
+alpha_g <-  rnorm(Ni, -15, 12)
+beta <- rlnorm(Ni, 0 , 1)
+
+#make a dataframe for the outputs of random effects 
+n_vars  <- 20 # number of random effects 
+variety <- as.factor(c(1:n_vars))
+raneffect <- rep(1:n_vars, times = Ni )
+repetition <- rep(1:Ni, each = n_vars)
+randomEffectsPre <- data.frame(raneffect )
+randomEffectsPre$sigma_v <- NA
+randomEffectsPre$rep <- repetition
+randomEffectsPre$alpha_g <- rep(alpha_g , each = n_vars)
+randomEffectsPre$beta <- rep(beta, each = n_vars)
+randomEffectsPre$x <- rep(preTemps, times = n_vars)
+
+
+for (counter in 1:Ni){
+
+	sigma_vc <- rnorm(n_vars, 0, 5) # this is not truncated to reflect that var an make values bigger or smaller 
+	randomEffectsPre$sigma_v[randomEffectsPre$rep == counter] <- sigma_vc
+
+}
+
+plot(alpha_g)
+
+
+plot(NULL, xlim = range(preTemps), ylim = c(-50, 50), xlab = "Temperature",
+	ylab = "LTE50")
+xbar <- mean(preTemps)
+for ( i in 1:nrow(randomEffectsPre) ) 
+	curve( randomEffectsPre$alpha_g[i] + randomEffectsPre$sigma_v[i] + randomEffectsPre$beta[i]*(x - xbar) ,
+from=min(preTemps) , to=max(preTemps) , add=TRUE , col = 2)
+for ( i in 1:N ) 
+	curve( alpha_g[i] + beta [i]*(x - xbar) ,
+from=min(preTemps) , to=max(preTemps) , add=TRUE )
+
+# maybe my sigma_v is a bit too restrictive? ()
+
+
+
+
+
+
+
+#write a stan model multi level on the intercept using simulated data
+#--------------------------------------
 
 #preparing the data
 #-----------------------------
@@ -382,14 +443,14 @@ print(varPoolM, digits = 2)
 # I need to index the x values from 1 to n(x)
 
 x <- I(simVarData$simTemps)
-y <- simVarData$simLTEmixedVar
+y <- simVarData$simLTEVar
 N <- length(simVarData$simTemps)
 Variety <- as.integer(as.factor(simVarData$varNames ))
 J <- length(unique(Variety))
 
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
-stan_data <- list(N = N, x = x, y = y, J = J, variety = Variety)
+stan_data2 <- list(N = N, x = x, y = y, n_vars = J, variety = Variety)
 
 
 write("//
@@ -398,116 +459,80 @@ write("//
 // Stan model for partially pooled linear regression including priors 
 
 data {
-	int < lower = 1 > N; // Sample size - number of data points
-	int < lower = 1 > J; // number of random effect levels (varieties) 
-	int < lower = 1, upper = J > variety[N]; // id of random effect (variety)
+	//Level 1
+	int < lower = 1 > N; // Sample size - number of observations
+
+	//Level 2 
+	int < lower = 1 > n_vars; // number of random effect levels (varieties) 
+	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
+
 	vector[N] x; // Predictor
 	vector[N] y; // Outcome
 	}
 
 parameters {
-	vector[J] aj; // this is a vector of how each alpha value chnages for i[N] based on random effect 
-	real beta ; // slope
-	real < upper = -3 > alpha; // major intercept 
-	real <lower = 0 > sigma_a; //variation around a random effect (variety)
-	real <lower = 0 > sigma_y; // variation around mean y value 
-	}
 
+	//level 1
+	real < upper = -3 > alpha_g; // mean intercept accross all varieties. Grand mean
+	real beta; //slope accross all varieties
+	real <lower =0> sigma_y; // overall variation accross observations
+
+	//level 2
+	real <lower = 0> sigma_v; // variation of intercept amoung varieties  
+	real varmu[n_vars];
+
+}
 transformed parameters{
-	vector[N] y_hat; // this is a 
+	//Individual mean 
+	real ymu[N];
 
-	for(i in 1:N)
-		y_hat [i] <- aj[variety[i]] + x[i] * beta;
+	//Individual mean calculation 
+	for (i in 1:N){
+		ymu[i] = alpha_g + varmu[variety[i]];  
 	}
-
+}
 
 model{
-	sigma_a ~ normal(0, 1); // prior for the variety around levels of random factor
-	aj ~ normal (alpha, sigma_a); // the intercept for each value is normally distributed  
-	// around the major alpha and has a standard deviation of sigma_a
-	beta ~ lognormal(0, 1); // prior for the slope, that says it needs to be positive 
-	sigma_y ~ normal(-10, 10)
+	//Level 1
+	alpha_g ~ normal(-15,12); // prior for grand alpha, assumes intercept will negative and around -10.
+	//i chose this because -3 is minimum hardiness (least hardy) and few vines can manage 
+	//temps much lower than -27
+	beta ~ lognormal(0,1);
+	sigma_y ~ normal(0,5); // prior around estiamted mean LTE50.
 
+	//Level 2
+	varmu ~ normal(0,sigma_v); // prior for the effect of random factor on grand mean 
+	sigma_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
 
-
+	//liklihood
+	for (i in 1:N){
+		y[i] ~ normal(ymu[i] + beta * x[i], sigma_y);
 	}
 }
 
 generated quantities {
 } // The posterior predictive distribution",
 
-"stan_model4.stan")
+"stan_model5.stan")
 
-stan_modelMulti <- "stan_model4.stan"
-
-
-fit4 <- stan(file = stan_modelMulti, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 4, thin = 1)
-fit4
-
-posterior4 <- extract(fit4)
-par(mfrow = c(1,3))
-
-plot(posterior4$alpha, type = "l")
-plot(posterior4$beta, type = "l")
-plot(posterior4$sigma, type = "l")
-
-traceplot(fit3)
-
-#thsi ones isnt working yet 
-#--------------------------
-write("//
-// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety 
-//
-// Stan model for partially pooled linear regression including priors 
-
-data {
-	int < lower = 1 > N; // Sample size - number of data points
-	int < lower = 1 > J; // number of random effect levels (varieties) 
-	int < lower = 1, upper = J > variety[N]; // id of random effect (variety)
-	vector[N] x; // Predictor
-	vector[N] y; // Outcome
-	}
-
-parameters {
-	real  < upper = -3 > alpha; // Intercept - truncated at maximum LTE50 of -3 degrees C 
-	real beta; // Slope (regression coefficients)
-	vector[J] uj ; // random effect intercepts 
-	real < lower = 0 > sigma; // Error SD, constrained to be positive
- 	real < lower = 0 > sigmaVar; // sd around the effects of random effect 
-	}
-
-model {
-	vector[N] mu;
-
-  //Priors
-	alpha ~ normal (-10, 10); //these should be somewhat informative priors
-	beta ~ lognormal(0, 1);
-	sigma ~ normal(0, 10); 
-	uj ~ normal(0, sigmaVar); // I assume variety has the same potential effect on alpha as sigma 
-	
-	//Likelihood 
-	for (i in 1:N){
-		mu = alpha + uj[variety[i]] + x * beta; // the main model equation for mean effect 
-		y[i] ~ normal(mu, sigma); // mean effect plus sigma variation 
-		}
-	}
-
-generated quantities {
-} // The posterior predictive distribution",
-
-"stan_model4.stan")
-
-stan_modelMulti <- "stan_model4.stan"
+stan_modelMulti5 <- "stan_model5.stan"
 
 
-fit4 <- stan(file = stan_modelMulti, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 4, thin = 1)
-fit4
+fit5 <- stan(file = stan_modelMulti5, data = stan_data2, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 
-posterior4 <- extract(fit4)
-par(mfrow = c(1,3))
+str(fit5)
 
-plot(posterior4$alpha, type = "l")
-plot(posterior4$beta, type = "l")
-plot(posterior4$sigma, type = "l")
+posterior5 <- extract(fit5)
 
-traceplot(fit3)
+str(posterior5)
+
+par(mfrow = c(1,1))
+
+plot(density(posterior5$alpha))
+plot(density(posterior5$beta))
+plot(density(posterior5$sigma_y))
+
+
+
+traceplot(fit5)
+
