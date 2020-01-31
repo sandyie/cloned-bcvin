@@ -29,7 +29,7 @@ i1 <- 2 # dont start on 1 becuase then the follwoing asymptotic (clogs) bounds w
 tempValues <- simDays$simTemps # a set temperature values for the winter. I used data from the original manuscript  
 
 #other parameters etimated by the model
-hcInit <- -10.55 # start hardiness value. mean of earliest LTE50 in the fall 
+hcInit <- -3 # start hardiness value. mean of earliest LTE50 in the fall 
 hcMax <- -25.24 # maximum hardiness
 hcMin <- -3 # min hardiness. Hardiness of green tissues 
 tThreshEnd <- 11.75 # threshold temperature for accumilating cold during endodormancy 
@@ -123,7 +123,7 @@ tempValues <- I(tempValues)
 hc <- hc #keep y albeled as hc
 N <- length(tempValues)
 
-hcInit <- -10.55 # start hardiness value. mean of earliest LTE50 in the fall 
+hcInit <- -3 # start hardiness value. mean of earliest LTE50 in the fall 
 hcMin <- -3 # min hardiness. Hardiness of green tissues 
 tThreshEnd <- 11.75 # threshold temperature for accumilating cold during endodormancy 
 tThreshEct <- 3.75 # threshold for accumilating warming during ectodormancy
