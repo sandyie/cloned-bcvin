@@ -410,3 +410,181 @@ plot(priorCheckLTEs$LTE50Change ~ priorCheckLTEs$counter)
 plot(priorCheckLTEs$LTE50 ~ priorCheckLTEs$counter)
 plot(priorCheckLTEs$LTE50 ~ priorCheckLTEs$tempValues)
 plot(density(kaEnd2))
+
+
+#####Model with more parameters
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+stan_data2 <- list(tempValues = tempValues, hc = hc, N = N, hcInit = hcInit, hcMin = hcMin)
+
+#i would like these parameters in teh model too:
+#  threshold temperatures 
+#  edb
+
+#also maybe a level fo variation for variety. so i woudl need to add a level of variation around the 
+#acclimation/deacclimation rates 
+
+write("// discreat dynamic model of winegrape winter hardiness based on Fergusonetal2011
+	// at the moment is simplified so that the threshold temperatures and edb are inputed parameters
+
+data {
+
+	int < lower = 1 > N; // Sample size - number of observations
+	vector[N] tempValues; // Predictor. Air temperature
+	vector[N] hc; // Outcome. LTE50
+
+	real <upper = 1 > hcInit; // the initial hardiness, mean of autumn LTE50
+	int <upper = 1 >  hcMin; // minimum LTE. set as -3 because LTE of green tissue  
+	}
+
+
+parameters {
+	//Acclimation and deacclimation rates 
+	real <lower = 0> kaEnd; //   constant accumilation rate during endodormancy
+	real <lower = 0> kaEct; //  constant accumilation rate during ectodormancy
+	real <lower = 0> kdEnd; // constant deaccumilation rate during endodormancy
+	real <lower = 0> kdEct; // constant deaccumilation rate during ectodormancy
+
+	//parameters around threshold temperatures and when to switch from endo to ecto
+	real tThreshEnd; // thereshold temperature between chilling and warming for Endodormancy  
+	real tThreshEct; // thereshold temperature between chilling and warming for Ectodormancy
+	real <lower = 0> edb; //number of chilling days needed to switch to ectodormancy  
+
+	// general varience/error
+	real <lower = 0> sigma; 
+
+}
+
+transformed parameters { // allows for preprocessing the data 
+
+	//change in hardiness rather than absolute hardiness
+	vector[N] hcChange;
+
+	//degree growing days for autum/winter 
+	vector[N] ddEnd; // degree growing days endothermy 
+	vector[N] ddEndc ; // degree growing days chilling 
+	vector[N] ddEndh ; // degree growing days warming  
+
+	//degree growing days for winter/spring
+	vector[N] ddEct ; // degree growing days ectothermy
+	vector[N] ddEctc ; // degree growing days chilling 
+	vector[N] ddEcth ; // degree growing days warming 
+
+	// The correction putting absolute bounds on change in hc. Equations 5 and 6 of Fergusonetal2011
+	vector [N] cloga; 
+	vector [N] clogd; 
+
+	// accumilating degree growing 
+	vector[N] accumilatedDD; 
+
+	//maximuym hardiness
+	real <upper = 1 > hcMax; // maximum LTE
+	hcMax = min(hc);
+
+	for (i in 1:N){
+		if (i == 1){
+			hcChange[i] = 0;// set first change in hardiness to 0
+			}
+		else {
+			hcChange[i] = hc[i] - hc[i-1] ;
+			}
+		
+		// getting chilling and warming amounts for autum/winter
+		ddEnd[i] = tempValues[i] - tThreshEnd;  // get degree growing days based on threshold temperature (endodormancy)
+			
+		if (ddEnd[i] < 0) // degree growing days warming are 0'ed out 
+			ddEndc[i] = ddEnd[i];
+		else ddEndc[i] = 0;
+
+		if (ddEnd[i] > 0)// degree growing days chilling are 0'ed out 
+			ddEndh[i] = ddEnd[i];
+		else ddEndh[i] = 0;
+
+		// getting chilling and warming amounts for autum/winter
+		ddEct[i] = tempValues[i] - tThreshEct;   // get degree growing days based on threshold temperature (ectodormancy)
+		if (ddEct[i] < 0)
+			ddEctc[i] = ddEct[i];
+		else ddEctc[i] = 0;
+
+		if (ddEct[i] > 0)
+			ddEcth[i] = ddEct[i];
+		else ddEcth[i] = 0;	
+
+		//calculating the clog parameters that bound maximum LTE50 change for a step 
+		if (i ==1){
+			cloga[i] = 1 - ((hcMin - hcInit)/(hcMin-hcMax));
+			clogd[i] = 1 - ((hcInit-hcMax)/(hcMin - hcMax));
+			}
+		else{
+			cloga[i] = 1 - ((hcMin - hc[i-1])/(hcMin-hcMax));
+			clogd[i] = 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax));
+			}
+
+		// hand coding accumilated sum because i am confused by cumulative_sum()
+		if (1== 1){
+			accumilatedDD[i] = ddEndc[i];
+		}
+		else{
+			accumilatedDD[i] = accumilatedDD[i] + accumilatedDD[i-1];
+			}
+		}
+}
+
+model{ 
+	//assign priors
+	kaEnd ~ normal(0,0.5 ); // bounded as positive. prior taken from Ferguson data 
+	kaEct ~ normal(0,0.5 );
+	kdEnd ~ normal(0,0.5 );
+	kdEct ~ normal(0,0.5 );
+	sigma ~ lognormal(0,1);
+	tThreshEct ~ normal(0, 10); 
+	tThreshEnd ~ normal(0, 10);
+	edb ~ normal(700, 300);
+
+	// run the actual model 
+
+	for(i in 1:N){
+
+		if (accumilatedDD[i] <= edb) { // edb is a parameter too  
+			hcChange[i] ~ normal((ddEndc[i] * kaEnd * cloga[i]) + (ddEndh[i] * kdEnd * clogd[i]), sigma);
+		} else {
+			hcChange[i] ~ normal ((ddEctc[i] * kaEct * cloga[i]) + (ddEcth[i] * kdEct * clogd[i]), sigma);	
+		}
+	}
+
+}
+
+
+generated quantities {
+} // The posterior predictive distribution",
+
+"stan_dynamic2.stan")
+
+
+
+
+stan_dynamic2 <- "stan_dynamic2.stan"
+
+
+DynamicFit2 <- stan(file = stan_dynamic2, data = stan_data2, warmup = 1000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+
+posteriorDynamic2 <- extract(DynamicFit2)
+str(posteriorDynamic2)
+
+plot(density(posteriorDynamic2$kaEnd)) # Looks good. should be 0.14
+
+plot(density(posteriorDynamic2$kaEct)) # Looks ok. should be 0.07
+
+plot(density(posteriorDynamic2$kdEnd)) # way WAY out. should be 0.01
+
+plot(density(posteriorDynamic2$kdEct)) # Looks good shoudl be 0.13
+
+plot(density(posteriorDynamic2$sigma)) # close to expected 0.5 
+
+plot(density(posteriorDynamic2$edb)) # looks good. should be 700
+
+plot(density(posteriorDynamic2$tThreshEct)) # 3.5. Maybe a bit of an underestimate
+
+plot(density(posteriorDynamic2$tThreshEnd)) # 11. Underestimates a bit 
