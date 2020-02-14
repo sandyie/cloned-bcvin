@@ -23,7 +23,7 @@ chardDataf$HardinessChange <- c(0, diff(chardDataf$Predicted_Hc))
 #parameter values
 tempValues <- chardDataf$T_mean
 
-hcInit <- -10.5 # start hardiness value. mean of earliest LTE50 in the fall 
+hcInit <- -10.3 # start hardiness value. mean of earliest LTE50 in the fall 
 hcMax <- -25.1 # maximum hardiness
 hcMin <- -1.2 # min hardiness. Hardiness of green tissues 
 tThreshEnd <- 13 # threshold temperature for accumilating cold during endodormancy 
@@ -39,124 +39,34 @@ sigma <- 0.25 # variation around teh mean. I made this number up
 eps <- rnorm(length(tempValues),0,sigma )
 
 
-#simulate data based on these parameter values and the temperatures for 2009/2010
-#----------------------------------------------------------------------------------
-i1 <- 2
 
-hcChange <- vector()
-hcChange[i1-1] <- NA
-hc <- vector()
-hc[i1-1] <- hcInit
+#focusing on their data 
+#---------------------------------------------
 
-#initiating secondary parameters
-cloga <- vector() #the correction putting absolute bounds on change in hc. Equations 5 and 6 of Fergusonetal2011
-clogd <- vector()
+#they inc;lude the hardiness at budbreake, which is in a different column. I need to add that 
 
-#tempeperatures below the mean threshold values are chilling days, and above are heating
-ddEnd <- tempValues - tThreshEnd 
-ddEct <- tempValues - tThreshEct
-
-#make a vector of chilling days only 
-ddEndc <- ddEnd
-ddEndc[ddEndc > 0 ] <- 0
-
-#ddEndc <- ddEndc * -1 # i think these should be negative values?
-
-ddEctc <- ddEct
-ddEctc[ddEctc > 0 ] <- 0
-#ddEctc <- ddEctc * -1
-
-#vector of heating days only 
-ddEndh <- ddEnd
-ddEndh[ddEndh < 0] <- 0
-
-ddEcth <- ddEct
-ddEcth[ddEcth < 0] <- 0
-
-#get accumilating degree growing days
-accumilatedDD <- cumsum(ddEndc)
-
-#main model for Endodormancy for teh first value i = 2
-#------------------------------------
-#cloga[i] <- 1 - ((hcMin - hc[i-1])/(hcMin-hcMax))
-#clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))
-#hcChange[i] <- (ddEndc[i] * kaEnd * cloga[i])+(ddEndh[i] * kdEnd* clogd[i])
-
-#build a loop for all data 
-
-for (i in (2:length(tempValues))){
-
-	#i <- 2
-
-	#calculate the asymptotic bound logistic function 
-		cloga[i] <- 1 - (hcMin - hc[i-1])/(hcMin-hcMax)
-		clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))^theta
-
-	#track accumilated degree days to decide if we are in Endo or Ectodormancy
-	
-	if (accumilatedDD[i] > edb) { # is teh value larger than -700. 
-
-		hcChange[i] <- (ddEndc[i] * kaEnd * cloga[i]) + (ddEndh[i] * kdEnd * clogd[i]) + eps
-
-	} else
-
-	hcChange[i] <- (ddEctc[i] * kaEct * cloga[i]) + (ddEcth[i] * kdEct * clogd[i]) + eps
-
-	#get the actual hardiness value 
-	hc[i] <- hc[i-1] + hcChange[i]
-}
-
-plot(hcChange)
-plot(hc)	
-plot(hc ~ tempValues) # In this plot the data looks more spreadout than i would expect 
-
-# how do my simulated data compare to their predicted values?
-
-plot(hc ~ chardDataf$Predicted_Hc)
-
-plot(chardDataf$Predicted_Hc ~ tempValues)
+head(chardDataf)
+bbData <- chardDataf[!is.na(chardDataf$Budbreak),]
+chardDataf$Observed_Hc[!is.na(chardDataf$Budbreak)] <- bbData$Budbreak
+chardObserved <- chardDataf[!is.na(chardDataf$Observed_Hc), ]
 
 
-# the simulated data generally predicts the model well, but there is an issue with early autumn 
-# temperatures. In the predicted data from the excel file, bud hardiness starts at -10.3, and then 
-# remains at this temperature until day 272. I can't find an explination for this. Accodring to their 
-#parameters as I understand them, the hardiness should increase before decreasing because temperatures
-# are above the threshold of 13 degrees C for warming. I might try starting the model at day 272 as see 
-# how this affects things
+plot(chardObserved$T_mean, chardObserved$Observed_Hc)
+plot(chardObserved$Observed_Hc ~ chardObserved$jday)
 
+# values I expect are above 
 
-#STAN MODEL 
-#preparing the data - some repeated from above 
-#-----------------------------
-
-# I need to index the x values from 1 to n(x)
-
-tempValues <- I(tempValues)
-hc <- hc #keep y albeled as hc
-N <- length(tempValues)
-
-hcInit <- -10.3 # start hardiness value. 
-hcMin <- -1.2 # min hardiness acording to Ferguson 2014 
-
-#kaEnd <- 0.12 # constant accumilation rate during endodormancy
-#kaEct <- 0.10 # constant accumilation rate during ectodormancy
-#kdEnd <- 0.08 # constant deaccumilation rate during endodormancy
-#kdEct <- 0.10 # constant deaccumilation during ectodormancy 
-#tThreshend <- 13 or 10. I am not sure which. 
-#tThreshect <- 5
-#edb <- -700
-#theta <- 7
-
-#data passed to STan needs to be a list of named objects. names here need to match names in model code
-#i make a LIST of the different varables, NOT data frame
-stan_data3 <- list(tempValues = tempValues, hc = hc, N = N, hcInit = hcInit, hcMin = hcMin)
-
-#i would like these parameters in teh model too:
-#  threshold temperatures 
-#  edb
-
+#Run the model i built on the "real" data
 #also maybe a level fo variation for variety. so i woudl need to add a level of variation around the 
 #acclimation/deacclimation rates 
+
+N <- I(nrow(chardObserved))
+hcInit <- hcInit # thsi i just took from the spreadsheet provided. I am not sure how they calculate it. -10.3
+hcMin <- hcMin  # again taken from teh Feguson paper . -1.2 
+
+
+stan_data4 <- list(tempValues = chardObserved$T_mean, hc = chardObserved$Observed_Hc, N = N, hcInit = hcInit, hcMin = hcMin)
+
 
 write("// discreat dynamic model of winegrape winter hardiness based on Fergusonetal2011
 	// at the moment is simplified so that the threshold temperatures and edb are inputed parameters
@@ -307,6 +217,287 @@ generated quantities {
 stan_dynamic3 <- "stan_dynamic3.stan"
 
 
+DynamicFit4 <- stan(file = stan_dynamic3, data = stan_data4, warmup = 1000, 
+	iter = 5000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+
+posteriorDynamic <- extract(DynamicFit4)
+
+#postderior checks - this model has very little idean what is going on 
+kaEnd
+plot(density(posteriorDynamic$kaEnd)) # 
+mean(posteriorDynamic$kaEnd, prob = 0.89)
+
+kaEct
+plot(density(posteriorDynamic$kaEct)) #
+kdEnd
+plot(density(posteriorDynamic$kdEnd)) #  
+kdEct
+plot(density(posteriorDynamic$kdEct)) # . 
+#sigma was estimated from teh data, and not provided by the Fergsum team 
+plot(density(posteriorDynamic$sigma)) #
+tThreshEnd
+plot(density(posteriorDynamic$tThreshEnd)) 
+tThreshEct
+plot(density(posteriorDynamic$tThreshEct)) 
+edb
+plot(density(posteriorDynamic$edb)) 
+theta
+plot(density(posteriorDynamic$theta)) 
+
+#Posterior predictions - simulate data based on posterior predictions
+#-------------------------------------------
+#NOT WORKING YET!!!!!
+
+nObs <- 100 # number of observations of hardiness to be predicted 
+nrep <- 200 # run teh model 200 times 
+
+PosteriorPrediction <- data.frame(matrix(NA, nObs*nrep, 2))
+names(PosteriorPrediction) <- c("rep", "predictedHc")
+PosteriorPrediction$rep <- rep(1:nrep, each = nObs) 
+for (i in 1:nrep){ # run the model 100 times
+
+	
+	tThreshEnd
+	tThreshEct
+	ddEndc
+	ddEctc
+	ddEndh
+	ddEcth
+	theta
+	edb
+	kaEnd
+	kaEct
+	kdEnd
+	kdEct
+	sigma
+	eps <- rnorm(length())
+
+	hcChange <- vector()
+	hcChange[i1-1] <- NA
+	hc <- vector()
+	hc[i1-1] <- hcInit
+
+	#initiating secondary parameters
+	cloga <- vector() #the correction putting absolute bounds on change in hc. Equations 5 and 6 of Fergusonetal2011
+	clogd <- vector()
+
+	#tempeperatures below the mean threshold values are chilling days, and above are heating
+	ddEnd <- tempValues - tThreshEnd 
+	ddEct <- tempValues - tThreshEct
+
+	#make a vector of chilling days only 
+	ddEndc <- ddEnd
+	ddEndc[ddEndc > 0 ] <- 0
+
+	#ddEndc <- ddEndc * -1 # i think these should be negative values?
+
+	ddEctc <- ddEct
+	ddEctc[ddEctc > 0 ] <- 0
+	#ddEctc <- ddEctc * -1
+
+	#vector of heating days only 
+	ddEndh <- ddEnd
+	ddEndh[ddEndh < 0] <- 0
+
+	ddEcth <- ddEct
+	ddEcth[ddEcth < 0] <- 0
+
+	#get accumilating degree growing days
+	accumilatedDD <- cumsum(ddEndc)
+
+
+	for (i in (2:length(tempValues))){
+
+		#calculate the asymptotic bound logistic function 
+		cloga[i] <- 1 - (hcMin - hc[i-1])/(hcMin-hcMax)
+		clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))^theta
+
+		#track accumilated degree days to decide if we are in Endo or Ectodormancy
+	
+		if (accumilatedDD[i] > edb) { # is teh value larger than -700. 
+
+			hcChange[i] <- (ddEndc[i] * kaEnd * cloga[i]) + (ddEndh[i] * kdEnd * clogd[i]) + eps
+
+		} else
+
+		hcChange[i] <- (ddEctc[i] * kaEct * cloga[i]) + (ddEcth[i] * kdEct * clogd[i]) + eps
+
+		#get the actual hardiness value 
+		hc[i] <- hc[i-1] + hcChange[i]
+	}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#simulate data based on these parameter values and the temperatures for 2009/2010
+#----------------------------------------------------------------------------------
+#i1 <- 2
+
+hcChange <- vector()
+hcChange[i1-1] <- NA
+hc <- vector()
+hc[i1-1] <- hcInit
+
+#initiating secondary parameters
+cloga <- vector() #the correction putting absolute bounds on change in hc. Equations 5 and 6 of Fergusonetal2011
+clogd <- vector()
+
+#tempeperatures below the mean threshold values are chilling days, and above are heating
+ddEnd <- tempValues - tThreshEnd 
+ddEct <- tempValues - tThreshEct
+
+#make a vector of chilling days only 
+ddEndc <- ddEnd
+ddEndc[ddEndc > 0 ] <- 0
+
+#ddEndc <- ddEndc * -1 # i think these should be negative values?
+
+ddEctc <- ddEct
+ddEctc[ddEctc > 0 ] <- 0
+#ddEctc <- ddEctc * -1
+
+#vector of heating days only 
+ddEndh <- ddEnd
+ddEndh[ddEndh < 0] <- 0
+
+ddEcth <- ddEct
+ddEcth[ddEcth < 0] <- 0
+
+#get accumilating degree growing days
+accumilatedDD <- cumsum(ddEndc)
+
+#main model for Endodormancy for teh first value i = 2
+#------------------------------------
+#cloga[i] <- 1 - ((hcMin - hc[i-1])/(hcMin-hcMax))
+#clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))
+#hcChange[i] <- (ddEndc[i] * kaEnd * cloga[i])+(ddEndh[i] * kdEnd* clogd[i])
+
+#build a loop for all data 
+
+for (i in (2:length(tempValues))){
+
+	#i <- 2
+
+	#calculate the asymptotic bound logistic function 
+		cloga[i] <- 1 - (hcMin - hc[i-1])/(hcMin-hcMax)
+		clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))^theta
+
+	#track accumilated degree days to decide if we are in Endo or Ectodormancy
+	
+	if (accumilatedDD[i] > edb) { # is teh value larger than -700. 
+
+		hcChange[i] <- (ddEndc[i] * kaEnd * cloga[i]) + (ddEndh[i] * kdEnd * clogd[i]) + eps
+
+	} else
+
+	hcChange[i] <- (ddEctc[i] * kaEct * cloga[i]) + (ddEcth[i] * kdEct * clogd[i]) + eps
+
+	#get the actual hardiness value 
+	hc[i] <- hc[i-1] + hcChange[i]
+}
+
+plot(hcChange)
+plot(hc)	
+plot(hc ~ tempValues) # In this plot the data looks more spreadout than i would expect 
+
+# how do my simulated data compare to their predicted values?
+
+plot(hc ~ chardDataf$Predicted_Hc)
+
+plot(chardDataf$Predicted_Hc ~ tempValues)
+
+
+# the simulated data generally predicts the model well, but there is an issue with early autumn 
+# temperatures. In the predicted data from the excel file, bud hardiness starts at -10.3, and then 
+# remains at this temperature until day 272. I can't find an explination for this. Accodring to their 
+#parameters as I understand them, the hardiness should increase before decreasing because temperatures
+# are above the threshold of 13 degrees C for warming. I might try starting the model at day 272 as see 
+# how this affects things
+
+
+#STAN MODEL 
+#preparing the data - some repeated from above 
+#-----------------------------
+
+# I need to index the x values from 1 to n(x)
+
+tempValues <- I(tempValues)
+hc <- hc #keep y albeled as hc
+N <- length(tempValues)
+
+hcInit <- -10.3 # start hardiness value. 
+hcMin <- -1.2 # min hardiness acording to Ferguson 2014 
+
+#kaEnd <- 0.12 # constant accumilation rate during endodormancy
+#kaEct <- 0.10 # constant accumilation rate during ectodormancy
+#kdEnd <- 0.08 # constant deaccumilation rate during endodormancy
+#kdEct <- 0.10 # constant deaccumilation during ectodormancy 
+#tThreshend <- 13 or 10. I am not sure which. 
+#tThreshect <- 5
+#edb <- -700
+#theta <- 7
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+stan_data3 <- list(tempValues = tempValues, hc = hc, N = N, hcInit = hcInit, hcMin = hcMin)
+
+#i would like these parameters in teh model too:
+#  threshold temperatures 
+#  edb
+
+#also maybe a level fo variation for variety. so i woudl need to add a level of variation around the 
+#acclimation/deacclimation rates 
+
+
 DynamicFit3 <- stan(file = stan_dynamic3, data = stan_data3, warmup = 1000, 
 	iter = 5000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
@@ -439,17 +630,16 @@ for (i in (2:length(tempValues))){
 
 	#i <- 150
 
-	#calculate the asymptotic bound logistic function 
-		priorCheckLTEs$cloga[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i] <- 1 - ((hcMin - hc[i-1])/(hcMin-hcMax))
-		priorCheckLTEs$clogd[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i] <- 1 - ((hc[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i-1]-hcMax)/(hcMin - hcMax))^ theta[ic]
-
-	#track accumilated degree days to decide if we are in Endo or Ectodormancy
 	for (ic in 1:100){
 
-	
+	#calculate the asymptotic bound logistic function 
+		priorCheckLTEs$cloga[priorCheckLTEs$rep == ic & priorCheckLTEs$counter == i] <- 1 - ((hcMin - hc[i-1])/(hcMin-hcMax))
+		priorCheckLTEs$clogd[priorCheckLTEs$rep == ic & priorCheckLTEs$counter == i] <- 1 - ((hc[priorCheckLTEs$rep == ic& priorCheckLTEs$counter == i-1]-hcMax)/(hcMin - hcMax))^ theta[ic]
+
+		#track accumilated degree days to decide if we are in Endo or Ectodormancy
 		if (accumilatedDD[i] > edb) {
 
-			hcChange[i] <- (priorCheckLTEs$ddEndc[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i] * kaEnd2[ic] * cloga[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i]) + (ddEndh[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i] * kdEnd2[ic] * clogd[priorCheckLTEs$rep == ic, priorCheckLTEs$counter == i]) 
+			hcChange[i] <- (priorCheckLTEs$ddEndc[priorCheckLTEs$rep == ic & priorCheckLTEs$counter == i] * kaEnd2[ic] * cloga[priorCheckLTEs$rep == ic & priorCheckLTEs$counter == i]) + (ddEndh[priorCheckLTEs$rep == ic & priorCheckLTEs$counter == i] * kdEnd2[ic] * clogd[priorCheckLTEs$rep == ic& priorCheckLTEs$counter == i]) 
 
 		} else
 
