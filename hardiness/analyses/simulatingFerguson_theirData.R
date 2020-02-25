@@ -8,6 +8,7 @@ setwd("/home/faith/Documents/github/bcvin/hardiness/analyses")
 library(rstan)
 library(rethinking)
 library(truncnorm)
+library(bayesplot)
 
 #read in temp data from ferguson et al 2011/2014. It is Chardony data 
 chardDataf <- read.csv("input/WashingtonStatecsFergusonData.csv")
@@ -217,10 +218,23 @@ generated quantities {
 stan_dynamic3 <- "stan_dynamic3.stan"
 
 
-DynamicFit4 <- stan(file = stan_dynamic3, data = stan_data4, warmup = 1000, 
-	iter = 5000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+DynamicFit4 <- stan(file = stan_dynamic3, data = stan_data4, warmup = 2000, 
+	iter = 10000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 posteriorDynamic <- extract(DynamicFit4)
+
+#Plots using bayesplot 
+posterior <- as.matrix(DynamicFit4)          
+mcmc_areas(posterior,
+           pars = c("kaEnd", "kaEct", "kdEnd", "kdEct"),
+           prob = 0.8) 
+
+
+mcmc_trace(posterior,  pars = c("kaEnd", "kaEct", "kdEnd", "kdEct"), n_warmup = 300,
+                facet_args = list(nrow = 2, labeller = label_parsed)) + facet_text(size = 15)
+
+
+plot(DynamicFit4)#model is very uncertain of the edb
 
 #postderior checks - this model has very little idean what is going on 
 kaEnd
@@ -254,78 +268,80 @@ nrep <- 200 # run teh model 200 times
 PosteriorPrediction <- data.frame(matrix(NA, nObs*nrep, 2))
 names(PosteriorPrediction) <- c("rep", "predictedHc")
 PosteriorPrediction$rep <- rep(1:nrep, each = nObs) 
-for (i in 1:nrep){ # run the model 100 times
 
+#assign prior distributions
+
+kaEndp <- rtruncnorm(100, 0,0.5 )#100 draws from the prior  
+kaEctp <-  rnorm(100, 0,0.5 )
+kdEndp <-  rnorm(100, 0,0.5 )
+kdEctp <-  rnorm(100, 0,0.5 )
+sigmap <- rlnorm(100, 0,1)
+tThreshEctp <-  rnorm(100,0, 10)
+tThreshEndp <-  rnorm(100,0, 10)
+edbp  <-  rnorm(100,700, 300)
+thetap <-  rnorm(100,5,5)
+
+
+for (ic in 1:nrep){ # run the model 100 times
+	ic <- 1
 	
-	tThreshEnd
-	tThreshEct
-	ddEndc
-	ddEctc
-	ddEndh
-	ddEcth
-	theta
-	edb
-	kaEnd
-	kaEct
-	kdEnd
-	kdEct
-	sigma
-	eps <- rnorm(length())
 
-	hcChange <- vector()
-	hcChange[i1-1] <- NA
-	hc <- vector()
-	hc[i1-1] <- hcInit
+	for(il in 1:length(tempValues)){ # number of temperature observations to iterate over 
 
-	#initiating secondary parameters
-	cloga <- vector() #the correction putting absolute bounds on change in hc. Equations 5 and 6 of Fergusonetal2011
-	clogd <- vector()
+		hcChange <- vector()
+		hcChange[i1-1] <- NA
+		hc <- vector()
+		hc[i1-1] <- hcInit
 
-	#tempeperatures below the mean threshold values are chilling days, and above are heating
-	ddEnd <- tempValues - tThreshEnd 
-	ddEct <- tempValues - tThreshEct
+		#initiating secondary parameters
+		cloga <- vector() #the correction putting absolute bounds on change in hc. Equations 5 and 6 of Fergusonetal2011
+		clogd <- vector()
 
-	#make a vector of chilling days only 
-	ddEndc <- ddEnd
-	ddEndc[ddEndc > 0 ] <- 0
+		#tempeperatures below the mean threshold values are chilling days, and above are heating
+		ddEnd <- tempValues - tThreshEndp[i] 
+		ddEct <- tempValues - tThreshEctp[i] 
 
-	#ddEndc <- ddEndc * -1 # i think these should be negative values?
+		#make a vector of chilling days only 
+		ddEndc <- ddEnd
+		ddEndc[ddEndc > 0 ] <- 0
 
-	ddEctc <- ddEct
-	ddEctc[ddEctc > 0 ] <- 0
-	#ddEctc <- ddEctc * -1
+		#ddEndc <- ddEndc * -1 # i think these should be negative values?
 
-	#vector of heating days only 
-	ddEndh <- ddEnd
-	ddEndh[ddEndh < 0] <- 0
+		ddEctc <- ddEct
+		ddEctc[ddEctc > 0 ] <- 0
+		#ddEctc <- ddEctc * -1
 
-	ddEcth <- ddEct
-	ddEcth[ddEcth < 0] <- 0
+		#vector of heating days only 
+		ddEndh <- ddEnd
+		ddEndh[ddEndh < 0] <- 0
 
-	#get accumilating degree growing days
-	accumilatedDD <- cumsum(ddEndc)
+		ddEcth <- ddEct
+		ddEcth[ddEcth < 0] <- 0
+
+		#get accumilating degree growing days
+		accumilatedDD <- cumsum(ddEndc)
 
 
-	for (i in (2:length(tempValues))){
+		for (i in (2:length(tempValues))){
 
-		#calculate the asymptotic bound logistic function 
-		cloga[i] <- 1 - (hcMin - hc[i-1])/(hcMin-hcMax)
-		clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))^theta
+			#calculate the asymptotic bound logistic function 
+			cloga[i] <- 1 - (hcMin - hc[i-1])/(hcMin-hcMax)
+			clogd[i] <- 1 - ((hc[i-1]-hcMax)/(hcMin - hcMax))^thetap[ic] 
 
-		#track accumilated degree days to decide if we are in Endo or Ectodormancy
-	
-		if (accumilatedDD[i] > edb) { # is teh value larger than -700. 
+			#track accumilated degree days to decide if we are in Endo or Ectodormancy
+		
+			if (accumilatedDD[i] > edbp[ic] ) { # is teh value larger than -700. 
 
-			hcChange[i] <- (ddEndc[i] * kaEnd * cloga[i]) + (ddEndh[i] * kdEnd * clogd[i]) + eps
+				hcChange[i] <- (ddEndc[i] * kaEndp[ic]  * cloga[i]) + (ddEndh[i] * kdEndp[ic]  * clogd[i])  
 
-		} else
+			} else
 
-		hcChange[i] <- (ddEctc[i] * kaEct * cloga[i]) + (ddEcth[i] * kdEct * clogd[i]) + eps
+			hcChange[i] <- (ddEctc[i] * kaEctp[ic]  * cloga[i]) + (ddEcth[i] * kdEctp[ic]  * clogd[i]) 
 
-		#get the actual hardiness value 
-		hc[i] <- hc[i-1] + hcChange[i]
+			#get the actual hardiness value 
+			hc[i] <- hc[i-1] + hcChange[i]
+		}
 	}
-
 
 }
 
