@@ -1,4 +1,3 @@
-#useful link - https://mc-stan.org/users/documentation/case-studies/rstan_workflow.html 
 rm(list = ls())
 #script started by Faith Jones on the 10th Jan 2020 
 
@@ -18,11 +17,6 @@ library(rstanarm)
 library(truncnorm) # truncated normal distribution 
 library(fitdistrplus) # fitting a gamm adsitribution 
 library(brms)
-library(rethinking) # for HPDI function 
-library(scales) # alpha making plotting points translucent 
-library(bayesplot)# nice posterior check plots 
-library(tidyr)
-library(dplyr)
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -185,7 +179,7 @@ eps <- rnorm(nrep, 0, sigma)
 simLTE <- alpha + beta*simTemps + eps
 plot(simLTE ~ simTemps)
 
-#prior predictive check - for a linear model
+#prior predictive check
 #------------------------------
 
 set.seed(16)
@@ -225,6 +219,94 @@ from=min(simTemps) , to=max(simTemps) , add=TRUE ,
 col=col.alpha("black",0.2) )
 
 
+#preparing the data
+#-----------------------------
+
+# I need to index the x values from 1 to n(x)
+
+x <- I(simTemps)
+y <- simLTE
+N <- length(simTemps)
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+stan_data <- list(N = N, x = x, y = y)
+
+#stan model 
+#--------------------
+
+
+write("// Stan model for simple linear regression including priors 
+data {
+ int < lower = 1 > N; // Sample size
+ 
+ vector[N] x; // Predictor
+ vector[N] y; // Outcome
+}
+parameters {
+ real  < upper = -3 > alpha; // Intercept - truncated at maximum LTE50 of -3 degrees C 
+ real beta; // Slope (regression coefficients)
+ real < lower = 0 > sigma; // Error SD
+}
+model {
+	alpha ~ normal (-10, 10); //these should be somewhat informative priors
+	beta ~ lognormal(0, 1);
+	sigma ~ normal(0, 10); // a trunctated normal distribution is less generative than a log normal - i should reconsider 
+	y ~ normal(alpha + x * beta , sigma);
+}
+generated quantities {
+} // The posterior predictive distribution",
+
+"stan_model3.stan")
+
+stan_model3 <- "stan_model3.stan"
+
+fit3 <- stan(file = stan_model3, data = stan_data, warmup = 500, iter = 1000, chains = 4, cores = 2, thin = 1)
+fit3
+
+posterior2 <- extract(fit3)
+par(mfrow = c(1,3))
+
+plot(posterior2$alpha, type = "l")
+plot(posterior2$beta, type = "l")
+plot(posterior2$sigma, type = "l")
+
+traceplot(fit3)
+
+stan_dens(fit3)
+
+#this is how it compares to the original vales for parameters (blue lines)
+plot(density(posterior2$alpha), main = "Alpha")
+abline(v = alpha, col = 4, lty = 2)
+
+plot(density(posterior2$beta), main = "Beta")
+abline(v = beta, col = 4, lty = 2)
+
+plot(density(posterior2$sigma), main = "Sigma")
+abline(v = sigma, col = 4, lty = 2)
+
+#probability of a positive relationship between temp and LTE50
+sum(posterior2$beta > 0)/length(posterior2$beta) # 1 - its definitly a positive relationship 
+
+
+#Run a hierarchical model using lme4
+#----------------------------------------------
+
+#model with varying intercepts
+lmerModel1 <- lmer(lte ~ meanC + (1 |variety) + (1|site), data = bhclim)
+summary(lmerModel1)
+
+#model with varying slopes as well
+lmerModel2 <- lmer(lte ~ meanC + (1 + meanC|variety) , data = bhclim)#error, doesnt fit
+
+
+M1_stanlmer <- stan_lmer(lte ~ meanC + (1 |variety) + (1|site), 
+	data = bhclim,
+	seed = 16)
+print(M1_stanlmer, digits = 2)
+sims <- as.matrix(M1_stanlmer)
+dim(sims)
+head(sims)
 
 plot(bhclim$lte ~ bhclim$site)
 
@@ -274,7 +356,7 @@ sigmaTemp <- sd(bhclim$meanC)
 simTemps <- rnorm(nObs , meanTemp , sigmaTemp)
 eps <- rnorm(nObs, 0, sigma)
 
-simLTEVar <- alpha + alphaVarObs + alphaYearObs + beta*simTemps + eps
+simLTEVar <- alpha + alphaVarObs + yearNamesObs + beta*simTemps + eps
 plot(simLTEVar ~ simTemps)
 
 #combine into a single data table
@@ -290,16 +372,16 @@ simVarData$yearNamesObs <- as.factor(simVarData$yearNamesObs )
 prior1 <- prior(normal(-10,10), class="Intercept")+prior(lognormal(0, 1),class="sd")+
 prior(lognormal(0, 1),class="sigma") # sigma is overall variation, sd is variation from random effect 
 
-#modelbrms <- brm(simLTEVar ~ simTemps + (1 |varNamesObs) + (1|yearNamesObs), 
-#	data = simVarData,
-#	family = gaussian(),
-#	prior = prior1)
+modelbrms <- brm(simLTEVar ~ simTemps + (1 |varNamesObs) + (1|yearNamesObs), 
+	data = simVarData,
+	family = gaussian(),
+	prior = prior1)
 
 
-#varPoolM <- stan_lmer(simLTEVar ~ simTemps + (1 |varNames), 
-#	data = simVarData,
-#	seed = 16)
-#print(varPoolM, digits = 2)
+varPoolM <- stan_lmer(simLTEVar ~ simTemps + (1 |varNames), 
+	data = simVarData,
+	seed = 16)
+print(varPoolM, digits = 2)
 
 
 #ok, so this model is doing an ok job of predicting - 0.25 rather than 0.3. I could
@@ -330,49 +412,28 @@ beta <- rlnorm(Ni, 0 , 1)
 #make a dataframe for the outputs of random effects 
 n_vars  <- 20 # number of random effects 
 variety <- as.factor(c(1:n_vars))
-yearSim <- as.factor(c(1:n_vars))
 raneffect <- rep(1:n_vars, times = Ni )
 repetition <- rep(1:Ni, each = n_vars)
 randomEffectsPre <- data.frame(raneffect )
 randomEffectsPre$sigma_v <- NA
-randomEffectsPre$sigma_year <- NA
 randomEffectsPre$rep <- repetition
 randomEffectsPre$alpha_g <- rep(alpha_g , each = n_vars)
 randomEffectsPre$beta <- rep(beta, each = n_vars)
 randomEffectsPre$x <- rep(preTemps, times = n_vars)
 
 
-#loop for making 100 different repetitions of the model, where there are 20 varieties and 20 years 
-#i then repeat the values so that there is a combination of variety and year for each value 
 for (counter in 1:Ni){
 
 	sigma_vc <- rnorm(n_vars, 0, 5) # this is not truncated to reflect that var an make values bigger or smaller 
-	sigma_yearc <- rnorm(n_vars, 0, 5)
 	randomEffectsPre$sigma_v[randomEffectsPre$rep == counter] <- sigma_vc
-	randomEffectsPre$sigma_year[randomEffectsPre$rep == counter] <- sigma_yearc
 
 }
 
-#prepare a dataframe for random effects year and variety 
-twoRandomsVar <- rep(variety, each = length(yearSim))
-yearSim2 <-  rep(yearSim, times = length(variety))
-twoRandoms <- data.frame(rep(1:10, each = length(yearSim2)))
-names(twoRandoms)[1] <- "simulation"
-twoRandoms$varietySim <- rep(twoRandomsVar, times = 10) # 10 differebt varieties and years 
-twoRandoms$yearSim <- rep(yearSim2, times = 10)
-tail(randomEffectsPre)
-
-#merge in the above random effects from the loop , but only for the first 20 repetations of the simulation 
-randomReps <- merge(twoRandoms, randomEffectsPre[, c("raneffect", "sigma_v", "rep", "alpha_g", "beta")], by.x = c("varietySim", "simulation"), by.y = c("raneffect", "rep") ) 
-randomReps2 <- merge(randomReps, randomEffectsPre[, c("raneffect", "sigma_year", "rep")], by.x = c("yearSim", "simulation"), by.y = c("raneffect", "rep") )
+plot(alpha_g)
 
 
-############# Start from here - predictive checks on the prior distribution 
-x <- I(simVarData$simTemps)
-
-# random effect of variety (Or year, they would be the same plot)
-plot(NULL, xlim = range(preTemps), ylim = c(-50, 50), xlab = "Temperature", 
-	ylab = "LTE50", sub = "Figure 6. The distribution of slopes suggested by my model with one effect")
+plot(NULL, xlim = range(preTemps), ylim = c(-50, 50), xlab = "Temperature",
+	ylab = "LTE50")
 xbar <- mean(preTemps)
 for ( i in 1:nrow(randomEffectsPre) ) 
 	curve( randomEffectsPre$alpha_g[i] + randomEffectsPre$sigma_v[i] + randomEffectsPre$beta[i]*(x - xbar) ,
@@ -381,55 +442,44 @@ for ( i in 1:N )
 	curve( alpha_g[i] + beta [i]*(x - xbar) ,
 from=min(preTemps) , to=max(preTemps) , add=TRUE )
 
-#random effects of variety and year combined 
-
-plot(NULL, xlim = range(preTemps), ylim = c(-50, 50), xlab = "Temperature",
-	ylab = "LTE50", sub = "Figure 7. The distribution of slopes suggested by my model with both effects")
-xbar <- mean(x)
-for ( i in 1:nrow(randomReps2) ) 
-	curve( randomReps2$alpha_g[i] + randomReps2$sigma_v[i] + randomReps2$beta[i]*(x - xbar) ,
-from=min(preTemps) , to=max(preTemps) , add=TRUE , col = 2)
-for ( i in 1:10 ) 
-	curve( alpha_g[i] + beta [i]*(x - xbar) ,
-from=min(preTemps) , to=max(preTemps) , add=TRUE )
+# maybe my sigma_v is a bit too restrictive? ()
 
 
-#two random effects model
-#------------------------------
-head(simVarData)
+
+#write a stan model multi level on the intercept using simulated data
+#--------------------------------------
+
+#preparing the data
+#-----------------------------
+
+# I need to index the x values from 1 to n(x)
 
 x <- I(simVarData$simTemps)
 y <- simVarData$simLTEVar
 N <- length(simVarData$simTemps)
 Variety <- as.integer(as.factor(simVarData$varNames ))
-year <- as.integer(as.factor(simVarData$yearNamesObs ))
-J <- length(unique(varNamesObs))
-k <- length(unique(yearNamesObs))
+J <- length(unique(Variety))
 
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
-stan_data3 <- list(N = N, x = x, y = y, n_vars = J, N = N, K = k, year = year, variety = Variety)
+stan_data2 <- list(N = N, x = x, y = y, n_vars = J, variety = Variety)
 
 
 write("//
-// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety and year 
+// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety 
 //
 // Stan model for partially pooled linear regression including priors 
 
 data {
-
 	//Level 1
 	int < lower = 1 > N; // Sample size - number of observations
-	vector[N] x; // Predictor
-	vector[N] y; // Outcome
 
 	//Level 2 
 	int < lower = 1 > n_vars; // number of random effect levels (varieties) 
 	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
 
-	int < lower = 1 > K; // number of random effect levels (years) 
-	int < lower = 1, upper = K > year[N]; // id of random effect (year)
-
+	vector[N] x; // Predictor
+	vector[N] y; // Outcome
 	}
 
 parameters {
@@ -443,9 +493,6 @@ parameters {
 	real <lower = 0> sigma_v; // variation of intercept amoung varieties  
 	real varmu[n_vars];
 
-	real <lower = 0> sigma_k; // variation of intercept amoung varieties  
-	real yearmu[K];
-
 }
 transformed parameters{
 	//Individual mean 
@@ -453,9 +500,8 @@ transformed parameters{
 
 	//Individual mean calculation 
 	for (i in 1:N){
-		ymu[i] = alpha_g + varmu[variety[i]] + yearmu[year[i]];  
+		ymu[i] = alpha_g + varmu[variety[i]];  
 	}
-
 }
 
 model{
@@ -470,10 +516,6 @@ model{
 	varmu ~ normal(0,sigma_v); // prior for the effect of random factor on grand mean 
 	sigma_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
 
-	//Level 2
-	yearmu ~ normal(0,sigma_k); // prior for the effect of random factor on grand mean 
-	sigma_k ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
-
 	//liklihood
 	for (i in 1:N){
 		y[i] ~ normal(ymu[i] + beta * x[i], sigma_y);
@@ -483,172 +525,30 @@ model{
 generated quantities {
 } // The posterior predictive distribution",
 
-"stan_model6.stan")
+"stan_model5.stan")
 
-stan_modelMulti6 <- "stan_model6.stan"
-
-
-#fit6 <- stan(file = stan_modelMulti6, data = stan_data3, warmup = 2000, 
-#	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
-
-#Rhat values suggest convergence 
-
-posterior6 <- extract.samples(fit6)
-str(posterior6)
-
-plot(density(posterior6$alpha)) # -21.4
-plot(density(posterior6$beta))# 0.5
-plot(density(posterior6$sigma_y))# 0.6
-plot(density(posterior6$sigma_v))# 0.3 seems to be underestimating the influence of v a little 
-plot(density(posterior6$sigma_k))# 0.5 overestimating a wee bit 
-
-#plot post predictive checks
-#------------------------------
+stan_modelMulti5 <- "stan_model5.stan"
 
 
-#extract mean and HPDI values
-mu.link <- function(temp) posterior6$alpha + posterior6$sigma_v + posterior6$sigma_k + posterior6$beta * temp
-temp.seq <- seq(from = min(simTemps), to = max(simTemps), by = 1)
-mu <- sapply(temp.seq, mu.link)
-mu.mean <- apply(mu, 2, mean)
-mu.HPDI <- apply(mu, 2, HPDI)
+fit5 <- stan(file = stan_modelMulti5, data = stan_data2, warmup = 500, iter = 1000, chains = 3, cores = 3, thin = 1)
 
-#simulate values 
-sim.lte50 <- sapply(temp.seq, function (temp)
-	rnorm(
-		n = length(posterior6$alpha),
-		mean = posterior6$alpha + posterior6$sigma_v + posterior6$sigma_k + posterior6$beta * temp,
-		sd = posterior6$sigma_y)
-		)
-lte50.HPDI <- apply(sim.lte50, 2, HPDI, prob = 0.89)
+str(fit5)
+
+posterior5 <- extract(fit5)
+
+#posterior predictive checks
+#-----------------------------------
 
 
-#plot model input data and posterior predictions
-plot(y~x, col = alpha("royalblue3", 0.2), pch = 16)
-lines(temp.seq, mu.mean)#draw mean value
-shade(mu.HPDI, temp.seq)#draw HPDI around mean
-shade(lte50.HPDI, temp.seq)#HPDI for simulated lte50
-#it looks like there is less sigma around the mean for lower temperatures 
+str(posterior5)
 
-#run the model on real data
-#-------------------------------------------
+par(mfrow = c(1,1))
+
+plot(density(posterior5$alpha))
+plot(density(posterior5$beta))
+plot(density(posterior5$sigma_y))
 
 
-head(bhclim)
-bhclimComplete <- bhclim[!is.na(bhclim$lte),]
-nReal <- nrow(bhclimComplete)
-x <- I(bhclimComplete$meanC)
-y <- bhclimComplete$lte
-year <- as.integer(as.factor(bhclimComplete$year))
-n_year <- length(unique(bhclimComplete$year))
-variety <- as.integer(as.factor(bhclimComplete$variety)) 
-n_vars <- length(unique(bhclimComplete$variety))
 
-stan_data_real <- list(N = nReal, x = x, y = y, n_vars = n_vars, K = n_year, year = year, variety = variety)
+traceplot(fit5)
 
-
-fit7 <- stan(file = stan_modelMulti6, data = stan_data_real, warmup = 1000, 
-	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
-
-precis(fit7)
-posterior7 <- extract.samples(fit7)
-str(posterior7)
-
-plot(density(posterior7$alpha)) # 
-mean(posterior7$alpha)
-HPDI(as.vector(posterior7$alpha), prob = 0.89)# i dont know why this needs the as.vector, but without it 
-#teh function throws an error message. *shrug*
-
-plot(density(posterior7$beta))# 
-plot(density(posterior7$sigma_y))# 
-plot(density(posterior7$sigma_v))#  I think year variation explains more variation than Variety does
-plot(density(posterior7$sigma_k))# 
-
-#launch_shinystan(fit7)
-color_scheme_set("red")
-
-#extract mean and HPDI values
-mu.link <- function(temp) posterior7$alpha + posterior7$sigma_v + posterior7$sigma_y + posterior7$sigma_k + posterior7$beta * temp
-
-temp.seq <- seq(from = min(simTemps), to = max(simTemps), by = 1)
-mu <- sapply(temp.seq, mu.link)
-mu.mean <- apply(mu, 2, mean)
-mu.HPDI <- apply(mu, 2, HPDI)
-
-plot(temp.seq, mu.mean)
-#simulate values - I am not sure this is doing what I want 
-#i dont knwo whether just adding the variation from random effects makes sense. Insead I think
-#i should do a more complicated simulation with the random effect levels included
-
-sim.lte50 <- sapply(temp.seq, function (temp)
-	rnorm(
-		n = length(posterior7$alpha),
-		mean = posterior7$alpha + posterior7$sigma_v + posterior7$sigma_y + posterior7$sigma_k + posterior7$beta * temp,
-		sd = posterior7$sigma_y)
-		)
-lte50.HPDI <- apply(sim.lte50, 2, HPDI, prob = 0.89)
-lte50.mean <- apply(sim.lte50, 2, mean)
-str(sim.lte50)
-
-#plot model input data and posterior predictions
-plot(y~x, col = alpha("royalblue3", 0.2), pch = 16)
-lines(temp.seq, mu.mean)#draw mean value
-shade(mu.HPDI, temp.seq)#draw HPDI around mean
-shade(lte50.HPDI, temp.seq)#HPDI for simulated lte50
-
-#extract the effect of variety on hardiness
-#--------------------------------------------------
-
-#make a dataframe of the how each variety varies from teh grand mean  
-varietyEffects <- data.frame(posterior7$varmu)
-colnames(varietyEffects) <- levels(bhclimComplete$variety)[1:13]#only the first 13 varietyies have data that is used in teh model
-colnames(varietyEffects)[1] <- "noData"
-#change to long format for ease of plotting 
-longVarietyEffect <- varietyEffects %>% gather(key = variety, value = predLte50)
-mcmc_intervals(varietyEffects)
-#the variety effects seem to be making sense?
-
-#a new dataframe where each variety effect is added to teh grand mean
-VarietyEffectsPred <- varietyEffects +  posterior7$alpha
-mcmc_intervals(VarietyEffectsPred)
-#change to long format for ease of plotting 
-longVarietyEffectPred <- VarietyEffectsPred %>% gather(key = variety, value = predLte50)
-
-plot(lte50.mean  ~ simTemps)
-
-#Extract teh effect of year on hardiness
-#--------------------------------------------------
-yearEffects <- data.frame(posterior7$yearmu)
-colnames(yearEffects) <- levels(bhclimComplete$year)
-mcmc_intervals(yearEffects)
-meanYearFit <- apply(yearEffects, 2, mean)
-
-#extract mean per year from original data
-head(bhclim)
-meanYear <- bhclim %>% group_by(Year) %>%
-	summarise(meanTempYear = mean(meanC), minTempYear = min(meanC))
-meanYear$modelLTE <- as.vector(meanYearFit)
-plot(meanYear$meanTempYear, meanYear$modelLTE , pch = '')
-abline(h = 0, col = "grey", lty = 2)
-text(x =  meanYear$meanTempYear, y = meanYear$modelLTE, meanYear$Year)
-
-plot(x = meanYear$minTempYear, y = meanYear$modelLTE , pch = '')
-text(x =  meanYear$minTempYear, y = meanYear$modelLTE,meanYear$Year)
-abline(h = 0, col = "grey", lty = 2)
-
-plot(meanYear$minTempYear ~ meanYear$meanTempYear)
-#there is something werid going on with the variation within year.
-#it seems that the years with higher mean and minumum years 
-#have the vines with the lowest LTE50 (most hardy). Surely it should be the 
-#otheer way around?
-
-#get predicted lte for each variety against tempereature 
-#----------------------------------------------------------
-
-sim.lte50
-
-#simulate values for each year and variety 
-for (vi in variety ){
-	viLTE <- 
-
-}
