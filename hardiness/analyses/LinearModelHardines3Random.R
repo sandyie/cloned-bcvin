@@ -9,15 +9,10 @@ setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
 
 
 #libraries
-#install.packages("reshape2")
 library(reshape2)
 library(ggplot2)
 library(rstan)
-library(lme4)
-library(rstanarm)
 library(truncnorm) # truncated normal distribution 
-library(fitdistrplus) # fitting a gamm adsitribution 
-library(brms)
 library(rethinking) # for HPDI function 
 library(scales) # alpha making plotting points translucent 
 library(bayesplot)# nice posterior check plots 
@@ -139,7 +134,7 @@ plot(bhclim$lte ~bhclim $month_day )
 plot(bhclim$lte ~bhclim $meanC)
 
 
-plot(bhclim$lte ~ bhclim$meanC)
+plot(bhclim$lte ~ bhclim$meanC, xlab = "Mean two day temperature (degrees C)", ylab = "bud hardiness (LTE50 degrees C)")
 abline(lmFit, col = "red")
 
 yearPlot <- ggplot(aes(x = year, y = lte), data = bhclim)
@@ -195,7 +190,7 @@ x <- I(bhclimComplete$meanC)
 y <- bhclimComplete$lte
 year <- as.integer(as.factor(bhclimComplete$year))
 n_year <- length(unique(bhclimComplete$year))
-variety <- as.integer(as.factor(as.character(bhclimComplete$variety)) 
+variety <- as.integer(as.factor(as.character(bhclimComplete$variety))) 
 n_vars <- length(unique(as.character(bhclimComplete$variety)))
 n_site <- length(unique(bhclimComplete$site2))
 site <- as.integer(as.factor(bhclimComplete$site2))
@@ -300,8 +295,8 @@ stan_modelMulti3 <- "stan_model3.stan"
 
 
 
-fit3 <- stan(file = stan_modelMulti3, data = stan_data3, warmup = 2000, 
-	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+fit3 <- stan(file = stan_modelMulti3, data = stan_data3, warmup = 1000, 
+	iter = 3000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 
 launch_shinystan(fit3)
@@ -313,36 +308,32 @@ str(post3)
 #density plots for main parameters
 plot(density(post3$alpha))# 
 mean(post3$alpha)
+HPDI(post3$alpha)
 plot(density(post3$beta))# 
 mean(post3$beta)
+HPDI(post3$beta)
 plot(density(post3$sigma_y))# standar derror around full model sigma. 
 mean(post3$sigma_y)
+HPDI(post3$sigma_y)
 plot(density(post3$sigma_v))#  standard error around variety. 
 mean(post3$sigma_v)
+HPDI(post3$sigma_v)
 plot(density(post3$sigma_k))#standard error around year
 mean(post3$sigma_k)
+HPDI(post3$sigma_k)
 plot(density(post3$sigma_s))#standard error around site
 mean(post3$sigma_s)
+HPDI(post3$sigma_s)
 
-#simlate x values
+#simlate x values in case i need them 
+#------------------------------------
 nObs <- 30
 meanTemp <- mean(bhclimComplete$meanC)
 sigmaTemp <- sd(bhclimComplete$meanC)
 simTemps <- rnorm(nObs , meanTemp , sigmaTemp)
 
-
-#extract mean and HPDI values
-mu.link <- function(temp) post3$alpha + post3$sigma_v + post3$sigma_y + post3$sigma_k + post3$sigma_s + post3$beta * temp
-
-temp.seq <- seq(from = min(simTemps), to = max(simTemps), by = 1)
-mu <- sapply(temp.seq, mu.link)
-mu.mean <- apply(mu, 2, mean)
-mu.HPDI <- apply(mu, 2, HPDI)
-
-#plot predicted hardiness aganist temperatuer 
-plot(temp.seq, mu.mean, type = "l") # the mean linear relationship between temperature and bud hardiness
-lines(temp.seq,mu.HPDI[1,],col="green")
-lines(temp.seq,mu.HPDI[2,],col="green")
+#get teh predicted hardiness from teh model
+#---------------------------------------------
 
 str(post3$realY)
 predY <- data.frame(post3$realY)
@@ -354,10 +345,10 @@ bhclimComplete$predLTE <- predYMean# add the predicted values to the original da
 #-------------------------
 
 #model prediction 
-plot( predYMean ~ bhclimComplete$meanC, xlab = "Temperature (C)", ylab = "predicted LTE") 
+plot( predYMean ~ bhclimComplete$meanC, xlab = "Temperature (C)", ylab = "predicted LTE", main = "model prediction") 
 
 #The estimated lte againts the real lte 
-plot ( bhclimComplete$lte ~ predYMean, xlab = "Predicted LTE", ylab = "empirical LTE") #model is overestimating hardiness especially at low temperatures 
+plot ( bhclimComplete$lte ~ predYMean, xlab = "Predicted LTE", ylab = "empirical LTE", main = "estimated lte against predicted lte") #model is overestimating hardiness especially at low temperatures 
 
 
 #variety effects
@@ -381,12 +372,14 @@ mcmc_intervals(siteEffects)
 
 unique(bhclimComplete$site2)
 #plot predicted values split by variety 
+bhclimComplete$site2F <- as.factor(bhclimComplete$site2)
 sitePlot <- ggplot(data = bhclimComplete, aes(y = lte, x = predYMean))
-sitePlot + geom_point()+theme_classic()+
-	facet_wrap(site2)
+sitePlot + geom_point()+theme_classic() +
+	facet_wrap(site)
 
 names(bhclimComplete)
 bhclimComplete$site2
+str(bhclimComplete)
 #year effects
 #------------
 
