@@ -405,7 +405,7 @@ model{
 	//Level 1
 	alpha_g ~ normal(-15,12); 				// prior for grand alpha, assumes intercept will negative and around -10.
 	//i chose this because -3 is minimum hardiness (least hardy) and few vines can manage temps much lower than -27
-	beta_g ~ normal(0,3);
+	beta_g ~ lognormal(0,1);
 	sigma_y ~ normal(0,3); 					// prior around estiamted mean LTE50.
 
 	//Level 2 - year
@@ -434,10 +434,10 @@ generated quantities {
 stan_modelMulti6 <- "stan_model_slope.stan"
 
 
-fit6 <- stan(file = stan_modelMulti6, data = stan_data3, warmup = 3000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.90))
+fit6 <- stan(file = stan_modelMulti6, data = stan_data3, warmup = 2000, 
+	iter = 2500, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
-#launch_shinystan(fit6)
+launch_shinystan(fit6)
 
 post <- extract.samples(fit6)
 postd<-  as.data.frame(post)
@@ -549,10 +549,10 @@ generated quantities {
 
 "stan_model_slope1.stan")
 
-stan_model_slope1.stan <- "stan_model_slope1.stan"
+stan_model_slope1 <- "stan_model_slope1.stan"
 
 
-fit6 <- stan(file = stan_model_slope1.stan, data = stan_data3, warmup = 2000, 
+fit6 <- stan(file = stan_model_slope1, data = stan_data3, warmup = 2000, 
 	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 
