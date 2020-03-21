@@ -152,7 +152,8 @@ sitePlot + geom_boxplot()+
 
 #check i have enouph data spread for to include site 
 levels(bhclim$site)
-bhclim$site2 <- bhclim$site # make a new column to simplify site names 
+bhclim$site2 <- bhclim$site # make a new column to simplify site names. This column is too simplified according to mira 
+
 levels(bhclim$site2) 
 table(bhclim$site, bhclim$variety)
 
@@ -171,14 +172,28 @@ bhclim$site2 <- gsub("West ", "", bhclim$site2 )
 bhclim$site2 <- gsub("s ", "s", bhclim$site2 )
 
 
-unique(bhclim$site2)
+unique(bhclim$site)
+bhclim$site3 <- bhclim$site # make a new column to clean but not simplify names. east and west remain different sites
 
+bhclim$site3 <- as.character(bhclim$site3)
+bhclim$site3[bhclim$site3 == "Oliver east"] <- "Oliver, east"
+bhclim$site3[bhclim$site3 == "Osoyoos northeast"] <- "Osoyoos, northeast"
 
+unique(bhclim$site3)
 
 bhclimnoNoData <- bhclim[!bhclim$site == "",]
 
-table(bhclimnoNoData$site2, as.character(bhclimnoNoData$variety))
+#get a feel for wich sites have teh most varieties present
+sitePresence <- data.frame(table(bhclimnoNoData$site, as.character(bhclimnoNoData$variety)))
+sitesVarieties <- sitePresence %>%
+	filter(Freq > 0) %>%
+	group_by(Var1) %>%
+	summarise(n_var = n_distinct(Var2))
 
+sitesVarieties[order(sitesVarieties$n_var),]
+
+varietiesPresent <- sitePresence[sitePresence$Freq > 0,]
+varietiesPresent[order(varietiesPresent$Var1),]
 
 #run the model on real data
 #--------------------------------
@@ -192,8 +207,8 @@ year <- as.integer(as.factor(bhclimComplete$year))
 n_year <- length(unique(bhclimComplete$year))
 variety <- as.integer(as.factor(as.character(bhclimComplete$variety))) 
 n_vars <- length(unique(as.character(bhclimComplete$variety)))
-n_site <- length(unique(bhclimComplete$site2))
-site <- as.integer(as.factor(bhclimComplete$site2))
+n_site <- length(unique(bhclimComplete$site3))
+site <- as.integer(as.factor(bhclimComplete$site3))
 
 stan_data3 <- list(N = nReal, x = x, y = y, n_vars = n_vars, n_year = n_year, n_site = n_site, year = year, variety = variety, site = site )
 
@@ -299,7 +314,7 @@ fit3 <- stan(file = stan_modelMulti3, data = stan_data3, warmup = 1000,
 	iter = 3000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 
-launch_shinystan(fit3)
+#launch_shinystan(fit3)
 
 post3 <- extract.samples(fit3)
 
@@ -367,7 +382,7 @@ varPlot + geom_point()+theme_classic()+
 #siteEffects
 #--------------
 siteEffects <- data.frame(post3$sitemu)
-colnames(siteEffects) <- levels(as.factor(as.character(bhclimComplete$site2)))#only the first 13 varietyies have data that is used in teh model
+colnames(siteEffects) <- levels(as.factor(as.character(bhclimComplete$site3)))#only the first 13 varietyies have data that is used in teh model
 mcmc_intervals(siteEffects)
 
 unique(bhclimComplete$site2)
