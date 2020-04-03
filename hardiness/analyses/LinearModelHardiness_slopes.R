@@ -24,6 +24,7 @@ library(bayesplot)# nice posterior check plots
 library(tidyr)
 library(dplyr)
 library(shinystan)
+library(MASS)
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -192,8 +193,8 @@ alphaYear <- rep(rnorm(nyear, 0, 0.5), times = nvariety) # random effect of year
 alphaYearObs <- rep(alphaYear, each = nrep) 
 
 #variety
-sigma_vara <- 0.2 # standard deviation in intercepts for year 
-sigma_varb <- 0.3 # standard deviation in slopes for year 
+sigma_vara <- 0.2 # standard deviation in intercepts for vatiety 
+sigma_varb <- 0.3 # standard deviation in slopes for vatiety 
 rho_var <- -0.7 # correlation between intercept and slope. Lower intercepts (more cold hardy) should have steeper slopes
 
 sigmas_var <- c(sigma_vara, sigma_varb) # combine sigma values into a vector
@@ -340,7 +341,7 @@ k <- length(unique(yearNamesObs))
 
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
-stan_data3 <- list(N = N, x = x, y = y, n_vars = J, N = N, K = k, year = year, variety = Variety)
+stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = year, variety = Variety)
 
 
 
@@ -362,8 +363,8 @@ data {
 	int < lower = 1 > n_vars; 				// number of random effect levels (varieties) 
 	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
 
-	int < lower = 1 > K; 					// number of random effect levels (years) 
-	int < lower = 1, upper = K > year[N]; 	// id of random effect (year)
+	int < lower = 1 > n_year; 					// number of random effect levels (years) 
+	int < lower = 1, upper = n_year > year[N]; 	// id of random effect (year)
 
 	}
 
@@ -381,7 +382,7 @@ parameters {
 	corr_matrix[2] Rho; 						// correlation between alpha and beta for effect of variety 
 
 	real <lower = 0> sigma_k; 				// variation of intercept amoung varieties  
-	real yearmu[K];
+	real yearmu[n_year];
 
 }
 transformed parameters {
@@ -430,13 +431,13 @@ generated quantities {
 
 } // The posterior predictive distribution",
 
-"stan_model_slope.stan"))
+"stan_model_slope.stan")
 
-stan_modelMulti6 <- "stan_model_slope.stan"
+stan_modelMulti7 <- "stan_model_slope.stan"
 
 
-fit6 <- stan(file = stan_modelMulti6, data = stan_data3, warmup = 2000, 
-	iter = 2500, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+fit6 <- stan(file = stan_modelMulti7, data = stan_data4, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
 launch_shinystan(fit6)
 
@@ -458,103 +459,202 @@ year <- as.integer(as.factor(simVarData$yearNamesObs ))
 J <- length(unique(varNamesObs))
 k <- length(unique(yearNamesObs))
 
+unique(Variety)
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
-stan_data3 <- list(N = N, x = x, y = y, n_vars = J, N = N, K = k, year = year, variety = Variety)
-
-
-
+stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = year, variety = Variety)
 
 write("//
-data {
+data{
 
 	//Level 1
-	int < lower = 1 > N; 					// Sample size - number of observations
-	vector[N] x; 							// Predictor
-	vector[N] y; 							// Outcome
+  int < lower = 1 > N; // Sample size - number of observations
+  vector[N] x; // Predictor
+  vector[N] y; // Outcome
 
-	//Level 2 
-	int < lower = 1 > n_vars; 				// number of random effect levels (varieties) 
-	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
+  //Level 2 
+  int < lower = 1 > n_vars; // number of random effect levels (varieties) 
+  int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
 
-	int < lower = 1 > K; 					// number of random effect levels (years) 
-	int < lower = 1, upper = K > year[N]; 	// id of random effect (year)
+  int < lower = 1 > n_year; // number of random effect levels (years) 
+  int < lower = 1, upper = n_year > year[N]; // id of random effect (year)
 
-	}
+  }
 
 parameters {
 
-	//level 1
-	real < upper = -3 > alpha_g; 			// mean intercept accross all varieties. Grand mean
-	real beta; 								//slope accross all varieties
-	real <lower =0> sigma_y; 				// overall variation accross observations
+  //level 1
+  real < upper = -3 > alpha_g; // mean intercept accross all varieties. Grand mean
+  real beta_g; //slope accross all varieties
+  real <lower =0> sigma_y; // overall variation accross observations
 
-	//level 2
-	real <lower = 0> sigma_v; 				// variation of intercept amoung varieties  
-	real varmu[n_vars];
-	real <lower = 0> sigma_bv;
-	real beta_v[n_vars];					// effect of variety on slope 
+  //level 2
+  real <lower = 0> sigma_alpha_v; // variation of intercept amoung varieties  
+  real varmu[n_vars]; // a list of the effect of each variety on the intercept 
+  real <lower = 0> sigma_beta_v; // variation around the grand slope for varieties 
+  real varbeta[n_vars]; // a list of the effect of each variety on the slope
 
-	real <lower = 0> sigma_k; 				// variation of intercept amoung varieties  
-	real yearmu[K];
+  real <lower = 0> sigma_k; // variation of intercept amoung years
+  real yearmu[n_year];
 
 }
 transformed parameters{
+  //Individual mean 
+  real ymu[N];
 
-	real ymu[N];							//Individual mean 
+  //variety slope
+  real ybeta[N];
+ 
+  //Individual mean and slope calculation 
+  for (i in 1:N){
 
-	real g_v_beta[N];					//variety slope 
-	
-	for (i in 1:N){					// beta for each variety calculation 
-		g_v_beta[i] = beta + beta_v[variety[i]];
-	}
-
-
-	for (i in 1:N){							//Individual mean calculation 
-		ymu[i] = alpha_g + varmu[variety[i]] + yearmu[year[i]];  
-	}
+    ymu[i] = alpha_g + varmu[variety[i]] + yearmu[year[i]];  //mean
+    ybeta[i] = beta_g + varbeta[variety[i]]; //slope 
+  
+  }
 
 }
 
 model{
-	//Level 1
-	alpha_g ~ normal(-15,12); 				// prior for grand alpha, assumes intercept will negative and around -10.
-	//i chose this because -3 is minimum hardiness (least hardy) and few vines can manage 
-	//temps much lower than -27
-	beta ~ lognormal(0,1);
-	sigma_y ~ normal(0,5); 					// prior around estiamted mean LTE50.
+  //Level 1
+  alpha_g ~ normal(-15,12); // prior for grand alpha, assumes intercept will negative and around -10.
+  //i chose this because -3 is minimum hardiness (least hardy) and few vines can manage 
+  //temps much lower than -27
+  beta_g ~ lognormal(0,1); // prior around teh grand mean slope 
+  sigma_y ~ normal(0,5); // prior around estiamted mean LTE50.
 
-	//Level 2
-	varmu ~ normal(0,sigma_v); 				// prior for the effect of random factor on grand mean 
-	sigma_v ~ normal(0, 5); 				// prior for the variety around levels of random factor. Same as sigma_y
-	beta_v ~ normal(0,sigma_bv); 			//prior for the effect of variety on slope 
-	sigma_bv ~ normal(0, 1); 				// prior of the variety around levels of random factor for teh slope 
+  //Level 2
+  varmu ~ normal(0,sigma_alpha_v); // prior for the effect of random factor on grand mean 
+  sigma_alpha_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
+  varbeta ~ normal(0, sigma_beta_v); //prior for the effect of variety on slope 
+  sigma_beta_v ~ normal(0, 1); // prior for the variation around 
 
-	yearmu ~ normal(0,sigma_k);				// prior for the effect of random factor on grand mean 
-	sigma_k ~ normal(0, 5); 				// prior for the variety around levels of random factor. Same as sigma_y
+  yearmu ~ normal(0,sigma_k); // prior for the effect of random factor on grand mean 
+  sigma_k ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
 
-	//liklihood
-	for (i in 1:N){
-		y[i] ~ normal(ymu[i] + g_v_beta[variety[i]] * x[i], sigma_y);
-	}
+
+  //liklihood
+  for (i in 1:N){
+    y[i] ~ normal(ymu[i] + ybeta[i] * x[i], sigma_y);
+  }
 }
 
 generated quantities {
-  real realy[N];	
-  						// The posterior predictive distribution
-	for (i in 1:N){
-		realy[i] =ymu[i] + g_v_beta[variety[i]] * x[i];
-	}
-	
+
+  real realY[N]; 
+
+  for (i in 1:N){
+  realY[i] = ymu[i] + ybeta[i] * x[i];
+  }
 }"  ,
 
-"stan_model_slope1.stan")
+"stan_model_slope2.stan")
 
-stan_model_slope1 <- "stan_model_slope1.stan"
+stan_model_slope2 <- "stan_model_slope2.stan"
 
 
-fit6 <- stan(file = stan_model_slope1, data = stan_data3, warmup = 2000, 
-	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+
+launch_shinystan(fit8)
+
+#model with no correlation matrix and non-centred parameterisation on the sigma alpha var
+#------------------------------------------------------------------------------------
+
+
+write("//
+data{
+
+	//Level 1
+  int < lower = 1 > N; // Sample size - number of observations
+  vector[N] x; // Predictor
+  vector[N] y; // Outcome
+
+  //Level 2 
+  int < lower = 1 > n_vars; // number of random effect levels (varieties) 
+  int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
+
+  int < lower = 1 > n_year; // number of random effect levels (years) 
+  int < lower = 1, upper = n_year > year[N]; // id of random effect (year)
+
+  }
+
+parameters {
+
+  //level 1
+  real < upper = -3 > alpha_g; // mean intercept accross all varieties. Grand mean
+  real beta_g; //slope accross all varieties
+  real <lower =0> sigma_y; // overall variation accross observations
+
+  //level 2
+  real <lower = 0> sigma_alpha_v; // variation of intercept amoung varieties  
+  real varmu[n_vars]; // a list of the effect of each variety on the intercept 
+  real <lower = 0> sigma_beta_v; // variation around the grand slope for varieties 
+  real varbeta[n_vars]; // a list of the effect of each variety on the slope
+
+  real <lower = 0> sigma_k; // variation of intercept amoung years
+  real yearmu[n_year];
+
+}
+transformed parameters{
+  //Individual mean 
+  real ymu[N];
+
+  //variety slope
+  real ybeta[N];
+ 
+  //Individual mean and slope calculation 
+  for (i in 1:N){
+
+    ymu[i] = alpha_g + varmu[variety[i]] + yearmu[year[i]];  //mean
+    ybeta[i] = beta_g + varbeta[variety[i]]; //slope 
+  
+  }
+
+}
+
+model{
+  //Level 1
+  alpha_g ~ normal(-15,12); // prior for grand alpha, assumes intercept will negative and around -10.
+  //i chose this because -3 is minimum hardiness (least hardy) and few vines can manage 
+  //temps much lower than -27
+  beta_g ~ lognormal(0,1); // prior around teh grand mean slope 
+  sigma_y ~ normal(0,5); // prior around estiamted mean LTE50.
+
+  //Level 2
+  varmu ~ normal(0,sigma_alpha_v); // prior for the effect of random factor on grand mean 
+  sigma_alpha_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
+  varbeta ~ normal(0, sigma_beta_v); //prior for the effect of variety on slope 
+  sigma_beta_v ~ normal(0, 1); // prior for the variation around 
+
+  yearmu ~ normal(0,sigma_k); // prior for the effect of random factor on grand mean 
+  sigma_k ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
+
+
+  //liklihood
+  for (i in 1:N){
+    y[i] ~ normal(ymu[i] + ybeta[i] * x[i], sigma_y);
+  }
+}
+
+generated quantities {
+
+  real realY[N]; 
+
+  for (i in 1:N){
+  realY[i] = ymu[i] + ybeta[i] * x[i];
+  }
+}"  ,
+
+"stan_model_slope2.stan")
+
+stan_model_slope2 <- "stan_model_slope2.stan"
+
+
+fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+
+launch_shinystan(fit8)
 
 
 #attemp at non centred parametrisation to get model working better
@@ -571,7 +671,7 @@ k <- length(unique(yearNamesObs))
 
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
-stan_data3 <- list(N = N, x = x, y = y, n_vars = J, N = N, K = k, year = year, variety = Variety)
+stan_data3 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = year, variety = Variety)
 
 
 write("//
@@ -592,8 +692,8 @@ data {
 	int < lower = 1 > n_vars; 					// number of random effect levels (varieties) 
 	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
 
-	int < lower = 1 > K; 						// number of random effect levels (years) 
-	int < lower = 1, upper = K > year[N]; 		// id of random effect (year)
+	int < lower = 1 > n_year; 						// number of random effect levels (years) 
+	int < lower = 1, upper = n_year > year[N]; 		// id of random effect (year)
 
 	}
 
@@ -613,7 +713,7 @@ parameters {
 
 
 	real <lower = 0> sigma_k; 					// variation of intercept amoung varieties  
-	real yearmu[K];
+	real yearmu[n_year];
 
 }
 transformed parameters {
@@ -690,7 +790,16 @@ generated quantities {
 stan_modelMulti7 <- "slope_nonCentre.stan"
 
 
-fit7 <- stan(file = stan_modelMulti7, data = stan_data3, warmup = 3000, 
-	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.80))
+fit7 <- stan(file = stan_modelMulti7, data = stan_data3, warmup = 2000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.80))
 
 launch_shinystan(fit7)
+
+#extra notes for teh chapter:
+
+#Just because a marginal posterior overlaps zero does not mean we should think of it as zero.
+
+#launch_shinystan(fit3)
+
+post7 <- extract.samples(fit7)
+str(post7)
