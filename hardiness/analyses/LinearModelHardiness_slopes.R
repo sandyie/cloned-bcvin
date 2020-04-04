@@ -436,8 +436,8 @@ generated quantities {
 stan_modelMulti7 <- "stan_model_slope.stan"
 
 
-fit6 <- stan(file = stan_modelMulti7, data = stan_data4, warmup = 1000, 
-	iter = 2000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+#fit6 <- stan(file = stan_modelMulti7, data = stan_data4, warmup = 1000, 
+#	iter = 2000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
 launch_shinystan(fit6)
 
@@ -467,7 +467,7 @@ stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = ye
 write("//
 data{
 
-	//Level 1
+  //Level 1
   int < lower = 1 > N; // Sample size - number of observations
   vector[N] x; // Predictor
   vector[N] y; // Outcome
@@ -490,25 +490,33 @@ parameters {
 
   //level 2
   real <lower = 0> sigma_alpha_v; // variation of intercept amoung varieties  
-  real varmu[n_vars]; // a list of the effect of each variety on the intercept 
   real <lower = 0> sigma_beta_v; // variation around the grand slope for varieties 
   real varbeta[n_vars]; // a list of the effect of each variety on the slope
+  real za_variety[n_vars]; // prior for the z bit of the non centerd bit for alpha variety 
 
   real <lower = 0> sigma_k; // variation of intercept amoung years
   real yearmu[n_year];
 
 }
 transformed parameters{
+  //variety mean
+  real alpha_var[n_vars];
+
   //Individual mean 
   real ymu[N];
 
   //variety slope
   real ybeta[N];
+
+  //Variety means
+  for (j in 1:n_vars){
+    alpha_var[j] = alpha_g + za_variety[j] * sigma_alpha_v; // non-centred effect of variety on alpha  
+  }
  
   //Individual mean and slope calculation 
   for (i in 1:N){
-
-    ymu[i] = alpha_g + varmu[variety[i]] + yearmu[year[i]];  //mean
+   
+    ymu[i] = alpha_g + alpha_var[variety[i]] + yearmu[year[i]];  //mean
     ybeta[i] = beta_g + varbeta[variety[i]]; //slope 
   
   }
@@ -524,7 +532,7 @@ model{
   sigma_y ~ normal(0,5); // prior around estiamted mean LTE50.
 
   //Level 2
-  varmu ~ normal(0,sigma_alpha_v); // prior for the effect of random factor on grand mean 
+  za_variety ~ normal(0,1);  // prior for the z bit of the non centerd bit for alpha variety
   sigma_alpha_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
   varbeta ~ normal(0, sigma_beta_v); //prior for the effect of variety on slope 
   sigma_beta_v ~ normal(0, 1); // prior for the variation around 
@@ -539,6 +547,7 @@ model{
   }
 }
 
+
 generated quantities {
 
   real realY[N]; 
@@ -546,6 +555,8 @@ generated quantities {
   for (i in 1:N){
   realY[i] = ymu[i] + ybeta[i] * x[i];
   }
+
+  
 }"  ,
 
 "stan_model_slope2.stan")
@@ -558,6 +569,27 @@ fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000,
 
 launch_shinystan(fit8)
 
+post8 <- extract.samples(fit8)
+
+str(post8)
+
+plot(density(post8$sigma_y))#2 - overestimating this 
+
+plot(density(post8$za_variety))
+
+plot(density(post8$sigma_alpha_v))#0.3 - estimating ok 
+
+plot(density(post8$varbeta))#
+
+plot(density(post8$sigma_beta_v))#0.2 - estimating ok
+
+plot(density(post8$sigma_k))#0.5 - overestimating a bit 
+
+predY <- data.frame(post8$realY)
+predYmean <- colMeans(predY)
+
+plot( predYmean ~ y)
+
 #model with no correlation matrix and non-centred parameterisation on the sigma alpha var
 #------------------------------------------------------------------------------------
 
@@ -565,7 +597,7 @@ launch_shinystan(fit8)
 write("//
 data{
 
-	//Level 1
+  //Level 1
   int < lower = 1 > N; // Sample size - number of observations
   vector[N] x; // Predictor
   vector[N] y; // Outcome
@@ -651,8 +683,8 @@ generated quantities {
 stan_model_slope2 <- "stan_model_slope2.stan"
 
 
-fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+#fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000, 
+#	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 launch_shinystan(fit8)
 
@@ -708,8 +740,8 @@ parameters {
 
 	vector<lower = 0>[2] var_sigma; 			// a vector of standard deviations, one for alpha and one for beta (overall effect of variety)
 	corr_matrix[2] Rho; 	
-	vector[n_vars] za_variety;					// z score of alpha for effect of variety 
-	vector[n_vars] zb_variety;					// z score of beta for effect of variety 
+	vector[n_vars] za_variety;			// z score of alpha for effect of variety 
+	vector[n_vars] zb_variety;			// z score of beta for effect of variety 
 
 
 	real <lower = 0> sigma_k; 					// variation of intercept amoung varieties  
@@ -750,6 +782,9 @@ model{
 	//Level 2 - variety
 	var_sigma ~ normal(0, 3); 					// prior for the variety effect that gets multiplied with rho (correlation)
 	Rho ~ lkj_corr_lpdf(2); 					// prior for teh correlation between alpha and beta effect of variety 
+	za_variety ~ normal(0,1); 					// prior for the z bit of the non centerd bit for alpha
+	zb_variety ~ normal(0,1); 					// prior for the z bit of the non centerd bit for beta
+
 
 	target += multi_normal_lpdf(v_variety | rep_vector(0, 2), Rho);
 
@@ -790,7 +825,7 @@ generated quantities {
 stan_modelMulti7 <- "slope_nonCentre.stan"
 
 
-fit7 <- stan(file = stan_modelMulti7, data = stan_data3, warmup = 2000, 
+fit7 <- stan(file = stan_modelMulti7, data = stan_data4, warmup = 2000, 
 	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.80))
 
 launch_shinystan(fit7)
