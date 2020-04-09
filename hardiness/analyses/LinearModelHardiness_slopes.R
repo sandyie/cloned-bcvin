@@ -4,6 +4,10 @@ rm(list = ls())
 #running a mixed linear model of bud winter hardiness regressed against air temperature. There is grouping 
 #on the intercept and slope for variety  
 
+#the best model at this time is slopeVarietyCov.stan (fit 6), which has a covarience structure and
+#no non centred parameterisation 
+
+#there are three more models in thsi script as well with either no covarience structure or non-centred parameterisation (or both)
 
 setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
 
@@ -313,14 +317,97 @@ n_vars <- length(unique(varNamesRep))
 stan_data4 <- list(N = N, x = x, y = y, n_vars = n_vars,  variety = variety )
 
 
+#model with a full covarience structure and no non-centred parameterisation 
+#-----------------------------------------------------------------------------
+
+#this model is (i think?) exactly the same as the process i used to simulate data. 
+#It has a covariance structure for teh partial pooling of variety on slope and 
+#intercept. There is no non-centred parameterisation. 
+
+#This model ddoesnt give fitting warnings (it used to when i included year) but has to have a high adapt_delta
+#
+
+fit6 <- stan(file = "slopeVarietyCov.stan", data = stan_data4, warmup = 3000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
+
+launch_shinystan(fit6)
+
+post <- extract.samples(fit6)
+
+str(post)
+names(post)
+
+plot(density(post$alpha_g))#-20 - ok estimate
+
+plot(density(post$beta_g))#0.5 - underestimating this a bit, but maybe ok?
+
+plot(density(data.frame(post$Rho)[,2]))#doing a good job i think? Should be -0.7
+
+plot(density(data.frame(post$var_sigma)[,1])) #Partial pooling on intercept. should be 0.2. Doing a good job i think. 
+
+plot(density(data.frame(post$var_sigma)[,2])) #Partial pooling on slope. should be 0.3. Doing a good job i think. 
+
+plot(density(post$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok. 
+
+#Predicted values
+meanRealY <- colMeans(data.frame(post$realY))
+SDRealY <- apply(data.frame(post$realY), 2, HPDI) 
+str(SDRealY)
+
+realYs <- data.frame(meanRealY)
+head(realYs)
+realYs$upperHPDI <- SDRealY[1,]
+realYs$lowerHPDI <- SDRealY[2,]
+
+#plot predicted valuea against temp
+#black lines are the mean slopes, coloured ones are the HPDI varience 
+
+plot(realYs$lowerHPDI ~ simVarData$simTemps,col="green", type = "l")
+lines(realYs$upperHPDI ~ simVarData$simTemps,col="green")
+lines(realYs$meanRealY ~ simVarData$simTemps,col="black")
+
+#plot predicted values against empirical ones (not including sigma_y)
+#black points are teh mean values, coloured ones are the HPDI variance  
+
+plot(realYs$lowerHPDI, simVarData$simLTEVar,col="purple", type = "p", pch = 16)
+points(realYs$upperHPDI, simVarData$simLTEVar,col="purple", pch = 16)
+points(realYs$meanRealY, simVarData$simLTEVar,col="black", pch = 16)
+
+#variety effects
+varietyAlphas <- data.frame(post$a_b_variety[,,1])
+meanVarietyAlpha <- colMeans(varietyAlphas)
+varietyBetas <- data.frame(post$a_b_variety[,,2])
+meanVarietyBeta <- colMeans(varietyBetas)
+
+plot(meanVarietyAlpha ~ meanVarietyBeta)
+
+#predictions for each variety 
+mcmc_intervals(varietyAlphas) + geom_vline(xintercept = alpha, linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(varietyBetas)+ geom_vline(xintercept = betag, linetype="dotted", color = "grey") #intercepts 
 
 
-#try a model with a less complicated structure (no covarience) 
+
+
+
+#Other models:
+#-----------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------
+
+
+
+
+#a model with a less complicated structure (no covarience) 
 #------------------------------------------------------
+
+#Thid model has non non-cented parameters and no covarience. Just partial pooling on 
+#the intercept and slope for variety
+
+#It is not giving me any fitting warnings at 8000 itterations, but not predicting 
+#the values as well as I would hope. 
 
 
 fit8 <- stan(file = "slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
+	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
 launch_shinystan(fit8)
 
@@ -332,8 +419,6 @@ plot(density(post8$alpha_g))#-20 - overestimating this
 
 plot(density(post8$beta_g))#0.5 - overestimating this 
 
-plot(density(post8$za_variety))
-
 plot(density(post8$sigma_alpha_v))#0.3 - estimating ok 
 
 plot(density(post8$varbeta))#
@@ -343,52 +428,177 @@ plot(density(post8$sigma_beta_v))#0.2 - estimating ok
 #attemp at non centred parametrisation to get model working better
 #---------------------------------------------------------------------
 
+#this model is very similar to model slope_varietySimple.stan, exept I added some
+#non-parameterisation on the partial pooling around the intercept. I did this because
+#I was getting transition errors and there was a banana shape without teh non-centred parameterisation
 
-fit10 <- stan(file = "nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.80))
+#This model gives no fitting warnings, and is doing an ok job of estimating parameters but not as good 
+#as I would like 
+
+
+fit10 <- stan(file = "noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, control = list(max_treedepth = 15, adapt_delta = 0.80))
 
 launch_shinystan(fit10)
-
-#extra notes for teh chapter:
-
-#Just because a marginal posterior overlaps zero does not mean we should think of it as zero.
-
-#launch_shinystan(fit3)
 
 post10 <- extract.samples(fit10)
 str(post7)
 
-#model with a full covarience structure and no non-centred parameterisation 
-#-----------------------------------------------------------------------------
 
-stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, variety = Variety)
+plot(density(post10$alpha_g))#-20 - ok estimate
 
-fit6 <- stan(file = "slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+plot(density(post10$beta_g))#0.5 -underestimating this 
 
-launch_shinystan(fit6)
+plot(density(post10$sigma_alpha_v))#0.3 - estimating ok 
 
-post <- extract.samples(fit6)
-postd<-  as.data.frame(post)
-pairs(postd[,c(1,2,3,113, 114, 45, 46, 47)])
+plot(density(post10$varbeta))#
 
-str(postd)
-names(postd)
-
-str(post8)
-
-plot(density(postd$alpha_g))#-20 - overestimating this 
-
-plot(density(postd$beta_g))#0.5 - overestimating this 
+plot(density(post10$sigma_beta_v))#0.2 - estimating ok
 
 
 
 #model with no correlation matrix and non-centred parameterisation on the sigma alpha var
 #------------------------------------------------------------------------------------
 
+#this is teh model i made woth partial pooling and a covariance structure for variety 
+#on intercept and slope, and non-centred parameterisation. I dont know if it is needed
+#because at the momment teh model without non-centred parameterisation is doing fine 
 
-fit9 <- stan(file = "noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
+#this model has no divergent transitions warning or other warnings
+#
+fit9 <- stan(file = "nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
 	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 launch_shinystan(fit9)
+
+fit9
+
+
+post9 <- extract.samples(fit9)
+
+str(post9)
+
+plot(density(post9$alpha_g))#-20 - ok estimate
+
+plot(density(post9$beta_g))#0.5 - underestimating this a bit, but maybe ok?
+
+plot(density(data.frame(post9$Rho)[,2]))#dOverestimating this.  Should be -0.7
+
+plot(density(data.frame(post9$var_sigma)[,1])) #Partial pooling on intercept. should be 0.2. Doing a good job i think. 
+
+plot(density(data.frame(post9$var_sigma)[,2])) #Partial pooling on slope. should be 0.3. Overestimating a lot. 
+
+plot(density(post9$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok. 
+
+
+#Try with the real Data
+#----------------------------
+#----------------------------------------
+
+
+#using the model with a covarience structure and no non-centred parameterisation 
+#------------------------------------------------------------------------------
+
+#this model now doesnt converge. There is a problem with teh partial pooling on slopes for varieties. (banana plot)
+head(bhclim)
+
+#remove na rows
+bhclimClean2 <- bhclim[!is.na(bhclim$lte),]
+
+#remove rows where no variety data given 
+bhclimClean <- bhclimClean2[!bhclimClean2$variety == "",]
+
+x2 <- I(bhclimClean$meanC)
+y2 <- bhclimClean$lte
+N2 <- length(bhclimClean$meanC)
+variety2 <- as.integer(as.factor(as.character(bhclimClean$variety)))
+n_vars2 <- length(unique(bhclimClean$variety))
+
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+
+stan_data_real <- list(N = N2, x = x2, y = y2, n_vars = n_vars2,  variety = variety2 )
+str(stan_data_real)
+
+fitReal_cov <- stan(file = "slopeVarietyCov.stan", data = stan_data_real, warmup = 2000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
+
+launch_shinystan(fitReal_cov)
+
+#try without the covariance structure 
+#------------------------------------------
+#more divergent transitions, again with sigma around partial pooling of variety around slope
+
+realFit_nocov <- stan(file = "slope_varietySimple.stan", data = stan_data_real, warmup = 2000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+
+launch_shinystan(realFit_nocov)
+
+#try with partial pooling, no covariance, and non-centred parameterisation for sigma_beta_var 
+#--------------------------------------------------------------------------------------------
+
+#this one fitted ok
+#I think teh probelm is that there is no real variation between varieties, which is making it 
+#really hard for the model
+
+#teh estimated different alphas for varieties have no changed with the inclusion of patial pooling on slope 
+realFit_nocov_bncp <- stan(file = "nonCentre_slopeVariety_beta.stan", data = stan_data_real, warmup = 2000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+
+launch_shinystan(realFit_nocov_bncp)
+
+
+
+postReal <- extract.samples(realFit_nocov_bncp)
+
+str(postReal)
+names(postReal)
+
+plot(density(postReal$alpha_g))#-20 - ok estimate
+
+plot(density(postReal$beta_g))#0.5 - underestimating this a bit, but maybe ok?
+
+plot(density(postReal$sigma_alpha_v)) #Partial pooling on intercept. should be 0.2. Doing a good job i think. 
+
+plot(density(postReal$sigma_beta_v)) #Partial pooling on slope. should be 0.3. Doing a good job i think. 
+
+plot(density(postReal$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok. 
+
+#Predicted values
+meanRealY2 <- colMeans(data.frame(postReal$realY))
+SDRealY2<- apply(data.frame(postReal$realY), 2, HPDI) 
+str(postReal)
+
+realYs2 <- data.frame(meanRealY2)
+head(realYs)
+realYs2$upperHPDI <- SDRealY2[1,]
+realYs2$lowerHPDI <- SDRealY2[2,]
+
+#plot predicted valuea against temp
+#black lines are the mean slopes, coloured ones are the HPDI varience 
+
+plot(realYs2$lowerHPDI ~ bhclimClean$meanC,col="green")
+points(realYs2$upperHPDI ~ bhclimClean$meanC,col="green")
+points(realYs2$meanRealY ~ bhclimClean$meanC,col="black")
+
+#plot predicted values against empirical ones (not including sigma_y)
+#black points are teh mean values, coloured ones are the HPDI variance  
+
+plot(realYs2$lowerHPDI, bhclimClean$lte,col="purple", type = "p", pch = 16)
+points(realYs2$upperHPDI, bhclimClean$lte,col="purple", pch = 16)
+points(realYs2$meanRealY, bhclimClean$lte,col="black", pch = 16)
+
+#variety effects
+meanVarietyAlpha2 <- colMeans(postReal$alpha_var)
+meanBetaVar <- data.frame(postReal$zb_variety * mean(postReal$sigma_beta_v))
+meanVarietyBetaZ <- colMeans(meanBetaVar)
+str(meanVarietyBetaZ)
+plot(meanVarietyAlpha2 ~ meanVarietyBetaZ)
+
+#predictions for each variety 
+SpeciesAlphas <- data.frame(postReal$alpha_var)
+names(SpeciesAlphas) <- levels(as.factor(as.character(bhclimClean$variety)))
+mcmc_intervals(SpeciesAlphas) + geom_vline(xintercept = mean(postReal$alpha_g), linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(meanBetaVar ) + geom_vline(xintercept = mean(postReal$alpha_b), linetype="dotted", color = "grey") #intercepts 
 
