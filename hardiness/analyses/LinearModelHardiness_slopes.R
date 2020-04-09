@@ -1,8 +1,8 @@
 rm(list = ls())
-#script started by Faith Jones on the 5th March 2020 
+#script started by Faith Jones on the 5th March 2020, with year removed April 8th 
 
 #running a mixed linear model of bud winter hardiness regressed against air temperature. There is grouping 
-#on the intercept and slope for variety and just on teh intercept for year 
+#on the intercept and slope for variety  
 
 
 setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
@@ -168,29 +168,24 @@ set.seed(16)
 #LTE50sim (y ) is simulated using parameters
 
 #inputs
-nrep <- 30 # number of reps of each variety and year (days sampled in a year and for a variety )
-meanTemp <- mean(bhclim$meanC) #2.03
-sigmaTemp <- sd(bhclim$meanC) #4.81
+nrep <- 40 # number of reps of each variety and year (days sampled in a year and for a variety )
+meanTemp <- 2
+sigmaTemp <- 5
 simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
 
-nvariety <- 20
+nvariety <- 40
 varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
-nyear <- 20 # there are 20 years of data
-yearNames <- as.factor(1:20) #name of each year 
+
 
 #parameters (mostly taken from the lmer model)
 
-nObs <- nyear*nvariety*nrep # the number of observations  for each year and each variety combined 
+nObs <- nvariety*nrep # the number of observations  for each year and each variety combined 
 
 #make a multivariate distribution of slopes and intercepts for each grouping effect
-alpha <- -21.4 # overall gran mean alpha
-betag <- 0.52 # overall grand mean beta
+alpha <- -20 # overall gran mean alpha
+betag <- 0.50 # overall grand mean beta
 
 muAB <- c(alpha, betag)#combine two gran effects
-
-#Year
-alphaYear <- rep(rnorm(nyear, 0, 0.5), times = nvariety) # random effect of year, 20 years and each year has a each variety in it 
-alphaYearObs <- rep(alphaYear, each = nrep) 
 
 #variety
 sigma_vara <- 0.2 # standard deviation in intercepts for vatiety 
@@ -200,56 +195,44 @@ rho_var <- -0.7 # correlation between intercept and slope. Lower intercepts (mor
 sigmas_var <- c(sigma_vara, sigma_varb) # combine sigma values into a vector
 Rho_var <- matrix(c(1, rho_var, rho_var, 1), nrow = 2) # correlation matrix
 Sigma_var <- diag(sigmas_var) %*% Rho_var %*% diag(sigmas_var) # this does some matrix black magic
-varEffects <- mvrnorm(nyear, muAB, Sigma_var)#get overall slopes and intercepts for each year 
+varEffects <- mvrnorm(nvariety, muAB, Sigma_var)#get overall slopes and intercepts for each year 
 
-alphaVar <- rep(varEffects[,1], times = nyear) # replicate the value so i can get a unique combination of year and variety
-alphaVarObs <- rep(alphaVar, each = nrep) # make sure I have 30 replicates for each variety/year combination
+alphaVarObs <- rep(varEffects[,1], each = nrep) # replicate the value so i can a variety specific mean for each observation
 
-betaVar <- rep(varEffects[,2], times = nyear) # replicate the value so i can get a unique combination of year and variety
-betaVarObs <- rep(betaVar, each = nrep) # make sure I have 30 replicates for each variety/year combination
-
-
+betaVarObs <- rep(varEffects[,2], each = nrep) # replicate the value so i can a variety specific slope for each observation
 
 #other model parameters (no grouing)
-sigma <-  2
+sigma <-  1
 eps <- rnorm(nObs , 0, sigma)
 
 #make columns for teh name of the year, variety and day of the year 
-varNamesRep <- rep(varNames, each = nyear)
-varNamesObs <- rep(varNamesRep, each = nrep)
-YearNameRep <- rep(1:nyear, times = nvariety)
-yearNamesObs <- rep(YearNameRep, each = nrep)
+varNamesRep <- rep(varNames, each = nrep)
+
 
 #sigma <- sqrt(sigma2)
 
-meanTemp <- mean(bhclim$meanC)
-sigmaTemp <- sd(bhclim$meanC)
-simTemps <- rnorm(nObs , meanTemp , sigmaTemp)
 
-
-simLTEVar <- alphaVarObs + alphaYearObs + betaVarObs * simTemps + eps
-plot(simLTEVar ~ simTemps)
+simLTEVar <- alphaVarObs  + betaVarObs * simTemps + eps
 
 #combine into a single data table
 
-simVarData <- data.frame(cbind(simTemps, varNamesObs, yearNamesObs, simLTEVar))
+simVarData <- data.frame(cbind(simTemps, varNamesRep, simLTEVar))
 str(simVarData)
 simVarData[order(simVarData$varNames),]
-simVarData$varNamesObs <- as.factor(simVarData$varNamesObs )
-simVarData$yearNamesObs <- as.factor(simVarData$yearNamesObs ) 
+simVarData$varNamesRep <- as.factor(simVarData$varNamesRep )
 
 #prior predictive checks 
 #---------------------------------------------
-
-#how do i chose a prior for the covarience structure???? I guess that it needs to be a negative number. Normal as well?
-R <- rlkjcorr(1e4, K = 2, eta = 2)
-plot(density(rlkjcorr(Ni, K = 2, eta = 2)[,1,2]))#what this prior looks like 
 
 
 #range of temperatures to simulate over
 Ni <- 10 #number of repeat runs of the model 
 nObs <- 30 # number fo temperature observations per simulation 
 preTemps <- rnorm(30, -15, 20) # i think this is a sensible range of winter temps
+
+#how do i chose a prior for the covarience structure???? I guess that it needs to be a negative number. Normal as well?
+R <- rlkjcorr(1e4, K = 2, eta = 2)
+plot(density(rlkjcorr(Ni, K = 2, eta = 2)[,1,2]))#what this prior looks like 
 
 #1st level parameters 
 alpha_g <-  rnorm(Ni, -15, 12)
@@ -263,16 +246,11 @@ Sigma_varb <- rnorm(Ni, 0, 1) # standard deviation in slopes for variety
 
 #make a dataframe for the outputs of random effects 
 n_vars  <- 20 # number of random effects 
-n_year <- 20
-varietySim <- rep(as.factor(c(1:n_vars)), each = n_year)
-yearSim <- rep(as.factor(c(1:n_year)), times = n_vars)
-raneffectV <- rep(varietySim, times = Ni )
-raneffectY <- rep(yearSim, times = Ni )
+varietyEffecSim <- rep(c(1:n_vars), times = Ni)
 
-repetition <- rep(1:Ni, each = n_vars*n_year)
-randomEffectsPre <- data.frame(cbind(raneffectY, raneffectV) )
+repetition <- rep(1:Ni, each = n_vars)
+randomEffectsPre <- data.frame(varietyEffecSim)
 randomEffectsPre$alpha_v <- NA # this will be the alpha values for each varity, not teh grand alpha 
-randomEffectsPre$sigma_year <- NA
 randomEffectsPre$rep <- repetition
 #randomEffectsPre$alpha_g <- rep(alpha_g , each = n_vars)
 #randomEffectsPre$beta <- rep(beta, each = n_vars) Thsi will come from teh below loop so each variety has a different slope
@@ -285,10 +263,6 @@ for (counter in 1:Ni){
 
 	#counter <- 1
 
-	#Year effect on alpha
-	sigma_yearc <- rep(rnorm(n_vars, 0, 5), times = n_vars)
-	randomEffectsPre$sigma_year[randomEffectsPre$rep == counter] <- sigma_yearc
-
 	#Variety effect on alpha and beta  
 	muABs <- c(alpha_g[counter], beta_g[counter])#combine two grand effects
 
@@ -299,28 +273,23 @@ for (counter in 1:Ni){
 	sigmas_vars <- c(sigma_varas, sigma_varbs) # combine sigma values into a vector
 	Rho_vars <- matrix(c(1, rho_vars, rho_vars, 1), nrow = 2) # correlation matrix
 	Sigma_vars <- diag(sigmas_vars) %*% Rho_vars %*% diag(sigmas_vars) # this does some matrix black magic
-	varEffectss <- mvrnorm(nyear, muABs, Sigma_vars)#get overall slopes and intercepts for each year 
+	varEffectss <- mvrnorm(n_vars, muABs, Sigma_vars)#get overall slopes and intercepts for each year 
 
-	alpha_vc <- varEffectss[,1] # alpha values for each variety 
-	alphaVar <- rep(alpha_vc, each = nyear) # replicate the value so i can get a unique combination of year and variety
+	# alpha values for each variety 
+	randomEffectsPre$alpha_v[randomEffectsPre$rep == counter] <- varEffectss[,1]
 
-	randomEffectsPre$alpha_v[randomEffectsPre$rep == counter] <- alphaVar
-
-	betaVars <- varEffectss[,2] # beta values for each variety 
-	betaVars2 <- rep(betaVars, each = nyear) # replicate the value so i can get a unique combination of year and variety
-	randomEffectsPre$beta_v[randomEffectsPre$rep == counter] <- betaVars2
+	# beta values for each variety 
+	randomEffectsPre$beta_v[randomEffectsPre$rep == counter] <- varEffectss[,2]
 
 }
-
-randomEffectsPre$alphaBoth <- randomEffectsPre$alpha_v +  randomEffectsPre$sigma_year # the alpha for each variety, plus teh effect of year on alpha
 
 plot(simVarData$ simLTEVar ~ simVarData$simTemps, col = "grey74")
 
-for (i in 1:length(randomEffectsPre$alphaBoth)){
-	abline(a = randomEffectsPre$alphaBoth[i], b = randomEffectsPre$beta_v[i], col = rgb(red = 1, green = 0, blue = 0, alpha = 0.8))
+for (i in 1:length(randomEffectsPre$alpha_v)){
+	abline(a = randomEffectsPre$alpha_v[i], b = randomEffectsPre$beta_v[i], col = rgb(red = 1, green = 0, blue = 0, alpha = 0.8))
 }
 
-plot(density(randomEffectsPre$alphaBoth))
+plot(density(randomEffectsPre$alpha_v))
 plot(density(randomEffectsPre$beta_v))
 
 #it is trying a few vrazy values, but generally ok i think?
@@ -334,110 +303,68 @@ head(simVarData)
 x <- I(simVarData$simTemps)
 y <- simVarData$simLTEVar
 N <- length(simVarData$simTemps)
-Variety <- as.integer(as.factor(simVarData$varNames ))
-year <- as.integer(as.factor(simVarData$yearNamesObs ))
-J <- length(unique(varNamesObs))
-k <- length(unique(yearNamesObs))
+variety <- as.integer(as.factor(simVarData$varNames ))
+n_vars <- length(unique(varNamesRep))
+
 
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
-stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = year, variety = Variety)
+
+stan_data4 <- list(N = N, x = x, y = y, n_vars = n_vars,  variety = variety )
 
 
 
 
-write("//
-
-// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety and year 
-//
-// Stan model for partially pooled linear regression including priors 
-
-data {
-
-	//Level 1
-	int < lower = 1 > N; 					// Sample size - number of observations
-	vector[N] x; 							// Predictor
-	vector[N] y; 							// Outcome
-
-	//Level 2 	
-	int < lower = 1 > n_vars; 				// number of random effect levels (varieties) 
-	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
-
-	int < lower = 1 > n_year; 					// number of random effect levels (years) 
-	int < lower = 1, upper = n_year > year[N]; 	// id of random effect (year)
-
-	}
-
-parameters {
-
-	//level 1
-	real < upper = 0 > alpha_g; 			// mean intercept accross all varieties. Grand mean
-	real beta_g;							//grand slope accross all varieties
-	real <lower =0> sigma_y; 				// overall variation accross observations
-
-	//level 2				  
-	vector[n_vars] var_alpha;					// a new alpha for each variety, which includes grand alpha and effect of variety 
-	vector[n_vars] var_beta;					// a new beta for each variety, which includes grand alpha and effect of variety 
-	vector<lower = 0>[2] var_sigma; 		// a vector of standard deviations, one for alpha and one for beta (overall effect of variety)
-	corr_matrix[2] Rho; 						// correlation between alpha and beta for effect of variety 
-
-	real <lower = 0> sigma_k; 				// variation of intercept amoung varieties  
-	real yearmu[n_year];
-
-}
-transformed parameters {
-
-	//variety level alpha and beta 
-	vector[2] mu_ab = [alpha_g, beta_g]'; 	//Vector of grand alpha and grand beta 
-	vector[2] a_b_variety[n_vars];			//vector of an alpha and beta value for each varity 
-	cov_matrix[2] SR_sigma_variety;			//the covarience matrix for the multinormal distribution 
-
-	for (j in 1:n_vars){
-		a_b_variety[j,1:2] = [var_alpha[j], var_beta[j]]';
-	}
-		SR_sigma_variety = quad_form_diag(Rho, var_sigma);
-
-}
-
-model{
-  
-  //Individual mean 
-	real ymu[N];
-	
-	//Level 1
-	alpha_g ~ normal(-15,12); 				// prior for grand alpha, assumes intercept will negative and around -10.
-	//i chose this because -3 is minimum hardiness (least hardy) and few vines can manage temps much lower than -27
-	beta_g ~ lognormal(0,1);
-	sigma_y ~ normal(0,3); 					// prior around estiamted mean LTE50.
-
-	//Level 2 - year
-	yearmu ~ normal(0,sigma_k); 			// prior for the effect of random factor on grand mean 
-	sigma_k ~ normal(0, 3); 				// prior for the variety around levels of random factor. Same as sigma_y
-
-	//Level 2 - variety
-	var_sigma ~ normal(0, 3); 				// prior for the variety effect that gets multiplied with rho (correlation)
-	Rho ~ lkj_corr_lpdf(2); 				// prior for teh correlation between alpha and beta effect of variety 
-
-	a_b_variety ~ multi_normal_lpdf(mu_ab , SR_sigma_variety);
-
-	//liklihood
-	for (i in 1:N){
-		ymu[i] = var_alpha[variety[i]] + yearmu[year[i]] + var_beta[variety[i]] * x[i];
-		y[i] ~ normal(ymu[i], sigma_y);
-	}
-}
-generated quantities {
+#try a model with a less complicated structure (no covarience) 
+#------------------------------------------------------
 
 
-} // The posterior predictive distribution",
+fit8 <- stan(file = "slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
-"stan_model_slope.stan")
+launch_shinystan(fit8)
 
-stan_modelMulti7 <- "stan_model_slope.stan"
+post8 <- extract.samples(fit8)
+
+str(post8)
+
+plot(density(post8$alpha_g))#-20 - overestimating this 
+
+plot(density(post8$beta_g))#0.5 - overestimating this 
+
+plot(density(post8$za_variety))
+
+plot(density(post8$sigma_alpha_v))#0.3 - estimating ok 
+
+plot(density(post8$varbeta))#
+
+plot(density(post8$sigma_beta_v))#0.2 - estimating ok
+
+#attemp at non centred parametrisation to get model working better
+#---------------------------------------------------------------------
 
 
-#fit6 <- stan(file = stan_modelMulti7, data = stan_data4, warmup = 1000, 
-#	iter = 2000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+fit10 <- stan(file = "nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.80))
+
+launch_shinystan(fit10)
+
+#extra notes for teh chapter:
+
+#Just because a marginal posterior overlaps zero does not mean we should think of it as zero.
+
+#launch_shinystan(fit3)
+
+post10 <- extract.samples(fit10)
+str(post7)
+
+#model with a full covarience structure and no non-centred parameterisation 
+#-----------------------------------------------------------------------------
+
+stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, variety = Variety)
+
+fit6 <- stan(file = "slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
 launch_shinystan(fit6)
 
@@ -448,393 +375,20 @@ pairs(postd[,c(1,2,3,113, 114, 45, 46, 47)])
 str(postd)
 names(postd)
 
-#try a model with a less complicated structure 
-#------------------------------------------------------
-
-x <- I(simVarData$simTemps)
-y <- simVarData$simLTEVar
-N <- length(simVarData$simTemps)
-Variety <- as.integer(as.factor(simVarData$varNames ))
-year <- as.integer(as.factor(simVarData$yearNamesObs ))
-J <- length(unique(varNamesObs))
-k <- length(unique(yearNamesObs))
-
-unique(Variety)
-#data passed to STan needs to be a list of named objects. names here need to match names in model code
-#i make a LIST of the different varables, NOT data frame
-stan_data4 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = year, variety = Variety)
-
-write("//
-data{
-
-  //Level 1
-  int < lower = 1 > N; // Sample size - number of observations
-  vector[N] x; // Predictor
-  vector[N] y; // Outcome
-
-  //Level 2 
-  int < lower = 1 > n_vars; // number of random effect levels (varieties) 
-  int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
-
-  int < lower = 1 > n_year; // number of random effect levels (years) 
-  int < lower = 1, upper = n_year > year[N]; // id of random effect (year)
-
-  }
-
-parameters {
-
-  //level 1
-  real < upper = -3 > alpha_g; // mean intercept accross all varieties. Grand mean
-  real beta_g; //slope accross all varieties
-  real <lower =0> sigma_y; // overall variation accross observations
-
-  //level 2
-  real <lower = 0> sigma_alpha_v; // variation of intercept amoung varieties  
-  real <lower = 0> sigma_beta_v; // variation around the grand slope for varieties 
-  real varbeta[n_vars]; // a list of the effect of each variety on the slope
-  real za_variety[n_vars]; // prior for the z bit of the non centerd bit for alpha variety 
-
-  real <lower = 0> sigma_k; // variation of intercept amoung years
-  real yearmu[n_year];
-
-}
-transformed parameters{
-  //variety mean
-  real alpha_var[n_vars];
-
-  //Individual mean 
-  real ymu[N];
-
-  //variety slope
-  real ybeta[N];
-
-  //Variety means
-  for (j in 1:n_vars){
-    alpha_var[j] = alpha_g + za_variety[j] * sigma_alpha_v; // non-centred effect of variety on alpha  
-  }
- 
-  //Individual mean and slope calculation 
-  for (i in 1:N){
-   
-    ymu[i] = alpha_g + alpha_var[variety[i]] + yearmu[year[i]];  //mean
-    ybeta[i] = beta_g + varbeta[variety[i]]; //slope 
-  
-  }
-
-}
-
-model{
-  //Level 1
-  alpha_g ~ normal(-15,12); // prior for grand alpha, assumes intercept will negative and around -10.
-  //i chose this because -3 is minimum hardiness (least hardy) and few vines can manage 
-  //temps much lower than -27
-  beta_g ~ lognormal(0,1); // prior around teh grand mean slope 
-  sigma_y ~ normal(0,5); // prior around estiamted mean LTE50.
-
-  //Level 2
-  za_variety ~ normal(0,1);  // prior for the z bit of the non centerd bit for alpha variety
-  sigma_alpha_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
-  varbeta ~ normal(0, sigma_beta_v); //prior for the effect of variety on slope 
-  sigma_beta_v ~ normal(0, 1); // prior for the variation around 
-
-  yearmu ~ normal(0,sigma_k); // prior for the effect of random factor on grand mean 
-  sigma_k ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
-
-
-  //liklihood
-  for (i in 1:N){
-    y[i] ~ normal(ymu[i] + ybeta[i] * x[i], sigma_y);
-  }
-}
-
-
-generated quantities {
-
-  real realY[N]; 
-
-  for (i in 1:N){
-  realY[i] = ymu[i] + ybeta[i] * x[i];
-  }
-
-  
-}"  ,
-
-"stan_model_slope2.stan")
-
-stan_model_slope2 <- "stan_model_slope2.stan"
-
-
-fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
-
-launch_shinystan(fit8)
-
-post8 <- extract.samples(fit8)
-
 str(post8)
 
-plot(density(post8$sigma_y))#2 - overestimating this 
+plot(density(postd$alpha_g))#-20 - overestimating this 
 
-plot(density(post8$za_variety))
+plot(density(postd$beta_g))#0.5 - overestimating this 
 
-plot(density(post8$sigma_alpha_v))#0.3 - estimating ok 
 
-plot(density(post8$varbeta))#
-
-plot(density(post8$sigma_beta_v))#0.2 - estimating ok
-
-plot(density(post8$sigma_k))#0.5 - overestimating a bit 
-
-predY <- data.frame(post8$realY)
-predYmean <- colMeans(predY)
-
-plot( predYmean ~ y)
 
 #model with no correlation matrix and non-centred parameterisation on the sigma alpha var
 #------------------------------------------------------------------------------------
 
 
-write("//
-data{
+fit9 <- stan(file = "noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
-  //Level 1
-  int < lower = 1 > N; // Sample size - number of observations
-  vector[N] x; // Predictor
-  vector[N] y; // Outcome
+launch_shinystan(fit9)
 
-  //Level 2 
-  int < lower = 1 > n_vars; // number of random effect levels (varieties) 
-  int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
-
-  int < lower = 1 > n_year; // number of random effect levels (years) 
-  int < lower = 1, upper = n_year > year[N]; // id of random effect (year)
-
-  }
-
-parameters {
-
-  //level 1
-  real < upper = -3 > alpha_g; // mean intercept accross all varieties. Grand mean
-  real beta_g; //slope accross all varieties
-  real <lower =0> sigma_y; // overall variation accross observations
-
-  //level 2
-  real <lower = 0> sigma_alpha_v; // variation of intercept amoung varieties  
-  real varmu[n_vars]; // a list of the effect of each variety on the intercept 
-  real <lower = 0> sigma_beta_v; // variation around the grand slope for varieties 
-  real varbeta[n_vars]; // a list of the effect of each variety on the slope
-
-  real <lower = 0> sigma_k; // variation of intercept amoung years
-  real yearmu[n_year];
-
-}
-transformed parameters{
-  //Individual mean 
-  real ymu[N];
-
-  //variety slope
-  real ybeta[N];
- 
-  //Individual mean and slope calculation 
-  for (i in 1:N){
-
-    ymu[i] = alpha_g + varmu[variety[i]] + yearmu[year[i]];  //mean
-    ybeta[i] = beta_g + varbeta[variety[i]]; //slope 
-  
-  }
-
-}
-
-model{
-  //Level 1
-  alpha_g ~ normal(-15,12); // prior for grand alpha, assumes intercept will negative and around -10.
-  //i chose this because -3 is minimum hardiness (least hardy) and few vines can manage 
-  //temps much lower than -27
-  beta_g ~ lognormal(0,1); // prior around teh grand mean slope 
-  sigma_y ~ normal(0,5); // prior around estiamted mean LTE50.
-
-  //Level 2
-  varmu ~ normal(0,sigma_alpha_v); // prior for the effect of random factor on grand mean 
-  sigma_alpha_v ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
-  varbeta ~ normal(0, sigma_beta_v); //prior for the effect of variety on slope 
-  sigma_beta_v ~ normal(0, 1); // prior for the variation around 
-
-  yearmu ~ normal(0,sigma_k); // prior for the effect of random factor on grand mean 
-  sigma_k ~ normal(0, 5); // prior for the variety around levels of random factor. Same as sigma_y
-
-
-  //liklihood
-  for (i in 1:N){
-    y[i] ~ normal(ymu[i] + ybeta[i] * x[i], sigma_y);
-  }
-}
-
-generated quantities {
-
-  real realY[N]; 
-
-  for (i in 1:N){
-  realY[i] = ymu[i] + ybeta[i] * x[i];
-  }
-}"  ,
-
-"stan_model_slope2.stan")
-
-stan_model_slope2 <- "stan_model_slope2.stan"
-
-
-#fit8 <- stan(file = stan_model_slope2, data = stan_data4, warmup = 2000, 
-#	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
-
-launch_shinystan(fit8)
-
-
-#attemp at non centred parametrisation to get model working better
-#---------------------------------------------------------------------
-
-
-x <- I(simVarData$simTemps)
-y <- simVarData$simLTEVar
-N <- length(simVarData$simTemps)
-Variety <- as.integer(as.factor(simVarData$varNames ))
-year <- as.integer(as.factor(simVarData$yearNamesObs ))
-J <- length(unique(varNamesObs))
-k <- length(unique(yearNamesObs))
-
-#data passed to STan needs to be a list of named objects. names here need to match names in model code
-#i make a LIST of the different varables, NOT data frame
-stan_data3 <- list(N = N, x = x, y = y, n_vars = J, N = N, n_year = k, year = year, variety = Variety)
-
-
-write("//
-// This Stan program defines a linear model predicting LTE50 from temperature, with partial pooling of variety and year 
-//
-// Stan model for partially pooled linear regression including priors 
-//
-//centered parameters for effect of variety on alpha and beta 
-
-data {
-
-	//Level 1
-	int < lower = 1 > N; 						// Sample size - number of observations
-	vector[N] x; 								// Predictor
-	vector[N] y; 								// Outcome
-
-	//Level 2 	
-	int < lower = 1 > n_vars; 					// number of random effect levels (varieties) 
-	int < lower = 1, upper = n_vars > variety[N]; // id of random effect (variety)
-
-	int < lower = 1 > n_year; 						// number of random effect levels (years) 
-	int < lower = 1, upper = n_year > year[N]; 		// id of random effect (year)
-
-	}
-
-parameters {
-
-	//level 1
-	real < upper = 0 > alpha_g; 				// mean intercept accross all varieties. Grand mean
-	real beta_g;								//grand slope accross all varieties
-	real <lower =0> sigma_y; 					// overall variation accross observations
-
-	//level 2				  
-
-	vector<lower = 0>[2] var_sigma; 			// a vector of standard deviations, one for alpha and one for beta (overall effect of variety)
-	corr_matrix[2] Rho; 	
-	vector[n_vars] za_variety;			// z score of alpha for effect of variety 
-	vector[n_vars] zb_variety;			// z score of beta for effect of variety 
-
-
-	real <lower = 0> sigma_k; 					// variation of intercept amoung varieties  
-	real yearmu[n_year];
-
-}
-transformed parameters {
-
- 	vector[2] v_variety[n_vars];				//vector of an z scores of alpha and beta value for each varity 
-  	for(j in 1:n_vars) { 
-  		v_variety[j] = [za_variety[j], zb_variety[j]]'; //put the two effects in a single list 
-  	}
-
-}
-
-model{
-  
-	//---extra parametres 
-
-	//alpha and beta for each variety
-  	vector[n_vars] var_alpha;					// a new alpha for each variety, which includes grand alpha and effect of variety 
-	vector[n_vars] var_beta;					// a new beta for each variety, which includes grand alpha and effect of variety 
-
-	real ymu[N];								 //Individual mean predicted y value for each x value 
-	
-	//---Priors 
-
-	//Level 1
-	alpha_g ~ normal(-15,12); 					// prior for grand alpha, assumes intercept will negative and around -10.
-	//i chose this because -3 is minimum hardiness (least hardy) and few vines can manage temps much lower than -27
-	beta_g ~ lognormal(0,1);
-	sigma_y ~ normal(0,3); 						// prior around estiamted mean LTE50.
-
-	//Level 2 - year
-	yearmu ~ normal(0,sigma_k); 				// prior for the effect of random factor on grand mean 
-	sigma_k ~ normal(0, 3); 					// prior for the variety around levels of random factor. Same as sigma_y
-
-	//Level 2 - variety
-	var_sigma ~ normal(0, 3); 					// prior for the variety effect that gets multiplied with rho (correlation)
-	Rho ~ lkj_corr_lpdf(2); 					// prior for teh correlation between alpha and beta effect of variety 
-	za_variety ~ normal(0,1); 					// prior for the z bit of the non centerd bit for alpha
-	zb_variety ~ normal(0,1); 					// prior for the z bit of the non centerd bit for beta
-
-
-	target += multi_normal_lpdf(v_variety | rep_vector(0, 2), Rho);
-
-	//---Linear model
-	for(j in 1:n_vars){
-
-		var_alpha[j] = alpha_g + za_variety[j] * var_sigma[1]; // get an alpha for each variety 
-		var_beta[j] = beta_g + zb_variety[j] * var_sigma[2]; // get a beta for each variety  
-
-	}
-
-	for (i in 1:N){
-		ymu[i] = var_alpha[variety[i]] + yearmu[year[i]] + var_beta[variety[i]] * x[i];
-
-	}
-
-	//---liklihood
-	for (i in 1:N){	
-		y[i] ~ normal(ymu[i], sigma_y);
-	}
-}
-generated quantities {
-  vector[N] var_alpha;
-  vector[N] var_beta;
-  vector[N] ymu;
-  
-  var_alpha = alpha_g + za_variety[variety] * var_sigma[1]; // get an alpha for each variety 
-	var_beta = beta_g + zb_variety[variety] * var_sigma[2]; // get a beta for each variety  
-
-  for (i in 1:N){
-		ymu[i] = var_alpha[variety[i]] + yearmu[year[i]] + var_beta[variety[i]] * x[i];
-	}
-	
-} // The posterior predictive distribution",
-
-"slope_nonCentre.stan")
-
-stan_modelMulti7 <- "slope_nonCentre.stan"
-
-
-fit7 <- stan(file = stan_modelMulti7, data = stan_data4, warmup = 2000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.80))
-
-launch_shinystan(fit7)
-
-#extra notes for teh chapter:
-
-#Just because a marginal posterior overlaps zero does not mean we should think of it as zero.
-
-#launch_shinystan(fit3)
-
-post7 <- extract.samples(fit7)
-str(post7)
