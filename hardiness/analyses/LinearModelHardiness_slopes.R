@@ -9,6 +9,9 @@ rm(list = ls())
 
 #there are three more models in thsi script as well with either no covarience structure or non-centred parameterisation (or both)
 
+if(length(grep("Lizzie", getwd())>0)) { 
+  setwd("~/Documents/git/projects/vinmisc/bcvin/hardiness/analyses/") 
+} else
 setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
 
 
@@ -327,12 +330,13 @@ stan_data4 <- list(N = N, x = x, y = y, n_vars = n_vars,  variety = variety )
 #This model ddoesnt give fitting warnings (it used to when i included year) but has to have a high adapt_delta
 #
 
-fit6 <- stan(file = "slopeVarietyCov.stan", data = stan_data4, warmup = 3000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
+fit6 <- stan(file = "slopeVarietyCov.stan", data = stan_data4, warmup = 5000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
 
 launch_shinystan(fit6)
 
 post <- extract.samples(fit6)
+fit6sum <- summary(fit6)$summary
 
 str(post)
 names(post)
@@ -347,7 +351,12 @@ plot(density(data.frame(post$var_sigma)[,1])) #Partial pooling on intercept. sho
 
 plot(density(data.frame(post$var_sigma)[,2])) #Partial pooling on slope. should be 0.3. Doing a good job i think. 
 
-plot(density(post$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok. 
+plot(density(post$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok.
+
+# check some hyperparameters
+Sigma_vara # hmm, this is  not right -- I am not finding the right comparison ... but would be good to check the hyper-parameters alpha and beta also
+fit6sum[grep("var_alpha\\[", rownames(fit6sum)),"mean"]
+# plot(fit6sum[grep("var_alpha\\[", rownames(fit6sum)),"mean"]~mua_sp)
 
 #Predicted values
 meanRealY <- colMeans(data.frame(post$realY))
