@@ -330,7 +330,7 @@ stan_data4 <- list(N = N, x = x, y = y, n_vars = n_vars,  variety = variety )
 #This model ddoesnt give fitting warnings (it used to when i included year) but has to have a high adapt_delta
 #
 
-fit6 <- stan(file = "slopeVarietyCov.stan", data = stan_data4, warmup = 5000, 
+fit6 <- stan(file = "stan/slopeVarietyCov.stan", data = stan_data4, warmup = 5000, 
 	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
 
 launch_shinystan(fit6)
@@ -415,8 +415,8 @@ mcmc_intervals(varietyBetas)+ geom_vline(xintercept = betag, linetype="dotted", 
 #the values as well as I would hope. 
 
 
-fit8 <- stan(file = "slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+fit8 <- stan(file = "stan/slope_varietySimple.stan", data = stan_data4, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1)
 
 launch_shinystan(fit8)
 
@@ -445,7 +445,7 @@ plot(density(post8$sigma_beta_v))#0.2 - estimating ok
 #as I would like 
 
 
-fit10 <- stan(file = "noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
+fit10 <- stan(file = "stan/noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
 	iter = 4000, chains = 4, cores = 4, thin = 1, control = list(max_treedepth = 15, adapt_delta = 0.80))
 
 launch_shinystan(fit10)
@@ -475,7 +475,7 @@ plot(density(post10$sigma_beta_v))#0.2 - estimating ok
 
 #this model has no divergent transitions warning or other warnings
 #
-fit9 <- stan(file = "nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
+fit9 <- stan(file = "stan/nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
 	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
 
 launch_shinystan(fit9)
@@ -530,7 +530,7 @@ n_vars2 <- length(unique(bhclimClean$variety))
 stan_data_real <- list(N = N2, x = x2, y = y2, n_vars = n_vars2,  variety = variety2 )
 str(stan_data_real)
 
-fitReal_cov <- stan(file = "slopeVarietyCov.stan", data = stan_data_real, warmup = 2000, 
+fitReal_cov <- stan(file = "/stan/slopeVarietyCov.stan", data = stan_data_real, warmup = 2000, 
 	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
 
 launch_shinystan(fitReal_cov)
@@ -539,7 +539,7 @@ launch_shinystan(fitReal_cov)
 #------------------------------------------
 #more divergent transitions, again with sigma around partial pooling of variety around slope
 
-realFit_nocov <- stan(file = "slope_varietySimple.stan", data = stan_data_real, warmup = 2000, 
+realFit_nocov <- stan(file = "stan/slope_varietySimple.stan", data = stan_data_real, warmup = 2000, 
 	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
 launch_shinystan(realFit_nocov)
@@ -552,7 +552,7 @@ launch_shinystan(realFit_nocov)
 #really hard for the model
 
 #teh estimated different alphas for varieties have no changed with the inclusion of patial pooling on slope 
-realFit_nocov_bncp <- stan(file = "nonCentre_slopeVariety_beta.stan", data = stan_data_real, warmup = 2000, 
+realFit_nocov_bncp <- stan(file = "stan/nonCentre_slopeVariety_beta.stan", data = stan_data_real, warmup = 2000, 
 	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
 
 launch_shinystan(realFit_nocov_bncp)
