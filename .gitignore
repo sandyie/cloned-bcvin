@@ -5,6 +5,8 @@
 *.Rds
 *.Rda
 
+*.toc
+*.synctex.gz
 *.aux
 *.bbl
 *.log
