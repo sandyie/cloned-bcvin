@@ -193,17 +193,88 @@ n_vars2 <- length(unique(bhclimClean$variety))
 stan_data_real <- list(N = N2, x = x2, y = y2, n_vars = n_vars2,  variety = variety2 )
 str(stan_data_real)
 
-fitReal_cov <- stan(file = "/stan/slopeVarietyCov.stan", data = stan_data_real, warmup = 2000, 
-	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.97))
+fitReal_cov <- stan(file = "stan/slopeVarietyCov.stan", data = stan_data_real, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1)
 
 launch_shinystan(fitReal_cov)
+
+#try with covariance and ncp
+#------------------------------------
+
+fitRal_covncp <- stan(file = "stan/nonCentre_slopeVarietyCov.stan", data = stan_data_real, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1, control= list(adapt_delta = 0.95))
+
+postRealCov <- extract.samples(fitRal_covncp)
+
+
+plot(density(postRealCov$alpha_g))#
+
+plot(density(postRealCov$beta_g))#
+
+plot(density(postRealCov$var_sigma[,1] ) )#
+
+plot(density(postRealCov$var_sigma[,2] ) )#P. 
+
+plot(density(postRealCov$sigma_y))#
+
+#make an easier to suse variable for effect on alpha and beta
+
+postRealCov$sigma_alpha_v <- postRealCov$var_sigma[,1]
+postRealCov$sigma_beta_v <- postRealCov$var_sigma[,2]
+
+#Predicted values
+meanRealY2 <- colMeans(data.frame(postRealCov$ymu))
+SDRealY2<- apply(data.frame(postRealCov$ymu), 2, HPDI) 
+str(postRealCov)
+
+realYs2 <- data.frame(meanRealY2)
+head(realYs2)
+realYs2$upperHPDI <- SDRealY2[1,]
+realYs2$lowerHPDI <- SDRealY2[2,]
+
+#plot predicted valuea against temp
+#black lines are the mean slopes, coloured ones are the HPDI varience 
+
+plot(realYs2$lowerHPDI ~ bhclimClean$meanC,col="green")
+points(realYs2$upperHPDI ~ bhclimClean$meanC,col="green")
+points(realYs2$meanRealY ~ bhclimClean$meanC,col="black")
+
+#plot predicted values against empirical ones (not including sigma_y)
+#black points are teh mean values, coloured ones are the HPDI variance  
+
+plot(realYs2$lowerHPDI, bhclimClean$lte,col="purple", type = "p", pch = 16)
+points(realYs2$upperHPDI, bhclimClean$lte,col="purple", pch = 16)
+points(realYs2$meanRealY, bhclimClean$lte,col="black", pch = 16)
+
+#variety effects
+varietyAlphas <- postRealCov$alpha_g + postRealCov$za_variety * postRealCov$var_alpha # i dont know how to include uncertainty in var_beta here
+varietyBetas <- postRealCov$beta_g + postRealCov$zb_variety * postRealCov$var_beta # i dont know how to include uncertainty in var_beta here
+
+
+meanVarietyAlpha2 <- colMeans(postRealCov$var_alpha)
+meanVarietyBetaZ <- colMeans(postRealCov$var_beta)
+str(meanVarietyBetaZ)
+plot(meanVarietyAlpha2 ~ meanVarietyBetaZ)
+
+#predictions for each variety 
+SpeciesAlphas <- data.frame(postRealCov$var_alpha)
+str(SpeciesAlphas)
+nrow(SpeciesAlphas)
+speciesBeta <- data.frame(postRealCov$var_beta)
+names(speciesBeta) <- levels(as.factor(as.character(bhclimClean$variety)))
+names(SpeciesAlphas) <- levels(as.factor(as.character(bhclimClean$variety)))
+mcmc_intervals(SpeciesAlphas) + geom_vline(xintercept = mean(postRealCov$alpha_g), linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(speciesBeta ) + geom_vline(xintercept = mean(postRealCov$beta_g), linetype="dotted", color = "grey") #intercepts 
+
+
+
 
 #try without the covariance structure 
 #------------------------------------------
 #more divergent transitions, again with sigma around partial pooling of variety around slope
 
-realFit_nocov <- stan(file = "stan/slope_varietySimple.stan", data = stan_data_real, warmup = 2000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+realFit_nocov <- stan(file = "stan/slope_varietySimple.stan", data = stan_data_real, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1)
 
 launch_shinystan(realFit_nocov)
 
@@ -227,15 +298,14 @@ postReal <- extract.samples(realFit_nocov_bncp)
 str(postReal)
 names(postReal)
 
-plot(density(postReal$alpha_g))#-20 - ok estimate
+plot(density(postReal$alpha_g))#
 
-plot(density(postReal$beta_g))#0.5 - underestimating this a bit, but maybe ok?
+plot(density(postReal$beta_g))#
 
-plot(density(postReal$sigma_alpha_v)) #Partial pooling on intercept. should be 0.2. Doing a good job i think. 
+plot(density(postReal$sigma_alpha_v)) #
 
-plot(density(postReal$sigma_beta_v)) #Partial pooling on slope. should be 0.3. Doing a good job i think. 
-
-plot(density(postReal$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok. 
+plot(density(postReal$sigma_beta_v)) #
+plot(density(postReal$sigma_y))#
 
 #Predicted values
 meanRealY2 <- colMeans(data.frame(postReal$realY))
