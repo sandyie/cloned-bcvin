@@ -10,6 +10,11 @@ rm(list = ls())
 #no non centred parameterisation 
 
 #there are three more models in thsi script as well with either no covarience structure or non-centred parameterisation (or both)
+
+#the normal and ncp version of teh covarience model both give good answers, but only when nobs was 60 rather than 40. before that teh model 
+#with ncp underestimated slope. 
+
+
 #try and simulate a multi level model of hardiness against temp partially pooled by variety 
 #-------------------------------------------------------------------------------------
 set.seed(16)
@@ -21,12 +26,12 @@ set.seed(16)
 #LTE50sim (y ) is simulated using parameters
 
 #inputs
-nrep <- 40 # number of reps of each variety and year (days sampled in a year and for a variety )
+nrep <- 80 # number of reps of each variety 
 meanTemp <- 2
 sigmaTemp <- 5
 simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
 
-nvariety <- 40
+nvariety <- 20
 varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
 
 
@@ -55,7 +60,7 @@ alphaVarObs <- rep(varEffects[,1], each = nrep) # replicate the value so i can a
 betaVarObs <- rep(varEffects[,2], each = nrep) # replicate the value so i can a variety specific slope for each observation
 
 #other model parameters (no grouing)
-sigma <-  1
+sigma <-  0.5
 eps <- rnorm(nObs , 0, sigma)
 
 #make columns for teh name of the year, variety and day of the year 
@@ -249,6 +254,40 @@ mcmc_intervals(varietyBetas)+ geom_vline(xintercept = betag, linetype="dotted", 
 #----------------------------------------------------------------------------------
 
 
+#model with a correlation matrix and non-centred parameterisation 
+#------------------------------------------------------------------------------------
+
+#this is teh model i made woth partial pooling and a covariance structure for variety 
+#on intercept and slope, and non-centred parameterisation. I dont know if it is needed
+#because at the momment teh model without non-centred parameterisation is doing fine 
+
+#this model has no divergent transitions warning or other warnings
+#
+fit9 <- stan(file = "stan/nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1)
+
+launch_shinystan(fit9)
+
+fit9
+
+
+post9 <- extract.samples(fit9)
+
+str(post9)
+
+plot(density(post9$alpha_g))#-20 - ok estimate. overestimating a little
+
+plot(density(post9$beta_g))#0.5 - overestimating this a bit, but maybe ok?
+
+plot(density(data.frame(post9$Rho)[,2]))#-0.7 - looks good
+
+plot(density(data.frame(post9$var_sigma)[,1])) #Partial pooling on intercept. should be 0.2. Overestimating quite a bit
+
+plot(density(data.frame(post9$var_sigma)[,2])) #Partial pooling on slope. should be 0.3. Overestimating a bit
+
+plot(density(post9$sigma_y))#should be 0.5. Overestimatinga  little, but looks good . 
+
+
 
 
 #a model with a less complicated structure (no covarience) 
@@ -270,17 +309,20 @@ post8 <- extract.samples(fit8)
 
 str(post8)
 
-plot(density(post8$alpha_g))#-20 - overestimating this 
+plot(density(post8$alpha_g))#-20 - overestimating this a bit, but not too bad
 
-plot(density(post8$beta_g))#0.5 - overestimating this 
+plot(density(post8$beta_g))#0.5 - overerestimating this a little, but ok. I had to up the 
+#number of observations in each variety a lot to get a good estimation though (4 or under nobs was not great) 
 
-plot(density(post8$sigma_alpha_v))#0.3 - estimating ok 
+plot(density(post8$sigma_alpha_v))#0.2 - estimating ok 
 
 plot(density(post8$varbeta))#
 
-plot(density(post8$sigma_beta_v))#0.2 - estimating ok
+plot(density(post8$sigma_beta_v))#0.3 - estimating ok
 
-#attemp at non centred parametrisation to get model working better
+
+
+#attemp at non centred parametrisation to get model working better - no covariance and pcp on sigma alpha
 #---------------------------------------------------------------------
 
 #this model is very similar to model slope_varietySimple.stan, exept I added some
@@ -291,8 +333,8 @@ plot(density(post8$sigma_beta_v))#0.2 - estimating ok
 #as I would like 
 
 
-fit10 <- stan(file = "stan/noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 2000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, control = list(max_treedepth = 15, adapt_delta = 0.80))
+fit10 <- stan(file = "stan/noncentred_slope_varietySimple.stan", data = stan_data4, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1, control = list(max_treedepth = 15)) #treedepth needed here 
 
 launch_shinystan(fit10)
 
@@ -302,46 +344,12 @@ str(post7)
 
 plot(density(post10$alpha_g))#-20 - ok estimate
 
-plot(density(post10$beta_g))#0.5 -underestimating this 
+plot(density(post10$beta_g))#0.5 -overestimating this a bit, but maybe ok? 
 
-plot(density(post10$sigma_alpha_v))#0.3 - estimating ok 
+plot(density(post10$sigma_alpha_v))#0.2 - estimating ok 
 
 plot(density(post10$varbeta))#
 
-plot(density(post10$sigma_beta_v))#0.2 - estimating ok
+plot(density(post10$sigma_beta_v))#0.3 - estimating ok
 
-
-
-#model with no correlation matrix and non-centred parameterisation on the sigma alpha var
-#------------------------------------------------------------------------------------
-
-#this is teh model i made woth partial pooling and a covariance structure for variety 
-#on intercept and slope, and non-centred parameterisation. I dont know if it is needed
-#because at the momment teh model without non-centred parameterisation is doing fine 
-
-#this model has no divergent transitions warning or other warnings
-#
-fit9 <- stan(file = "stan/nonCentre_slopeVarietyCov.stan", data = stan_data4, warmup = 2000, 
-	iter = 4000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15))
-
-launch_shinystan(fit9)
-
-fit9
-
-
-post9 <- extract.samples(fit9)
-
-str(post9)
-
-plot(density(post9$alpha_g))#-20 - ok estimate
-
-plot(density(post9$beta_g))#0.5 - underestimating this a bit, but maybe ok?
-
-plot(density(data.frame(post9$Rho)[,2]))#dOverestimating this.  Should be -0.7
-
-plot(density(data.frame(post9$var_sigma)[,1])) #Partial pooling on intercept. should be 0.2. Doing a good job i think. 
-
-plot(density(data.frame(post9$var_sigma)[,2])) #Partial pooling on slope. should be 0.3. Overestimating a lot. 
-
-plot(density(post9$sigma_y))#should be 1. Maybe underestimating a bit, but I think its ok. 
 
