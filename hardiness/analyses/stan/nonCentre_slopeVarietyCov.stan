@@ -49,7 +49,7 @@ model{
 	//---extra parametres 
 
 	//alpha and beta for each variety
-  	vector[n_vars] var_alpha;					// a new alpha for each variety, which includes grand alpha and effect of variety 
+  vector[n_vars] var_alpha;					// a new alpha for each variety, which includes grand alpha and effect of variety 
 	vector[n_vars] var_beta;					// a new beta for each variety, which includes grand alpha and effect of variety 
 
 	real ymu[N];								 //Individual mean predicted y value for each x value 
@@ -90,15 +90,20 @@ model{
 	}
 }
 generated quantities {
-  vector[N] var_alpha;
-  vector[N] var_beta;
+  vector[n_vars] var_alpha;
+  vector[n_vars] var_beta;
   vector[N] ymu;
-  
-  var_alpha = alpha_g + za_variety[variety] * var_sigma[1]; // get an alpha for each variety 
-	var_beta = beta_g + zb_variety[variety] * var_sigma[2]; // get a beta for each variety  
 
-  for (i in 1:N){
+for(j in 1:n_vars){
+
+		var_alpha[j] = alpha_g + za_variety[j] * var_sigma[1]; // get an alpha for each variety 
+		var_beta[j] = beta_g + zb_variety[j] * var_sigma[2]; // get a beta for each variety  
+
+	}
+
+	for (i in 1:N){
 		ymu[i] = var_alpha[variety[i]] + var_beta[variety[i]] * x[i];
+
 	}
 	
 } // The posterior predictive distribution
