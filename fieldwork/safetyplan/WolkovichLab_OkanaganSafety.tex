@@ -8,6 +8,12 @@
 \def\labelitemi{--}
 \parindent=0pt
 
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+
+\usepackage{float}
+
 \begin{document}
 \bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
 \renewcommand{\refname}{\CHead{}}
@@ -19,7 +25,79 @@
 \tableofcontents
 
 \section{Personnel, Contact Information and Safety Training}
+
+\subsection {Feild Crew}
+
+There will be a main team of two feild operatives (Faith Jones and Mira Garner) for the full three week period, and and additional feild crew member (Elizabeth Wolkovich) for the first week. Faith and Mira will travel up in one vehicle (\textbf{\textit{insert vehicle licence plate}}), and Elizabeth in another other (\textbf{\textit{insert licence plate}}). Elizabath will also stay at a different location to Faith and Mira, although both locations will be within (\textbf{\textit{x}} km from Kelowna.   
+
+\subsection {Conact Details}
+
+\begin{table}[H]
+\caption{Feild crew contact details} % title of Table
+%\centering % used for centering table. I dont want my tabel centred 
+\begin{tabular}{ l | l }  % left jusitfy columns (2 columns)
+\hline\hline %inserts double horizontal lines
+Name & Contact\\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+Elizabeth Wolkovich & ? \\ % inserting body of the table
+Faith Jones & 604 786 2574 \\
+Mira Garner & ? \\
+\hline %inserts single line
+\end{tabular}
+\label{table:nonlin} % is used to refer this table in the text
+\end{table}
+
+\begin{table}[H]
+\caption{Feild crew emergency contact details} % title of Table
+%\centering % used for centering table
+\begin{tabular}{l l l} % left jusitfy columns (3 columns)
+\hline\hline %inserts double horizontal lines
+Feild Crew Member & Name & Contact\\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+Elizabeth Wolkovich & ? & ? \\ % inserting body of the table
+Faith Jones & Peter Walton (spouse) & 604 803 0664\\
+Mira Garner & ? & ? \\
+\hline %inserts single line
+\end{tabular}
+\label{table:nonlin} % is used to refer this table in the text
+\end{table}
+
+\begin{table}[H]
+\caption{Other contact details} % title of Table
+%\centering % used for centering table
+\begin{tabular}{l l} % left jusitfy columns (3 columns)
+\hline\hline %inserts double horizontal lines
+Name & Contact \\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+General Emergencies & 911 \\ % inserting body of the table
+Kelona General Hospital & 250 862 4000 \\
+Pat & ?\\
+Carl & ?\\
+QuailsGate vinyard main office & ? \\
+Altera main vinyard office & ? \\
+
+\hline %inserts single line
+\end{tabular}
+\label{table:nonlin} % is used to refer this table in the text
+\end{table}
+
+\subsection {Nearest Hospital}
+Kelowna General Hospital \newline
+2268 Pandosy Street\newline
+Kelowna, BC V1Y 1T2\newline
+Phone: 250-862-4000\newline
+Emergency service 24/7 7 days a week
+
+\subsection{Saftey training}
+
+?
+
 \section{Identifying and Addressing Specific Health and Safety Concerns}
+
+
 \subsection{COVID-19}
 \subsection{Location}
 \subsection{Interactions with collaborators}
