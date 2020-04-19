@@ -4,6 +4,7 @@
 *.rds
 *.Rds
 *.Rda
+*.docx
 
 *.toc
 *.synctex.gz
