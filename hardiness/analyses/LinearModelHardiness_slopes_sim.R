@@ -14,6 +14,21 @@ rm(list = ls())
 #the normal and ncp version of teh covarience model both give good answers, but only when nobs was 60 rather than 40. before that teh model 
 #with ncp underestimated slope. 
 
+library(reshape2)
+library(ggplot2)
+library(rstan)
+library(lme4)
+library(rstanarm)
+library(truncnorm) # truncated normal distribution 
+library(fitdistrplus) # fitting a gamm adsitribution 
+library(brms)
+library(rethinking) # for HPDI function 
+library(scales) # alpha making plotting points translucent 
+library(bayesplot)# nice posterior check plots 
+library(tidyr)
+library(dplyr)
+library(shinystan)
+library(MASS)
 
 #try and simulate a multi level model of hardiness against temp partially pooled by variety 
 #-------------------------------------------------------------------------------------
