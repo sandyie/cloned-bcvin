@@ -14,6 +14,13 @@ rm(list = ls())
 #the normal and ncp version of teh covarience model both give good answers, but only when nobs was 60 rather than 40. before that teh model 
 #with ncp underestimated slope. 
 
+if(length(grep("Lizzie", getwd())>0)) { 
+  setwd("~/Documents/git/projects/vinmisc/bcvin/hardiness/analyses/") 
+} else
+setwd("/home/faith/Documents/github/bcvin/hardiness/analyses/")
+
+
+
 library(reshape2)
 library(ggplot2)
 library(rstan)
