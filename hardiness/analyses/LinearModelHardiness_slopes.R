@@ -278,39 +278,67 @@ realFit_nocov <- stan(file = "stan/slope_varietySimple.stan", data = stan_data_r
 
 launch_shinystan(realFit_nocov)
 
-#try with partial pooling, no covariance, and non-centred parameterisation for sigma_beta_var 
-#--------------------------------------------------------------------------------------------
-
-#this one fitted ok
-#I think teh probelm is that there is no real variation between varieties, which is making it 
-#really hard for the model
-
-#teh estimated different alphas for varieties have no changed with the inclusion of patial pooling on slope 
-realFit_nocov_bncp <- stan(file = "stan/nonCentre_slopeVariety_beta.stan", data = stan_data_real, warmup = 2000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
-
-launch_shinystan(realFit_nocov_bncp)
+#Try splitting into two datasets, one for endodormancy and one for ectodormance (using 1st of Jan as the breakpoint)
+#--------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------
 
 
+head(bhclimClean)
 
-postReal <- extract.samples(realFit_nocov_bncp)
+unique(bhclimClean$month.x)
+ "Feb" "Mar" "Apr" 
 
-str(postReal)
-names(postReal)
+monthsEndo <- c("Oct", "Nov", "Dec", "Jan")
+monthsEcto <-  c( "Feb", "Mar", "Apr")
 
-plot(density(postReal$alpha_g))#
+endoClim <- bhclimClean[bhclimClean$month.x %in% monthsEndo,]
+ectoClim <- bhclimClean[bhclimClean$month.x %in% monthsEcto,]
 
-plot(density(postReal$beta_g))#
 
-plot(density(postReal$sigma_alpha_v)) #
+#run model for endodormancy (autumn)
+#----------------------------------------
 
-plot(density(postReal$sigma_beta_v)) #
-plot(density(postReal$sigma_y))#
+x2 <- I(endoClim$meanC)
+y2 <- endoClim$lte
+N2 <- length(endoClim$meanC)
+variety2 <- as.integer(as.factor(as.character(endoClim$variety)))
+n_vars2 <- length(unique(endoClim$variety))
+
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+
+stan_data_Endo <- list(N = N2, x = x2, y = y2, n_vars = n_vars2,  variety = variety2 )
+
+
+endo_Fit_nocov_bncp <- stan(file = "stan/nonCentre_slopeVarietyCov.stan", data = stan_data_Endo, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+
+postEndo <- extract.samples(endo_Fit_nocov_bncp)
+
+str(postEndo)
+
+plot(density(postEndo$alpha_g))#
+mean(postEndo$alpha_g)#pretty much the same as in ectodormancy 
+
+plot(density(postEndo$beta_g))#
+mean(postEndo$beta_g)#0.42 (as opossed to 0.7 in the ectodormancy period)
+
+plot(density(postEndo$var_sigma[,1] ) )#
+mean(postEndo$var_sigma[,1] )#1.15 vs 0.15 in ectodormancy 
+
+plot(density(postEndo$var_sigma[,2] ) )#. 0.03 vs 0.04 in ectodormancy  
+mean(postEndo$var_sigma[,2] )
+
+plot(density(postEndo$sigma_y))#
+
+plot(density(postEndo$Rho))#0.67 vs 0.48 in Ectodormancy 
+mean(postEndo$Rho)
 
 #Predicted values
-meanRealY2 <- colMeans(data.frame(postReal$realY))
-SDRealY2<- apply(data.frame(postReal$realY), 2, HPDI) 
-str(postReal)
+meanRealY2 <- colMeans(data.frame(postEndo$ymu))
+SDRealY2<- apply(data.frame(postEndo$ymu), 2, HPDI) 
+str(postEndo)
 
 realYs2 <- data.frame(meanRealY2)
 head(realYs)
@@ -320,27 +348,120 @@ realYs2$lowerHPDI <- SDRealY2[2,]
 #plot predicted valuea against temp
 #black lines are the mean slopes, coloured ones are the HPDI varience 
 
-plot(realYs2$lowerHPDI ~ bhclimClean$meanC,col="green")
-points(realYs2$upperHPDI ~ bhclimClean$meanC,col="green")
-points(realYs2$meanRealY ~ bhclimClean$meanC,col="black")
+plot(realYs2$lowerHPDI ~ endoClim$meanCZ,col="green")
+points(realYs2$upperHPDI ~ endoClim$meanCZ,col="green")
+points(realYs2$meanRealY ~ endoClim$meanCZ,col="black")
 
 #plot predicted values against empirical ones (not including sigma_y)
 #black points are teh mean values, coloured ones are the HPDI variance  
 
-plot(realYs2$lowerHPDI, bhclimClean$lte,col="purple", type = "p", pch = 16)
-points(realYs2$upperHPDI, bhclimClean$lte,col="purple", pch = 16)
-points(realYs2$meanRealY, bhclimClean$lte,col="black", pch = 16)
+plot(realYs2$lowerHPDI, endoClim$lte,col="purple", type = "p", pch = 16)
+points(realYs2$upperHPDI, endoClim$lte,col="purple", pch = 16)
+points(realYs2$meanRealY, endoClim$lte,col="black", pch = 16)
 
 #variety effects
-meanVarietyAlpha2 <- colMeans(postReal$alpha_var)
-meanBetaVar <- data.frame(postReal$zb_variety * mean(postReal$sigma_beta_v))
-meanVarietyBetaZ <- colMeans(meanBetaVar)
-str(meanVarietyBetaZ)
-plot(meanVarietyAlpha2 ~ meanVarietyBetaZ)
+meanAlphaVarEndo <- data.frame(postEndo$za_variety * mean(postEndo$var_sigma[,1]))
+meanBetaVarEndo <- data.frame(postEndo$zb_variety * mean(postEndo$var_sigma[,2]))
+
+meanVarietyAlpha2Endo <- colMeans(meanAlphaVarEndo)
+meanVarietyBetaZEndo <- colMeans(meanBetaVarEndo)
+
+plot(meanVarietyAlpha2Endo ~ meanVarietyBetaZEndo)
 
 #predictions for each variety 
-SpeciesAlphas <- data.frame(postReal$alpha_var)
-names(SpeciesAlphas) <- levels(as.factor(as.character(bhclimClean$variety)))
-mcmc_intervals(SpeciesAlphas) + geom_vline(xintercept = mean(postReal$alpha_g), linetype="dotted", color = "grey")  #intercepts 
-mcmc_intervals(meanBetaVar ) + geom_vline(xintercept = mean(postReal$alpha_b), linetype="dotted", color = "grey") #intercepts 
 
+names(meanAlphaVarEndo) <- levels(as.factor(as.character(endoClim$variety)))
+names(meanBetaVarEndo) <- levels(as.factor(as.character(endoClim$variety)))
+
+mcmc_intervals(meanAlphaVarEndo) + geom_vline(xintercept = mean(postEndo$alpha_g), linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(meanBetaVarEndo ) + geom_vline(xintercept = mean(postEndo$alpha_b), linetype="dotted", color = "grey") #intercepts 
+
+#run model for endodormancy (autumn)
+#----------------------------------------
+
+x2 <- I(ectoClim$meanC)
+y2 <- ectoClim$lte
+N2 <- length(ectoClim$meanC)
+variety2 <- as.integer(as.factor(as.character(ectoClim$variety)))
+n_vars2 <- length(unique(ectoClim$variety))
+
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+
+stan_data_Ecto <- list(N = N2, x = x2, y = y2, n_vars = n_vars2,  variety = variety2 )
+
+
+ecto_Fit_nocov_bncp <- stan(file = "stan/nonCentre_slopeVarietyCov.stan", data = stan_data_Ecto, warmup = 4000, 
+	iter = 6000, chains = 4, cores = 4, thin = 1, , control = list(max_treedepth = 15, adapt_delta = 0.95))
+
+postEcto <- extract.samples(ecto_Fit_nocov_bncp)
+
+str(postEcto)
+
+plot(density(postEcto$alpha_g))#
+mean(postEcto$alpha_g)
+
+plot(density(postEcto$beta_g))#
+mean(postEcto$beta_g)
+
+plot(density(postEcto$var_sigma[,1] ) )#
+mean(postEcto$var_sigma[,1] )
+
+plot(density(postEcto$var_sigma[,2] ) )#
+mean(postEcto$var_sigma[,2] )
+
+plot(density(postEcto$sigma_y))#
+
+plot(density(postEcto$Rho))
+mean(postEcto$Rho)
+
+#Predicted values
+meanRealY2 <- colMeans(data.frame(postEcto$ymu))
+SDRealY2<- apply(data.frame(postEcto$ymu), 2, HPDI) 
+str(postEcto)
+
+realYs2 <- data.frame(meanRealY2)
+head(realYs)
+realYs2$upperHPDI <- SDRealY2[1,]
+realYs2$lowerHPDI <- SDRealY2[2,]
+
+#plot predicted valuea against temp
+#black lines are the mean slopes, coloured ones are the HPDI varience 
+
+plot(realYs2$lowerHPDI ~ ectoClim$meanCZ,col="green")
+points(realYs2$upperHPDI ~ ectoClim$meanCZ,col="green")
+points(realYs2$meanRealY ~ ectoClim$meanCZ,col="black")
+
+#plot predicted values against empirical ones (not including sigma_y)
+#black points are teh mean values, coloured ones are the HPDI variance  
+
+plot(realYs2$lowerHPDI, ectoClim$lte,col="purple", type = "p", pch = 16)
+points(realYs2$upperHPDI, ectoClim$lte,col="purple", pch = 16)
+points(realYs2$meanRealY, ectoClim$lte,col="black", pch = 16)
+
+#variety effects
+meanAlphaVarEcto <- data.frame(postEcto$za_variety * mean(postEcto$var_sigma[,1]))
+meanBetaVarEcto <- data.frame(postEcto$zb_variety * mean(postEcto$var_sigma[,2]))
+
+meanVarietyAlpha2Endo <- colMeans(meanAlphaVarEcto)
+meanBetaVarietyEcto <- colMeans(meanBetaVarEcto)
+
+plot(meanVarietyAlpha2Endo ~ meanBetaVarietyEcto)
+
+#predictions for each variety 
+
+names(meanAlphaVarEcto) <- levels(as.factor(as.character(ectoClim$variety)))
+names(meanBetaVarEcto) <- levels(as.factor(as.character(ectoClim$variety)))
+
+mcmc_intervals(meanAlphaVarEcto) + geom_vline(xintercept = mean(postEcto$alpha_g), linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(meanBetaVarEcto ) + geom_vline(xintercept = mean(postEcto$beta_g), linetype="dotted", color = "grey") #intercepts 
+
+#compare slopes of varieties in ecto and endo dormancy
+#---------------------------------------------------------
+
+plot(colMeans(meanBetaVarEcto) ~ colMeans(meanAlphaVarEcto))
+
+plot(colMeans(meanBetaVarEndo) ~ colMeans(meanBetaVarEcto))#I dont see a relationship between 
+#the effect of a slope on a variety in endo and ecto-dormancy. But then the slopes are so similar that
+#maybe it is just random variation?
