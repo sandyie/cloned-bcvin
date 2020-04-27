@@ -9,7 +9,7 @@
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc} % allow funny letters in citaions 
 \usepackage[nottoc]{tocbibind} %should add Refences to the table of contents?
-
+\usepackage{amsmath} % making nice equations 
 
 \def\labelitemi{--}
 \parindent=0pt
@@ -70,6 +70,10 @@ Changes in the duration of periods between flowering and verasion in Riesling in
 \cite{Hannah2013} looked at projections of where will be suitable for winegrapes considering climate change. They predict that the area suitable will change a lot, and this will probably cause conflicts with biodiversity/ecological conservation. \\
 
 \section{Climate Modeling}
+
+Good wine making is very sensitive to climate, so much so that wine was described as the "canary in the coal mine for climate change" \citep{Goode2012}.
+
+The sensitivity of wine making to climate change threatens natural systems through potential land conversion and increased irrigation \citep{Hannah2013}.
 
 I could frame a question around predicting species’/variety's niches? This might be more ecological? About how difficult it is based on a one or a few climate variables. Focus on supposed increases in where wine can be grown in the north because winter temperatures are getting higher, but what about the influence of increasing heatwaves, drought and false springs? Also how does considering within species variation change the answer? But what if better adapted varieties cant reach new areas? Also how much can we infer about changes in summer heat/drought from changes in winter temperatures? Do places generally increase winter and summer temperatures the same amount? Does something weird happen in spring? Might there be more extreme fluctuations in climate? Are microclimatic differences consistent across seasons? \\
 
@@ -173,7 +177,11 @@ Maybe uses a logistic regression? \cite{Kovaleski2018a} used a logistic regressi
 
 \cite{Kovaleski2018a} found that different varieties of winegrape had different rates of deacclimation. \\ 
 
-\section{Physiology and hardiness mechanisms}  
+Deacclimation happens much faster than acclimation in plants \citep{Kalberer2006}. So I expect two different curves for change in hardiness with air temp during endo and ectodormancy. \\ 
+
+How can I get at deacclimation rates through modeling? And how would I predict deacclimation rates should correlate with general hardiness?\\
+
+\subsection{Physiology and hardiness mechanisms}  
 Energy is necessary to drive acclimation and sugars play an essential role in freezing tolerance, the
 resiliency of photosynthesis under stress conditions and how photosynthates are utilized (growth vs acclimation) also need to be better understood (\citep{Gusta2013}. Could there be a growth cost to being more cold hardy? Do more cold hardy vines produce smaller yields? \\
 
@@ -189,7 +197,120 @@ Lots of references in \cite{Lenz2016} about how budbreak is closely related to l
 
 Phenological response to temperature seems to be quite plastic based on elevation. For example budburst should change based on climate conditions (see \citep{Caffarra2010}. So should hardiness be plastic also? - Yes. But should the rate of acc/deacc also be plastic? Maybe this relates to the physiological mechanisms underpinning winter hardiness? \\
 
+i\\
+o\\
+\\
+
+\section{Model structure}
+
+\begin{equation*}
+ltePred_{i} \sim Normal(\mu_{i}, \sigma ) 
+\end{equation*}
+\begin{equation*}
+\mu_{i} = \alpha_{var,i} + \alpha_{site, i}+ \beta_{var, i}\ast x_{i}
+\end{equation*}
+
+\begin{equation*}
+\begin{bmatrix}
+\alpha_{var} \\
+\beta_{var}
+\end{bmatrix}
+\sim MVnorm
+\left(
+\begin{bmatrix}
+\alpha \\
+\beta
+\end{bmatrix}
+,S
+\right)
+\end{equation*}
+
+\begin{equation*}
+S = 
+\begin{pmatrix}
+\sigma_{\alpha Var} & 0 \\
+0 & \sigma_{\beta Var} 
+\end{pmatrix}
+\rho
+\begin{pmatrix}
+\sigma_{\alpha Var} & 0 \\
+0 & \sigma_{\beta Var} 
+\end{pmatrix}
+\end{equation*}
+
+\begin{equation*}
+\alpha_{site} \sim normal(0, \sigma_{\alpha Site}) 
+\end{equation*}
+
+Priors:
+\begin{gather*}
+\beta \sim lognormal(0,1)\\
+\sigma \sim truncNormal(0,5)\\
+\sigma_{\alpha Var} \sim truncNormal(0,5)\\
+\sigma_{\alpha Site} \sim truncNormal(0,5)\\
+\sigma_{\beta Var} \sim truncNormal(0,1)\\
+\rho \sim LKJcorr (2)
+\end{gather*}
+
+
+\subsection{Quadratic Model Structure}
+
+\begin{equation*}
+ltePred_{i} \sim Normal(\mu_{i}, \sigma ) 
+\end{equation*}
+\begin{equation*}
+\mu_{i} = \alpha_{var,i} + \alpha_{site, i}+ \beta_{var, i}\ast x_{i} + \beta_{quad} \ast x^{2}_{i}
+\end{equation*}
+
+\begin{equation*}
+\begin{bmatrix}
+\alpha_{var} \\
+\beta_{var}
+\end{bmatrix}
+\sim MVnorm
+\left(
+\begin{bmatrix}
+\alpha \\
+\beta
+\end{bmatrix}
+,S
+\right)
+\end{equation*}
+
+\begin{equation*}
+S = 
+\begin{pmatrix}
+\sigma_{\alpha Var} & 0 \\
+0 & \sigma_{\beta Var} 
+\end{pmatrix}
+\rho
+\begin{pmatrix}
+\sigma_{\alpha Var} & 0 \\
+0 & \sigma_{\beta Var} 
+\end{pmatrix}
+\end{equation*}
+
+\begin{equation*}
+\alpha_{site} \sim normal(0, \sigma_{\alpha Site}) 
+\end{equation*}
+
+Priors:
+\begin{gather*}
+\alpha \sim Normal(-15, 12)\\
+\beta \sim lognormal(0,1)\\
+\beta_{quad} \sim Normal(0,1)\\
+\sigma \sim truncNormal(0,5)\\
+\sigma_{\alpha Var} \sim truncNormal(0,5)\\
+\sigma_{\alpha Site} \sim truncNormal(0,5)\\
+\sigma_{\beta Var} \sim truncNormal(0,1)\\
+\rho \sim LKJcorr (2)
+\end{gather*}
+
+
 \bibliographystyle{/home/faith/Documents/Bibtex/styles/besjournals/besjournals}
 \bibliography{/home/faith/Documents/Bibtex/mendeleyStuff/library}
 
 \end{document}
+
+
+
