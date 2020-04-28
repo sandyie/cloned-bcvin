@@ -375,3 +375,113 @@ plot(density(post10$varbeta))#
 plot(density(post10$sigma_beta_v))#0.3 - estimating ok
 
 
+
+#try adding site variation in to the model as well
+#------------------------------------------------------------
+
+
+
+set.seed(16)
+#model should be:
+
+# y ~ Normal((alpha + alphaSite) + beta * x, sigma/eps)
+
+#parameters 
+#LTE50sim (y ) is simulated using parameters
+
+#inputs
+nrep <- 20 # number of reps of each variety 
+meanTemp <- 2
+sigmaTemp <- 5
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+
+nvariety <- 10
+varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
+
+nsite <- 10
+siteNames <- as.factor(c(1:nsite))
+#parameters (mostly taken from the lmer model)
+
+nObs <- nvariety*nrep*nsite # the number of observations  for each site and each variety combined 
+
+#make a multivariate distribution of slopes and intercepts for each grouping effect
+alpha <- -20 # overall gran mean alpha
+betag <- 0.50 # overall grand mean beta
+
+muAB <- c(alpha, betag)#combine two gran effects
+
+#variety
+sigma_vara <- 0.2 # standard deviation in intercepts for vatiety 
+sigma_varb <- 0.3 # standard deviation in slopes for vatiety 
+rho_var <- -0.7 # correlation between intercept and slope. Lower intercepts (more cold hardy) should have steeper slopes
+
+sigmas_var <- c(sigma_vara, sigma_varb) # combine sigma values into a vector
+Rho_var <- matrix(c(1, rho_var, rho_var, 1), nrow = 2) # correlation matrix
+Sigma_var <- diag(sigmas_var) %*% Rho_var %*% diag(sigmas_var) # this does some matrix black magic
+varEffects <- mvrnorm(nvariety, muAB, Sigma_var)#get overall slopes and intercepts for each year 
+
+alphaVarObs <- rep(varEffects[,1], each = nrep*nsite) # replicate the value so i can a variety specific mean for each observation
+betaVarObs <- rep(varEffects[,2], each = nrep*nsite) # replicate the value so i can a variety specific slope for each observation
+
+#site
+sigma_a_site <- 0.5#effect of site on teh gran alpha 
+alpha_site <- rnorm(nsite, 0, sigma_a_site)#individual effect of each site 
+alphaSite <- rep(alpha_site, times = nrep*nvariety) #repeat site so i get an even distribution of site and variety observations
+
+#other model parameters (no grouing)
+sigma <-  0.5
+eps <- rnorm(nObs , 0, sigma)
+
+#make columns for teh name of the year, variety and day of the year 
+varNamesRep <- rep(varNames, each = nrep*nsite)
+siteNamesRep <- rep(siteNames, times = nrep*nvariety)
+
+#sigma <- sqrt(sigma2)
+
+
+simLTEVar <- alphaVarObs  + alphaSite + betaVarObs * simTemps + eps
+
+#combine into a single data table
+
+simVarData <- data.frame(cbind(simTemps, varNamesRep, simLTEVar, siteNamesRep))
+str(simVarData)
+simVarData[order(simVarData$varNames),]
+simVarData$varNamesRep <- as.factor(simVarData$varNamesRep )
+simVarData$siteNamesRep <- as.factor(simVarData$siteNamesRep )
+
+
+
+#Run an extended model on teh simulated data including site
+#---------------------------------------------------------------
+
+x <- I(simVarData$simTemps)
+y <- simVarData$simLTEVar
+N <- length(simVarData$simTemps)
+variety <- as.integer(as.factor(simVarData$varNames ))
+n_vars <- length(unique(varNamesRep))
+site <-  as.integer(as.factor(simVarData$siteNames))
+n_site <- length(unique(siteNamesRep))
+
+stan_data5 <- list(N = N, x = x, y = y, n_vars = n_vars,  variety = variety , site = site, n_site = n_site)
+
+fit10 <- stan(file = "stan/nonCentre_slopeSiteVarietyCov.stan", data = stan_data5, warmup = 4000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1, control = list(max_treedepth = 15)) #treedepth needed here 
+
+
+post10 <- extract.samples(fit10)
+
+str(post10)
+
+plot(density(post10$alpha_g))#-20 - good estimate. 
+
+plot(density(post10$beta_g))#0.5 - overestimating this a bit, but maybe ok?
+
+plot(density(data.frame(post10$Rho)[,2]))#-0.7 - looks good
+
+plot(density(data.frame(post10$var_sigma)[,1])) #Partial pooling on intercept. should be 0.2. Overestimating quite a bit
+
+plot(density(data.frame(post10$var_sigma)[,2])) #Partial pooling on slope. should be 0.3. Overestimating a bit
+
+plot(density(post10$sigma_y))#should be 0.5. Overestimatinga  little, but looks good . 
+
+plot(density(post10$site_sigma))
