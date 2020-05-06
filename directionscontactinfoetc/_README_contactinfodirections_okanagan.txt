@@ -38,7 +38,7 @@ Nk'mip directions (easy: Google maps to Spirit Ridge Resort): Take highway 97 So
 McIntyre and Whitetail
 
 Contact FIRST is the vineyard supervisor: 
-Scott Carlson
+Scott Carlson (Scott Carlson <scott.carlson@arterracanada.com>)
 250.485.7920
 Manager is Manjay Deol: 250.485.8215
 
