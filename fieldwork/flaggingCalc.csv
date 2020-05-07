@@ -1,96 +1,96 @@
-﻿company,vineyard,variety,block.num,qg.block.readable,plants.number,total.per.vineyard,notes
-Quails Gate,Mannhardt,Pinot noir,4-Jul,7-4,,,
-Quails Gate,Mannhardt,Pinot noir,5-Jul,7-5,,,
-Quails Gate,Mannhardt,Pinot noir,7-Aug,8-7,,,
-Quails Gate,Mannhardt,Pinot noir,8-Aug,8-8,,,
-Quails Gate,Mannhardt,Pinot noir,9-Aug,8-9,,,
-Quails Gate,Mannhardt,Pinot noir,10-Aug,8-10,,,
-Quails Gate,Mannhardt,Riesling,1-Aug,8-1,,,
-Quails Gate,Mannhardt,Riesling,2-Aug,8-2,,,
-Quails Gate,Mannhardt,Riesling,6-Aug,8-6,,,
-Quails Gate,Mannhardt,Riesling,1-Sep,9-1,,,
-Quails Gate,Mannhardt,Riesling,2-Sep,9-2,,,
-Quails Gate,Mannhardt,Riesling,5-Sep,9-5,,,
-Quails Gate,Mannhardt,Chardonnay,4-Aug,8-4,,,
-Quails Gate,Estate,Merlot,1-Jun,6-1,,,
-Quails Gate,Estate,Merlot,2-Jun,6-2,,,
-Quails Gate,Estate,Merlot,9-Feb,2-9,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,8-Feb,2-8,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,7-Feb,2-7,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,2-Feb,2-2,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,1-1a,1-1a,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,1-1c,1-1c,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,1-1d,1-1d,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Cabernet sauvignon,6-Apr,4-5,,,
-Quails Gate,Estate,Cabernet sauvignon,6-Apr,4-6,,,
-Quails Gate,Estate,Cabernet sauvignon,7-May,5-7,,,
-Quails Gate,Estate,Cabernet sauvignon,1-1b,1-1b,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,2-Jan,1-2,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,4-Feb,2-4,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,5-Feb,2-5,,,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,4-Mar,3-4,,,"no -a, yes b"
-Quails Gate,Estate,Chardonnay,1-Apr,4-1,,,no
-Quails Gate,Estate,Chardonnay,1-May,5-1,,,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Chardonnay,2-May,5-2,,,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Chardonnay,3-May,5-3,,,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Chardonnay,4-May,5-4,,,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Riesling,4-Jan,1-4,,,will be ripped out
-Quails Gate,Estate,Sauvignon blanc,6-Jan,1-6,,,lower vineyard
-Quails Gate,Estate,Syrah,1-Feb,2-1,,,"lower vineyard, staying?"
-Quails Gate,Estate,Pinot noir,1-Mar,3-1,,,high quality
-Quails Gate,Estate,Pinot noir,3-Mar,3-3,,,
-Quails Gate,Estate,Pinot noir,5-Mar,3-5,,,
-Quails Gate,Estate,Pinot noir,6-Mar,3-6,,,
-Quails Gate,Estate,Pinot noir,7-Mar,3-7,,,
-Quails Gate,Estate,Pinot noir,8-Mar,3-8,,,
-Quails Gate,Estate,Pinot noir,2-Apr,4-2,,,
-Quails Gate,Estate,Pinot noir,3-Apr,4-3,,,
-Quails Gate,Estate,Pinot noir,7-Apr,4-7,,,
-Quails Gate,Estate,Pinot noir,8-Apr,4-8,,,
-Quails Gate,Estate,Pinot noir,9-Apr,4-9,,,
-Quails Gate,Estate,Pinot noir,10-Apr,4-10,,,
-Quails Gate,Estate,Pinot noir,11-Apr,4-11,,,
-Quails Gate,Estate,Pinot noir,5-May,5-5,,,
-Quails Gate,Estate,Pinot noir,6-May,5-6,,,
-Quails Gate,Estate,Pinot noir,10-May,5-10,,,
-Arterra,Whitetail,Chardonnay,C,,36,,
-Arterra,Whitetail,Chardonnay,OIB,,36,,
-Arterra,Whitetail,Sauvignon blanc,D,,36,,
-Arterra,Whitetail,Sauvignon blanc,E,,0,,
-Arterra,Whitetail,Cabernet sauvignon,F,,36,,
-Arterra,Whitetail,Merlot,G,,36,,
-Arterra,Whitetail,Riesling,B,,36,,
-Arterra,Whitetail,Riesling,J,,24,,
-Arterra,Whitetail,Riesling,L,,24,,
-Arterra,Whitetail,Riesling,M,,24,,
-Arterra,McIntyre,Riesling,A,,36,,
-Arterra,McIntyre,Sauvignon blanc,E,,36,,
-Arterra,McIntyre,Sauvignon blanc,F,,0,,
-Arterra,McIntyre,Chardonnay,J,,36,,
-Arterra,McIntyre,Pinot noir,C,,24,,
-Arterra,McIntyre,Pinot noir,O,,24,,
-Arterra,McIntyre,Cabernet sauvignon,Q,,36,,
-Arterra,Dark Horse,Merlot,1,,36,,
-Arterra,Dark Horse,Merlot,2,,0,,
-Arterra,Dark Horse,Merlot,3,,36,,
-Arterra,Dark Horse,Merlot,F,,24,,
-Arterra,Dark Horse,Merlot,J,,24,,
-Arterra,Dark Horse,Merlot,K,,0,,
-Arterra,Dark Horse,Cabernet sauvignon,A or C,,36,,used same color for Tempranillo
-Arterra,Dark Horse,Pinot noir,G,,36,,
-Arterra,Dark Horse,Pinot noir,H,,0,,
-Arterra,Dark Horse,Chardonnay,B,,36,,
-Arterra,Dark Horse,Chardonnay,I,,36,,
-Arterra,Dark Horse,Chardonnay,N,,0,,
-Arterra,Dark Horse,Chardonnay,E,,0,,baby plants?
-Arterra,Dark Horse,Chardonnay,L,,0,,Definitely baby plants
-Arterra,NK'MIP Cellars,Merlot,A,,36,,
-Arterra,NK'MIP Cellars,Merlot,E,,0,,"very small block, diff orientation?"
-Arterra,NK'MIP Cellars,Merlot,G,,36,,
-Arterra,NK'MIP Cellars,Cabernet sauvignon,B,,36,,
-Arterra,NK'MIP Cellars,Syrah,C,,36,,
-Arterra,NK'MIP Cellars,Syrah,F,,36,,
-Arterra,NK'MIP Cellars,,,,,180,
-Arterra,Dark Horse,,,,,264,
-Arterra,McIntyre,,,,,192,
-Arterra,Whitetail,,,,,288,
+company,vineyard,variety,block.num,qg.block.readable,rootstock,plants.number,total.per.vineyard,notes
+Quails Gate,Mannhardt,Pinot noir,4-Jul,7-4,,,,
+Quails Gate,Mannhardt,Pinot noir,5-Jul,7-5,,,,
+Quails Gate,Mannhardt,Pinot noir,7-Aug,8-7,,,,
+Quails Gate,Mannhardt,Pinot noir,8-Aug,8-8,,,,
+Quails Gate,Mannhardt,Pinot noir,9-Aug,8-9,,,,
+Quails Gate,Mannhardt,Pinot noir,10-Aug,8-10,,,,
+Quails Gate,Mannhardt,Riesling,1-Aug,8-1,,,,
+Quails Gate,Mannhardt,Riesling,2-Aug,8-2,,,,
+Quails Gate,Mannhardt,Riesling,6-Aug,8-6,,,,
+Quails Gate,Mannhardt,Riesling,1-Sep,9-1,,,,
+Quails Gate,Mannhardt,Riesling,2-Sep,9-2,,,,
+Quails Gate,Mannhardt,Riesling,5-Sep,9-5,,,,
+Quails Gate,Mannhardt,Chardonnay,4-Aug,8-4,,,,
+Quails Gate,Estate,Merlot,1-Jun,6-1,,,,
+Quails Gate,Estate,Merlot,2-Jun,6-2,,,,
+Quails Gate,Estate,Merlot,9-Feb,2-9,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,8-Feb,2-8,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,7-Feb,2-7,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,2-Feb,2-2,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,1-1a,1-1a,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,1-1c,1-1c,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,1-1d,1-1d,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Cabernet sauvignon,6-Apr,4-5,,,,
+Quails Gate,Estate,Cabernet sauvignon,6-Apr,4-6,,,,
+Quails Gate,Estate,Cabernet sauvignon,7-May,5-7,,,,
+Quails Gate,Estate,Cabernet sauvignon,1-1b,1-1b,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,2-Jan,1-2,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,4-Feb,2-4,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,5-Feb,2-5,,,,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,4-Mar,3-4,,,,"no -a, yes b"
+Quails Gate,Estate,Chardonnay,1-Apr,4-1,,,,no
+Quails Gate,Estate,Chardonnay,1-May,5-1,,,,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Chardonnay,2-May,5-2,,,,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Chardonnay,3-May,5-3,,,,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Chardonnay,4-May,5-4,,,,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Riesling,4-Jan,1-4,,,,will be ripped out
+Quails Gate,Estate,Sauvignon blanc,6-Jan,1-6,,,,lower vineyard
+Quails Gate,Estate,Syrah,1-Feb,2-1,,,,"lower vineyard, staying?"
+Quails Gate,Estate,Pinot noir,1-Mar,3-1,,,,high quality
+Quails Gate,Estate,Pinot noir,3-Mar,3-3,,,,
+Quails Gate,Estate,Pinot noir,5-Mar,3-5,,,,
+Quails Gate,Estate,Pinot noir,6-Mar,3-6,,,,
+Quails Gate,Estate,Pinot noir,7-Mar,3-7,,,,
+Quails Gate,Estate,Pinot noir,8-Mar,3-8,,,,
+Quails Gate,Estate,Pinot noir,2-Apr,4-2,,,,
+Quails Gate,Estate,Pinot noir,3-Apr,4-3,,,,
+Quails Gate,Estate,Pinot noir,7-Apr,4-7,,,,
+Quails Gate,Estate,Pinot noir,8-Apr,4-8,,,,
+Quails Gate,Estate,Pinot noir,9-Apr,4-9,,,,
+Quails Gate,Estate,Pinot noir,10-Apr,4-10,,,,
+Quails Gate,Estate,Pinot noir,11-Apr,4-11,,,,
+Quails Gate,Estate,Pinot noir,5-May,5-5,,,,
+Quails Gate,Estate,Pinot noir,6-May,5-6,,,,
+Quails Gate,Estate,Pinot noir,10-May,5-10,,,,
+Arterra,Whitetail,Chardonnay,C,,3309,36,,
+Arterra,Whitetail,Chardonnay,OIB,,3309,36,,
+Arterra,Whitetail,Sauvignon blanc,D,,3309,36,,
+Arterra,Whitetail,Sauvignon blanc,E,,101-14,0,,
+Arterra,Whitetail,Cabernet sauvignon,F,,101-14,36,,
+Arterra,Whitetail,Merlot,G,,SO4,36,,
+Arterra,Whitetail,Riesling,B,,SO4,36,,
+Arterra,Whitetail,Riesling,J,,SO4,24,,
+Arterra,Whitetail,Riesling,L,,SO4,24,,
+Arterra,Whitetail,Riesling,M,,SO4,24,,
+Arterra,McIntyre,Riesling,A,,SO4,36,,
+Arterra,McIntyre,Sauvignon blanc,E,,3309,36,,"Also root stock 420A, but avoid"
+Arterra,McIntyre,Sauvignon blanc,F,,SO4,0,,
+Arterra,McIntyre,Chardonnay,J,,3309/SO4,36,,
+Arterra,McIntyre,Pinot noir,C,,SO4,24,,
+Arterra,McIntyre,Pinot noir,O,,3309/SO4,24,,
+Arterra,McIntyre,Cabernet sauvignon,Q,,SO4,36,,"also root stock 101-14 and B, but avoid "
+Arterra,Dark Horse,Merlot,1,,3309,36,,
+Arterra,Dark Horse,Merlot,2,,RGM,0,,
+Arterra,Dark Horse,Merlot,3,,3309,36,,
+Arterra,Dark Horse,Merlot,F,,SR,24,,
+Arterra,Dark Horse,Merlot,J,,SO4,24,,
+Arterra,Dark Horse,Merlot,K,,SO4,0,,
+Arterra,Dark Horse,Cabernet sauvignon,A or C,,SR,36,,used same color for Tempranillo
+Arterra,Dark Horse,Pinot noir,G,,SR,36,,
+Arterra,Dark Horse,Pinot noir,H,,,0,,
+Arterra,Dark Horse,Chardonnay,B,,SR,36,,
+Arterra,Dark Horse,Chardonnay,I,,3309,36,,there is also RG and 101-14 rootsock
+Arterra,Dark Horse,Chardonnay,N,,SO4,0,,
+Arterra,Dark Horse,Chardonnay,E,,SO4,0,,baby plants?
+Arterra,Dark Horse,Chardonnay,L,,3309,0,,Definitely baby plants
+Arterra,NK'MIP Cellars,Merlot,A,,RGM,36,,
+Arterra,NK'MIP Cellars,Merlot,E,,3309/SO4,0,,"very small block, diff orientation? Root ctock 3309-143"
+Arterra,NK'MIP Cellars,Merlot,G,,3309,36,,
+Arterra,NK'MIP Cellars,Cabernet sauvignon,B,,RGM,36,,
+Arterra,NK'MIP Cellars,Syrah,C,,101-14,36,,Some root stock 101-14-759
+Arterra,NK'MIP Cellars,Syrah,F,,RGM,36,,
+Arterra,NK'MIP Cellars,,,,,,180,
+Arterra,Dark Horse,,,,,,264,
+Arterra,McIntyre,,,,,,192,
+Arterra,Whitetail,,,,,,288,
