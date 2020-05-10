@@ -1,59 +1,59 @@
 company,vineyard,variety,block.num,qg.block.readable,rootstock,plants.number,total.per.vineyard,notes
-Quails Gate,Mannhardt,Pinot noir,4-Jul,7-4,SO4,,0,
-Quails Gate,Mannhardt,Pinot noir,5-Jul,7-5,SO4/102,,0,
-Quails Gate,Mannhardt,Pinot noir,7-Aug,8-7,SO4/762,,0,
-Quails Gate,Mannhardt,Pinot noir,8-Aug,8-8,3309/144,,1,
-Quails Gate,Mannhardt,Pinot noir,9-Aug,8-9,SO4/102,,0,
-Quails Gate,Mannhardt,Pinot noir,10-Aug,8-10,SO4/762,,0,
-Quails Gate,Mannhardt,Riesling,1-Aug,8-1,SO4/5,,0,
-Quails Gate,Mannhardt,Riesling,2-Aug,8-2,3309/114,,0,
-Quails Gate,Mannhardt,Riesling,6-Aug,8-6,3309/114,24,1,
-Quails Gate,Mannhardt,Riesling,1-Sep,9-1,3309/114,,1,
-Quails Gate,Mannhardt,Riesling,2-Sep,9-2,14b.MGT/153,,0,
-Quails Gate,Mannhardt,Riesling,5-Sep,9-5,5c,,0,
-Quails Gate,Mannhardt,Chardonnay,4-Aug,8-4,101-14/3309,24,1,maybe cut?
-Quails Gate,Estate,Merlot,1-Jun,6-1,3309/143,,1,
-Quails Gate,Estate,Merlot,2-Jun,6-2,SO4/5,,0,
-Quails Gate,Estate,Merlot,9-Feb,2-9,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,8-Feb,2-8,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,7-Feb,2-7,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Merlot,2-Feb,2-2,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Mannhardt,Pinot noir,7-4,7-4,SO4,,0,
+Quails Gate,Mannhardt,Pinot noir,7-5,7-5,SO4/102,,0,
+Quails Gate,Mannhardt,Pinot noir,8-7,8-7,SO4/762,,0,
+Quails Gate,Mannhardt,Pinot noir,8-8,8-8,3309/144,,1,
+Quails Gate,Mannhardt,Pinot noir,8-9,8-9,SO4/102,,0,
+Quails Gate,Mannhardt,Pinot noir,8-10,8-10,SO4/762,,0,
+Quails Gate,Mannhardt,Riesling,8-1,8-1,SO4/5,,0,
+Quails Gate,Mannhardt,Riesling,8-2,8-2,3309/114,,0,
+Quails Gate,Mannhardt,Riesling,8-6,8-6,3309/114,24,1,
+Quails Gate,Mannhardt,Riesling,9-1,9-1,3309/114,,1,
+Quails Gate,Mannhardt,Riesling,9-2,9-2,14b.MGT/153,,0,
+Quails Gate,Mannhardt,Riesling,9-5,9-5,5c,,0,
+Quails Gate,Mannhardt,Chardonnay,8-4,8-4,101-14/3309,24,1,maybe cut?
+Quails Gate,Estate,Merlot,6-1,6-1,3309/143,,1,
+Quails Gate,Estate,Merlot,6-2,6-2,SO4/5,,0,
+Quails Gate,Estate,Merlot,2-9,2-9,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,2-8,2-8,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,2-7,2-7,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Merlot,2-2,2-2,,,0,"lower vineyard, not recommended for sampling?"
 Quails Gate,Estate,Merlot,1-1a,1-1a,,,0,"lower vineyard, not recommended for sampling?"
 Quails Gate,Estate,Merlot,1-1c,1-1c,,,0,"lower vineyard, not recommended for sampling?"
 Quails Gate,Estate,Merlot,1-1d,1-1d,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Cabernet sauvignon,6-Apr,4-5,119,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Cabernet sauvignon,6-Apr,4-6,119,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Cabernet sauvignon,7-May,5-7,119,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Cabernet sauvignon,4-5,4-5,119,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Cabernet sauvignon,4-6,4-6,119,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Cabernet sauvignon,5-7,5-7,119,,0,"lower vineyard, not recommended for sampling?"
 Quails Gate,Estate,Cabernet sauvignon,1-1b,1-1b,SO4/5,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,2-Jan,1-2,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,4-Feb,2-4,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,5-Feb,2-5,,,0,"lower vineyard, not recommended for sampling?"
-Quails Gate,Estate,Chardonnay,4-Mar,3-4a,,,0,"no -a, yes b"
-Quails Gate,Estate,Chardonnay,4-Mar,3-4b,,,1,"no -a, yes b"
-Quails Gate,Estate,Chardonnay,1-Apr,4-1,,,0,no
-Quails Gate,Estate,Chardonnay,1-May,5-1,SO4/102,,0,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Chardonnay,2-May,5-2,SO4/102,,0,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Chardonnay,3-May,5-3,SO4/102,,0,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Chardonnay,4-May,5-4,SO4/102,,1,"top = high vigour low quality, higher quality"
-Quails Gate,Estate,Riesling,4-Jan,1-4,,,0,will be ripped out
-Quails Gate,Estate,Sauvignon blanc,6-Jan,1-6,,,1,"lower vineyard, but can sample"
-Quails Gate,Estate,Syrah,1-Feb,2-1,3309,,1,"lower vineyard, staying?"
-Quails Gate,Estate,Pinot noir,1-Mar,3-1,3309-144,,0,high quality
-Quails Gate,Estate,Pinot noir,3-Mar,3-3,3309-144,,1,
-Quails Gate,Estate,Pinot noir,5-Mar,3-5,SO4,,0,
-Quails Gate,Estate,Pinot noir,6-Mar,3-6,SO4,,0,
-Quails Gate,Estate,Pinot noir,7-Mar,3-7,54,,0,
-Quails Gate,Estate,Pinot noir,8-Mar,3-8,self,,0,
-Quails Gate,Estate,Pinot noir,2-Apr,4-2,3309/144,,0,
-Quails Gate,Estate,Pinot noir,3-Apr,4-3,SO4,,0,
-Quails Gate,Estate,Pinot noir,7-Apr,4-7,SO4/5,,0,
-Quails Gate,Estate,Pinot noir,8-Apr,4-8,3309/144,,1,
-Quails Gate,Estate,Pinot noir,9-Apr,4-9,3309/144,,0,
-Quails Gate,Estate,Pinot noir,10-Apr,4-10,SO4,,0,
-Quails Gate,Estate,Pinot noir,11-Apr,4-11,SO4/5,,0,
-Quails Gate,Estate,Pinot noir,5-May,5-5,SO4/762,,0,
-Quails Gate,Estate,Pinot noir,6-May,5-6,SO4/102,,0,
-Quails Gate,Estate,Pinot noir,10-May,5-10,3309/144,,0,
+Quails Gate,Estate,Chardonnay,1-2,1-2,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,2-4,2-4,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,2-5,2-5,,,0,"lower vineyard, not recommended for sampling?"
+Quails Gate,Estate,Chardonnay,3-4a,3-4a,,,0,"no -a, yes b"
+Quails Gate,Estate,Chardonnay,3-4b,3-4b,,,1,"no -a, yes b"
+Quails Gate,Estate,Chardonnay,4-1,4-1,,,0,no
+Quails Gate,Estate,Chardonnay,5-1,5-1,SO4/102,,0,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Chardonnay,5-2,5-2,SO4/102,,0,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Chardonnay,5-3,5-3,SO4/102,,0,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Chardonnay,5-4,5-4,SO4/102,,1,"top = high vigour low quality, higher quality"
+Quails Gate,Estate,Riesling,1-4,1-4,,,0,will be ripped out
+Quails Gate,Estate,Sauvignon blanc,1-6,1-6,,,1,"lower vineyard, but can sample"
+Quails Gate,Estate,Syrah,2-1,2-1,3309,,1,"lower vineyard, staying?"
+Quails Gate,Estate,Pinot noir,3-1,3-1,3309-144,,0,high quality
+Quails Gate,Estate,Pinot noir,3-3,3-3,3309-144,,1,
+Quails Gate,Estate,Pinot noir,3-5,3-5,SO4,,0,
+Quails Gate,Estate,Pinot noir,3-6,3-6,SO4,,0,
+Quails Gate,Estate,Pinot noir,3-7,3-7,54,,0,
+Quails Gate,Estate,Pinot noir,3-8,3-8,self,,0,
+Quails Gate,Estate,Pinot noir,4-2,4-2,3309/144,,0,
+Quails Gate,Estate,Pinot noir,4-3,4-3,SO4,,0,
+Quails Gate,Estate,Pinot noir,4-7,4-7,SO4/5,,0,
+Quails Gate,Estate,Pinot noir,4-8,4-8,3309/144,,1,
+Quails Gate,Estate,Pinot noir,4-9,4-9,3309/144,,0,
+Quails Gate,Estate,Pinot noir,4-10,4-10,SO4,,0,
+Quails Gate,Estate,Pinot noir,4-11,4-11,SO4/5,,0,
+Quails Gate,Estate,Pinot noir,5-5,5-5,SO4/762,,0,
+Quails Gate,Estate,Pinot noir,5-6,5-6,SO4/102,,0,
+Quails Gate,Estate,Pinot noir,5-10,5-10,3309/144,,0,
 Arterra,Whitetail,Chardonnay,C,,3309,36,1,
 Arterra,Whitetail,Chardonnay,OIB,,3309,36,0,
 Arterra,Whitetail,Sauvignon blanc,D,,3309,36,1,
@@ -70,7 +70,7 @@ Arterra,McIntyre,Sauvignon blanc,F,,SO4,0,0,
 Arterra,McIntyre,Chardonnay,J,,3309/SO4,36,1,
 Arterra,McIntyre,Pinot noir,C,,SO4,24,1,
 Arterra,McIntyre,Pinot noir,O,,3309/SO4,24,1,
-Arterra,McIntyre,Cabernet sauvignon,Q,,SO4,36,1,"also root stock 101-14 and B, but avoid "
+Arterra,McIntyre,Cabernet sauvignon,Q,,SO4,36,1,"also root stock 101-14 and B, but avoid"
 Arterra,Dark Horse,Merlot,1,,3309,36,1,
 Arterra,Dark Horse,Merlot,2,,RGM,0,0,
 Arterra,Dark Horse,Merlot,3,,3309,36,0,
