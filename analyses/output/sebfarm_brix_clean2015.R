@@ -1,23 +1,25 @@
 ########################## 2015_SebFarms_Brix.csv Cleaning (PA) ##########################
 
-#Housekeeping 
+  # Ask EW about different columns #
+
+#Housekeeping
 rm(list=ls())
 options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/input/sebastianfarms/brix/")
-library(tidyverse) 
+library(tidyverse)
 library(lubridate)
 
 #Reading in csv files
 SebFarms_Brix <- read.csv("2015_SebFarms_Brix.csv", header=TRUE)
 head(SebFarms_Brix)
 
-#Add columns: company, vineyard, notes 
+#Add columns: company, vineyard, notes
 company <- "SebastianFarms"
 vineyard <- ""
 SebF <- cbind(SebFarms_Brix, company, vineyard)
 
-#Rename block column 
+#Rename block column
 colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
 colnames(SebF)[colnames(SebF) == 'comments'] <- 'notes'
 

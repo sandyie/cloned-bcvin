@@ -1,18 +1,20 @@
 ########################## 2018_SebFarms_Brix.csv Cleaning (PA) ##########################
 
-#Housekeeping 
+  # Ask EW about different columns #
+
+#Housekeeping
 rm(list=ls())
 options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/input/sebastianfarms/brix/")
-library(tidyverse) 
+library(tidyverse)
 library(lubridate)
 
 #Reading in csv files
 SebFarms_Brix <- read.csv("2018_SebFarms_Brix.csv", header=TRUE)
 head(SebFarms_Brix)
 
-#Add columns: notes 
+#Add columns: notes
 notes <- ""
 SebF <- cbind(SebFarms_Brix, notes)
 
@@ -43,11 +45,10 @@ SebF <- pivot_longer(SebF, #tidyr
                      names_to = "event",
                      values_to = "value")
 
-#Reordering column names : #unique columns (time, code ID, product, calculated/potassium?) as EW
+#Reordering column names : #unique columns (time, code ID, product, calculated/potassium?) ask EW
 #"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
 SebF <- select(SebF, block, everything())
 SebF <- select(SebF, variety, everything())
 SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
-SebF <- select(SebF, -time, time)
 SebF.clean <- select(SebF, -notes, notes)
