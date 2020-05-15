@@ -36,7 +36,11 @@ SebF <- pivot_longer(SebF, #tidyr
                      values_to = "value")
 
 #Reordering column names : 
-#"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
+#"company", "vineyard", "sampler", "block", "variety", "year", "month", "day", "event", "value", "notes"
 SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
 SebF.clean <- select(SebF, -notes, notes)
+
+#Export Final Output
+setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+write.csv(SebF.clean, "sebfarm_brix_clean2006.csv", row.names = F)

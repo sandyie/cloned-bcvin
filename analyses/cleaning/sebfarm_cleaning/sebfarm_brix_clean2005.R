@@ -1,4 +1,4 @@
-########################## 2014_SebFarms_Brix.csv Cleaning (PA) ##########################
+########################## 2005_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
 rm(list=ls())
@@ -9,7 +9,7 @@ library(tidyverse)
 library(lubridate)
 
 #Reading in csv files
-SebFarms_Brix <- read.csv("2014_SebFarms_Brix.csv", header=TRUE)
+SebFarms_Brix <- read.csv("2005_SebFarms_Brix.csv", header=TRUE)
 head(SebFarms_Brix)
 
 #Add columns: company, vineyard, notes 
@@ -18,21 +18,24 @@ vineyard <- ""
 notes <- ""
 SebF <- cbind(SebFarms_Brix, company, vineyard, notes)
 
-#Rename block column 
-colnames(SebF)[colnames(SebF) == 'grow.blk'] <- 'block'
-colnames(SebF)[colnames(SebF) == 'grower'] <- 'sampler'
+#Delete column, dMACH
+SebF <- SebF[, -9]
+
+#Rename block and berry wt. columns
+colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
+colnames(SebF)[colnames(SebF) == 'avg..berry.wt.'] <- 'avg.berry.wt'
 
 #Reformating dates - Seperating date into three columns, Y/M/D
-date <- SebF$date
-date2 <- ymd(date) #lubridate
-SebF <- cbind(SebF, date2)
+sample.date <- SebF$samdate
+sample.date2 <- ymd(sample.date) #lubridate
+SebF <- cbind(SebF, sample.date2)
 
-SebF <- separate(SebF, date2, into = c("year", "month", "day"), sep = "-") #tidyr
-SebF <- SebF[, -4]
+SebF <- separate(SebF, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
+SebF <- SebF[, -1]
 
 #Creating Events and Value Column
 SebF <- pivot_longer(SebF, #tidyr
-                     cols = c(brix, ta, ph),
+                     cols = c(brix, ta, ph, avg.berry.wt),
                      names_to = "event",
                      values_to = "value")
 
@@ -41,3 +44,7 @@ SebF <- pivot_longer(SebF, #tidyr
 SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
 SebF.clean <- select(SebF, -notes, notes)
+
+#Export Final Output
+setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+write.csv(SebF.clean, "sebfarm_brix_clean2005.csv", row.names = F)

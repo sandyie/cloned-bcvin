@@ -1,7 +1,5 @@
 ########################## 2015_SebFarms_Brix.csv Cleaning (PA) ##########################
 
-  # Ask EW about different columns #
-
 #Housekeeping
 rm(list=ls())
 options(stringsAsFactors = FALSE)
@@ -19,6 +17,9 @@ company <- "SebastianFarms"
 vineyard <- ""
 SebF <- cbind(SebFarms_Brix, company, vineyard)
 
+#Removing columns: tag.no, appell, tanks, deputy, jtemp, location, bins
+SebF <- subset(SebF, select = -c(tag.no, appell, tanks, deputy, jtemp, location, bins))
+
 #Rename block column
 colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
 colnames(SebF)[colnames(SebF) == 'comments'] <- 'notes'
@@ -29,18 +30,21 @@ date2 <- ymd(date) #lubridate
 SebF <- cbind(SebF, date2)
 
 SebF <- separate(SebF, date2, into = c("year", "month", "day"), sep = "-") #tidyr
-SebF <- SebF[, -2]
+SebF <- SebF[, -1]
 
 #Creating Events and Value Column
 SebF <- pivot_longer(SebF, #tidyr
-                     cols = c(brix, ta, ph),
+                     cols = c(brix, ta, ph, lbs),
                      names_to = "event",
                      values_to = "value")
 
-#Reordering column names : #unique columns (tag.no, appell, lbs, tanks, deputy, jtemp, location, bins) as EW
-#"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
-SebF <- select(SebF, block, everything())
-SebF <- select(SebF, variety, everything())
+#Reordering column names : 
+  #"company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"
 SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
 SebF.clean <- select(SebF, -notes, notes)
+
+#Export Final Output
+setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+write.csv(SebF.clean, "sebfarm_brix_clean2015.csv", row.names = F)
+

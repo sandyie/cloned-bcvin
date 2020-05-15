@@ -1,4 +1,4 @@
-########################## 2017_SebFarms_Brix.csv Cleaning (PA) ##########################
+########################## 2010_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
 rm(list=ls())
@@ -9,7 +9,7 @@ library(tidyverse)
 library(lubridate)
 
 #Reading in csv files
-SebFarms_Brix <- read.csv("2017_SebFarms_Brix.csv", header=TRUE)
+SebFarms_Brix <- read.csv("2010_SebFarms_Brix.csv", header=TRUE)
 head(SebFarms_Brix)
 
 #Add columns: company, vineyard, notes 
@@ -40,3 +40,7 @@ SebF <- pivot_longer(SebF, #tidyr
 SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
 SebF.clean <- select(SebF, -notes, notes)
+
+#Export Final Output
+setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+write.csv(SebF.clean, "sebfarm_brix_clean2010.csv", row.names = F)

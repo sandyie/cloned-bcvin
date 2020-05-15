@@ -17,6 +17,9 @@ company <- "SebastianFarms"
 notes <- ""
 SebF <- cbind(SebFarms_Brix, company, notes)
 
+#Delete column tag.no
+SebF <- SebF[, -5]
+
 #Rename block column 
 colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
 
@@ -30,11 +33,17 @@ SebF <- SebF[, -4]
 
 #Creating Events and Value Column
 SebF <- pivot_longer(SebF, #tidyr
-                     cols = c(brix, ta, ph),
+                     cols = c(brix, ta, ph, lbs),
                      names_to = "event",
                      values_to = "value")
 
 #Reordering column names
-  #"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
+  #"company", "vineyard", "sampler", "block", "variety", "year", "month", "day", "event", "value", "notes"
+SebF <- select(SebF, block, everything())
+SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
 SebF.clean <- select(SebF, -notes, notes)
+
+#Export Final Output
+setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+write.csv(SebF.clean, "sebfarm_brix_clean2008.csv", row.names = F)

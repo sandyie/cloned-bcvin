@@ -1,4 +1,4 @@
-########################## 2013_SebFarms_Brix.csv Cleaning (PA) ##########################
+########################## 2014_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
 rm(list=ls())
@@ -9,7 +9,7 @@ library(tidyverse)
 library(lubridate)
 
 #Reading in csv files
-SebFarms_Brix <- read.csv("2013_SebFarms_Brix.csv", header=TRUE)
+SebFarms_Brix <- read.csv("2014_SebFarms_Brix.csv", header=TRUE)
 head(SebFarms_Brix)
 
 #Add columns: company, vineyard, notes 
@@ -18,16 +18,19 @@ vineyard <- ""
 notes <- ""
 SebF <- cbind(SebFarms_Brix, company, vineyard, notes)
 
+#Remove columns: tag.no, grower
+SebF <- subset(SebF, select = -c(tag.no, grower))
+
 #Rename block column 
-colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
+colnames(SebF)[colnames(SebF) == 'grow.blk'] <- 'block'
 
 #Reformating dates - Seperating date into three columns, Y/M/D
-sample.date <- SebF$sample.date
-sample.date2 <- ymd(sample.date) #lubridate
-SebF <- cbind(SebF, sample.date2)
+date <- SebF$date
+date2 <- ymd(date) #lubridate
+SebF <- cbind(SebF, date2)
 
-SebF <- separate(SebF, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
-SebF <- SebF[, -1]
+SebF <- separate(SebF, date2, into = c("year", "month", "day"), sep = "-") #tidyr
+SebF <- SebF[, -3]
 
 #Creating Events and Value Column
 SebF <- pivot_longer(SebF, #tidyr
@@ -36,7 +39,13 @@ SebF <- pivot_longer(SebF, #tidyr
                      values_to = "value")
 
 #Reordering column names : 
-#"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
+#"company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"
+SebF <- select(SebF, block, everything())
 SebF <- select(SebF, vineyard, everything())
 SebF <- select(SebF, company, everything())
 SebF.clean <- select(SebF, -notes, notes)
+
+#Export Final Output
+setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+write.csv(SebF.clean, "sebfarm_brix_clean2014.csv", row.names = F)
+
