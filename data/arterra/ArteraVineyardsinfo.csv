@@ -1,0 +1,102 @@
+Vineyard,Block,Variety,Clone,Rootstock,Rows,Orientation,Grape Colour,Year Planted,Vine Spacing,Acres
+McIntyre ,A,Riesling,49,SO4,All,E-W,White,2000,32,6.55
+McIntyre ,B1,Pinot Noir,115,101-14,Jan-17,W-E,Red,2018,32,2.31
+McIntyre ,B2,Pinot Noir,667,3309,18-27,W-E,Red,2018,32,1.41
+McIntyre ,B3,Pinot Noir,777,3309,28-38,W-E,Red,2018,32,1.48
+McIntyre ,B4,Pinot Noir,91,3309,39-58,W-E,Red,2018,32,1.2
+McIntyre ,C,Riesling,21B,SO4,All,E-W,White,2000,32,3.87
+McIntyre ,D,Chenin Blanc,220,RGM,All,W-E,White,2000,32,3.26
+McIntyre ,D2,Gewurztraminer,47,220/RGM,All,W-E,White,2013,32,3.01
+McIntyre ,E1,Sauvignon Blanc,297,420A,57-68,E-W,White,2000,32,3.88
+McIntyre ,E2,Sauvignon Blanc,317,3309,Jan-56,E-W,White,2000,32,10.98
+McIntyre ,F,Sauvignon Blanc,317,SO4,All,W-E,White,2000,32,15.99
+McIntyre ,G,Gewurztraminer,BC,SO4,All,W-E,White,2000,32,9.15
+McIntyre ,H,Pinot Gris,52,SO4,All,E-W,White,2000,32,4.37
+McIntyre ,I,Pinot Gris,54,SO4,All,E-W,White,2000,32,4.53
+McIntyre ,J_East,Chardonnay,76,3309,119-129,W-E,White,2000,32,2.18
+McIntyre ,J_East,Chardonnay,76,SO4,130,W-E,White,2000,32,0.19
+McIntyre ,J_East,Chardonnay,76,SO4,99-106,W-E,White,2000,32,1.57
+McIntyre ,J_East,Chardonnay,95,3309,131-180,W-E,White,2000,32,9.45
+McIntyre ,J_East,Chardonnay,76,SO4,113-118,W-E,White,2000,32,1.19
+McIntyre ,J_East,Chardonnay,76,3309,107-112,W-E,White,2000,32,1.19
+McIntyre ,J_West,Chardonnay,76,3309,Jan-98,W-E,White,2000,32,17.38
+McIntyre ,J_West,Chardonnay,76,3309,Jan-98,W-E,White,2000,32,1.58
+McIntyre ,K,Petit Verdot,400,SO4,All,E-W,Red,2000,32,1.95
+McIntyre ,L,Malbec,598,3309,All,E-W,Red,2000,32,2.11
+McIntyre ,M,Cabernet Franc,327,3309,55-End,E-W,Red,2000,32,4.27
+McIntyre ,M,Cabernet Franc,214,3309,Jan-54,E-W,Red,2000,32,4.1
+McIntyre ,N1,Cabernet Franc,214,3309,Jan-32,W-E,Red,2018,32,3.9
+McIntyre ,N2,Cabernet Franc,214,3309,33-46,W-E,Red,2019,32,1.82
+McIntyre ,N3,Cabernet Franc,327,3309,47-51,W-E,Red,2019,4,0.68
+McIntyre ,N4,Cabernet Franc,327,101-14,52-68,W-E,Red,2019,32,2.18
+McIntyre ,N5,Cabernet Franc,327,RG,69-85,W-E,Red,2019,32,2.16
+McIntyre ,N6,Cabernet Franc,214,RG,86-108,W-E,Red,2019,32,2.93
+McIntyre ,N7,Cabernet Franc,327,3309,109-125,W-E,Red,2019,4,2.2
+McIntyre ,N8,Cabernet Franc,214,3309,126-195,W-E,Red,2019,32,7.67
+McIntyre ,O,Pinot Noir,777,SO4,Jan-31,E-W,Red,2000,32,2.88
+McIntyre ,O,Pinot Noir,777,3309,31-53,E-W,Red,2000,32,1.12
+McIntyre ,P1,Pinot Noir,667,3309,01-Dec,W-E,Red,2018,4,1.82
+McIntyre ,P2,Pinot Noir,777,3309,13-21,W-E,Red,2018,32,1.16
+McIntyre ,P3,Pinot Noir,115,101-14,22-29,W-E,Red,2018,32,1.02
+McIntyre ,P4,Pinot Noir,115,101-14,30-47,W-E,Red,2018,32,2.12
+McIntyre ,P5,Pinot Noir,114,3309,48-52,W-E,Red,2018,32,0.54
+McIntyre ,Q,Cabernet Sauvignon,15,B,48-97,W-E,Red,2000,32,6.5
+McIntyre ,Q,Cabernet Sauvignon,169,SO4,129-170,W-E,Red,2000,32,3.88
+McIntyre ,Q,Cabernet Sauvignon,191,101-14,Jan-47,W-E,Red,2000,32,4.83
+McIntyre ,Q,Cabernet Sauvignon,191,SO4,98-128,W-E,Red,2000,32,4.03
+Darkhorse,A,Temperanillo,809,SR,All,W-E,Red,1990,40,2.31
+Darkhorse,B,Chardonnay,,SR,All,W-E,White,1990,40,1.43
+Darkhorse,C,Cabernet Sauvignon,,SR,All,W-E,Red,1990,40,2.21
+Darkhorse,D,Cabernet Franc,332,SO4,All,W-E,Red,1993,40,1.6
+Darkhorse,E,Chardonnay,76,SO4,All,W-E,White,1993,40,0.63
+Darkhorse,F,Merlot,184,SR,All,W-E,Red,1990,40,1.89
+Darkhorse,G,Pinot Noir,115,SR,All,W-E,Red,1990,40,2.33
+Darkhorse,H,Pinot Noir,,,All,W-E,Red,2019,40,1.83
+Darkhorse,I1,Chardonnay,76,3309,1,W-E,White,2019,32,0.13
+Darkhorse,I2,Chardonnay,95,3309,2-5,W-E,White,2019,32,0.37
+Darkhorse,I3,Chardonnay,76,RG,6-9,W-E,White,2019,32,0.35
+Darkhorse,I4,Chardonnay,548,101-14,10-14,W-E,White,2019,32,0.39
+Darkhorse,J,Merlot,447,SO4,All,W-E,Red,1993,40,1.24
+Darkhorse,K,Merlot,181,SO4,All,W-E,Red,1993,40,0.38
+Darkhorse,L,Chardonnay,76,3309,All,W-E,White,2019,40,0.25
+Darkhorse,M,Marsanne/Roussanne,115,SR,All,W-E,White,1990,40,0.67
+Darkhorse,N,Chardonnay,76,SO4,All,W-E,White,1993,40,0.26
+Darkhorse,1,Merlot,347,3309,All,N-S,Red,2003,32,1.79
+Darkhorse,2,Merlot,181,RGM,All,N-S,Red,2003,32,2.3
+Darkhorse,3,Merlot,347,3309,All,W-E,Red,2003,32,1.04
+Whitetail,A,Semillon,317,3309,All,E-W,White,2000,32,2.98
+Whitetail,A2,Riesling,21B,S04,1-48,E-W,White,2019,32,8.07
+Whitetail,B,Riesling,21B,SO4,All,E-W,White,2011,32,3.24
+Whitetail,B2,Riesling,21B,S04,25-64,E-W,White,2019,32,4.92
+Whitetail,C,Chardonnay,95,3309,All,E-W,White,2000,32,14.21
+Whitetail,D,Sauvignon Blanc,317,3309,All,N-S,White,2000,32,17.87
+Whitetail,E,Sauvignon Blanc,317,101-14,All,W-E,White,2000,32,13.89
+Whitetail,E2,Pinot Gris,457,3309,1-20,W-E,White,2019,32,2.48
+Whitetail,F,Cabernet Sauvignon,191,101-14,All,E-W,Red,2002,32,13
+Whitetail,G,Merlot,346,SO4,66-93,E-W,Red,2002,32,5.39
+Whitetail,G2,Cabernet Franc,214,3309,1-52,W-E,Red,2018,32,3.09
+Whitetail,G3,Merlot,181,SO4,1-65,W-E,Red,2002,32,5.13
+Whitetail,H,Pinotage,1200,3309,All,E-W,Red,2002,32,0.87
+Whitetail,J,Riesling,21,SO4,All,E-W,White,2000,32,7.71
+Whitetail,K,Gewurztraminer,47,SO4,All,E-W,White,2000,32,15.73
+Whitetail,L_Bottom,Riesling,49,SO4,All,E-W,White,2000,32,8.63
+Whitetail,L_Top,Riesling,49,SO4,All,E-W,White,2000,32,4.06
+Whitetail,M,Riesling,49,SO4,All,E-W,White,2000,32,6.64
+Whitetail,N1,Pinot Blanc,54,SO4,All,E-W,White,1999,32,3.2
+Whitetail,N2,Vidal,,3309,All,E-W,White,2010,32,6.37
+Whitetail,O,Vidal,,3309,All,E-W,White,2010,32,10.17
+Whitetail,OIB_North,Chardonnay,76,3309,125-162,E-W,White,2009,32,5.64
+Whitetail,OIB_North,Chardonnay,95,3309,120-124,E-W,White,2009,32,0.54
+Whitetail,OIB_North,Chardonnay,6,Self Rooted,45-119,E-W,White,2009,32,8.58
+Whitetail,OIB_North,Chardonnay,95,3309,1-44,E-W,White,2009,32,3.16
+Whitetail,OIB_South,Chardonnay,95,3309,1-124,E-W,White,2009,32,7.35
+Whitetail,OIB-South,Chardonnay,76,3309,125-162,E-W,White,2009,32,4.62
+Whitetail,P,Pinot Gris,52,SO4,All,E-W,White,1999,32,4.38
+NK'MIP,A,Merlot,181,RGM,All,N-S,Red,2002,32,4.8
+NK'MIP,B,Cabernet Sauvignon,191,RGM,All,N-S,Red,2002,32,6.8
+NK'MIP,C,Shiraz,174,101-14-759,1-23,N-S,Red,2007,32,1.3
+NK'MIP,C,Shiraz,877,101-14,24-56,N-S,Red,2007,32,2.1
+NK'MIP,D,Cabernet Franc,327,3309,All,W-E,Red,2004,32,1.7
+NK'MIP,E,Merlot,181,3309-143,All,N-S,Red,2006,32,0.1
+NK'MIP,F,Shiraz,100,RGM,All,N-S,Red,2005,32,0.1
+NK'MIP,G,Merlot,181,3309,All,N-S,Red,2006,32,3.2
