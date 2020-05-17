@@ -1,0 +1,15 @@
+#### NOTES
+
+### environmentcanada
+
+This folder contains daily temperature data for Environment Canada's "PENTICTON A" weather station, collected using wget and the following shell scripts:
+
+for year in `seq 2001 2018`;do for month in `seq 1 12`;do wget --content-disposition "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=1053&Year=${year}&Month=${month}&Day=14&timeframe=2&submit= Download+Data" ;done;done
+
+- Change the year range in "seq 2001 2018" to get data for different years
+- Change the number in the "stationID=1053" part to get data from a difference station. Note that this loop generates duplicates for each year that can be deleted.
+- It appears that the original PENTICTON A station (stationID=1053) was replaced in 2012 in May, as there is no data for this station after that period
+- A new PENTICTON A station appears to have been erected at this time (stationID=50269)
+- There are gaps in the records for years 2012 and 2013 arising from the replacement + apparent malfunctions
+
+
