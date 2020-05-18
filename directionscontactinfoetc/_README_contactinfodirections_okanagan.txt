@@ -32,7 +32,7 @@ Arterra (see PNG file): The address is 4856 Mariposa Rd but if you put it in a G
 
 
 Nk'mip -- gates usually locked, need a key -- *GIVE back at end of year*
-Nelson Dutra (not sure on spelling of last name)
+Nelson Dutra 
 250.485.8085
 
 Nk'mip directions (easy: Google maps to Spirit Ridge Resort): Take highway 97 South through Osoyoos and onto 3 east, LEFT at 45th Street and follow through to resort; vineyards are basically above and below fountain.
