@@ -9,7 +9,7 @@ plantsInfo.csv
 Information on the specific vines, including the row number, date flagged, training method, which cordon was marked, direction of row
 
 VineRowLocations.csv
-The GPS points taken from teh GPS unit showing the location of each group of 12 vines, as well as whether they are activly monitored and which rows are monitored
+The GPS points taken from teh GPS unit showing the location of each group of 12 vines, as well as whether they are activly monitored and which rows are monitored. Coordinates CRS(SPSG:4326,WC 84)
 
 BlockInfo.csv
 Information on each block, incluing variety, clone, rootstock, grape colour, year plantes and number of vines monitored.
