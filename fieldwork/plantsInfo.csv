@@ -1,40 +1,40 @@
-﻿plantID,vineyard,block,variety,clone,rootstock,roworientation,irrigation,row.number,plant.position,rowEndtoCountFrom,training.pruning,cordon.marked,date.flagged,GPSpoint,notes,ToBeRemoved
-1,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,6,south,cane/cordon,north,7-May-20,,,y
-2,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,7,south,cane/cordon,north,7-May-20,,,y
-3,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,8,south,cordon,north,7-May-20,,,y
-4,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,9,south,cane/cordon,north,7-May-20,,,y
-5,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,10,south,cordon,south,7-May-20,,,y
-6,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,11,south,cane,south,7-May-20,,,y
-7,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,6,south,cordon,south,7-May-20,,,y
-8,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,7,south,cordon,north,7-May-20,,,y
-9,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,8,south,cane/cordon,south,7-May-20,,,y
-10,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,9,south,cordon,north,7-May-20,,,y
-11,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,10,south,cane/cordon,south,7-May-20,,"cane flagged, cordon had 2 buds",y
-12,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,11,south,cane/cordon,north,7-May-20,,,y
-13,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,82,south,cordon,south,7-May-20,,check plant position,y
-14,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,83,south,cordon,south,7-May-20,,check plant position,y
-15,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,84,south,cordon,north,7-May-20,,check plant position,y
-16,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,85,south,cordon,south,7-May-20,,check plant position,y
-17,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,86,south,cordon,north,7-May-20,,check plant position,y
-18,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,87,south,cordon,south,7-May-20,,check plant position,y
-19,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,82,south,cordon,north,7-May-20,,check plant position,y
-20,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,83,south,cane,south,7-May-20,,check plant position,y
-21,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,84,south,cane/cordon,north,7-May-20,,check plant position,y
-22,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,85,south,cane/cordon,north,7-May-20,,check plant position,y
-23,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,86,south,cane/cordon,north,7-May-20,,check plant position,y
-24,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,87,south,cordon,south,7-May-20,,check plant position,y
-25,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,7,north,cordon,north,7-May-20,,,y
-26,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,8,north,cordon,north,7-May-20,,,y
-27,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,9,north,cordon,north,7-May-20,,,y
-28,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,11,north,cane,north,7-May-20,,plant 10 skipped because unhealthy,y
-29,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,12,north,cordon,south,7-May-20,,,y
-30,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,13,north,cordon,south,7-May-20,,small north cordon,y
-31,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,6,north,cordon,south,7-May-20,,,y
-32,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,7,north,cordon,north,7-May-20,,,y
-33,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,8,north,cordon,south,7-May-20,,,y
-34,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,9,north,cane,south,7-May-20,,,y
-35,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,10,north,cane,south,7-May-20,,,y
-36,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,11,north,cordon,south,7-May-20,,,y
+﻿plantID,vineyard,block,variety,clone,rootstock,roworientation,irrigation,row.number,plant.position,rowEndtoCountFrom,training.pruning,cordon.marked,date.flagged,GPSpoint,notes,
+1,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,6,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+2,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,7,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+3,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,8,south,cordon,north,7-May-20,,FLAGS REMOVED,
+4,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,9,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+5,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,10,south,cordon,south,7-May-20,,FLAGS REMOVED,
+6,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,29,11,south,cane,south,7-May-20,,FLAGS REMOVED,
+7,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,6,south,cordon,south,7-May-20,,FLAGS REMOVED,
+8,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,7,south,cordon,north,7-May-20,,FLAGS REMOVED,
+9,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,8,south,cane/cordon,south,7-May-20,,FLAGS REMOVED,
+10,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,9,south,cordon,north,7-May-20,,FLAGS REMOVED,
+11,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,10,south,cane/cordon,south,7-May-20,,FLAGS REMOVED,
+12,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,28,11,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+13,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,82,south,cordon,south,7-May-20,,FLAGS REMOVED,
+14,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,83,south,cordon,south,7-May-20,,FLAGS REMOVED,
+15,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,84,south,cordon,north,7-May-20,,FLAGS REMOVED,
+16,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,85,south,cordon,south,7-May-20,,FLAGS REMOVED,
+17,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,86,south,cordon,north,7-May-20,,FLAGS REMOVED,
+18,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,21,87,south,cordon,south,7-May-20,,FLAGS REMOVED,
+19,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,82,south,cordon,north,7-May-20,,FLAGS REMOVED,
+20,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,83,south,cane,south,7-May-20,,FLAGS REMOVED,
+21,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,84,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+22,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,85,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+23,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,86,south,cane/cordon,north,7-May-20,,FLAGS REMOVED,
+24,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,20,87,south,cordon,south,7-May-20,,FLAGS REMOVED,
+25,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,7,north,cordon,north,7-May-20,,FLAGS REMOVED,
+26,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,8,north,cordon,north,7-May-20,,FLAGS REMOVED,
+27,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,9,north,cordon,north,7-May-20,,FLAGS REMOVED,
+28,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,11,north,cane,north,7-May-20,,FLAGS REMOVED,
+29,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,12,north,cordon,south,7-May-20,,FLAGS REMOVED,
+30,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,9,13,north,cordon,south,7-May-20,,FLAGS REMOVED,
+31,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,6,north,cordon,south,7-May-20,,FLAGS REMOVED,
+32,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,7,north,cordon,north,7-May-20,,FLAGS REMOVED,
+33,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,8,north,cordon,south,7-May-20,,FLAGS REMOVED,
+34,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,9,north,cane,south,7-May-20,,FLAGS REMOVED,
+35,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,10,north,cane,south,7-May-20,,FLAGS REMOVED,
+36,Whitetail,J,Riesling,21,S04,E-W,overhead sprinklers,10,11,north,cordon,south,7-May-20,,FLAGS REMOVED,
 37,Whitetail,OIB,Chardonnay,,,,,,,,,,7-May-20,,FLAGS REMOVED,
 38,Whitetail,OIB,Chardonnay,,,,,,,,,,7-May-20,,FLAGS REMOVED,
 39,Whitetail,OIB,Chardonnay,,,,,,,,,,7-May-20,,FLAGS REMOVED,
@@ -71,138 +71,138 @@
 70,Whitetail,OIB,Chardonnay,,,,,,,,,,7-May-20,,FLAGS REMOVED,
 71,Whitetail,OIB,Chardonnay,,,,,,,,,,7-May-20,,FLAGS REMOVED,
 72,Whitetail,OIB,Chardonnay,,,,,,,,,,7-May-20,,FLAGS REMOVED,
-73,Whitetail,B,Riesling,21B,S04,E-W,,4,9,south,cane/cordon,south,7-May-20,Wt-b5,,y
-74,Whitetail,B,Riesling,21B,S04,E-W,,4,10,south,cane,south,7-May-20,Wt-b5,,y
-75,Whitetail,B,Riesling,21B,S04,E-W,,4,12,south,cordon,south,7-May-20,Wt-b5,Neither cane on plant 11 had 3 buds,y
-76,Whitetail,B,Riesling,21B,S04,E-W,,4,15,south,cordon,south,7-May-20,Wt-b5,"Vines 13, 14 no buds",y
-77,Whitetail,B,Riesling,21B,S04,E-W,,4,16,south,cane,south,7-May-20,Wt-b5,,y
-78,Whitetail,B,Riesling,21B,S04,E-W,,4,17,south,cordon,north,7-May-20,Wt-b5,,y
-79,Whitetail,B,Riesling,21B,S04,E-W,,5,9,south,cane,north,7-May-20,Wt-b5,,y
-80,Whitetail,B,Riesling,21B,S04,E-W,,5,10,south,cane/cordon,north,7-May-20,Wt-b5,,y
-81,Whitetail,B,Riesling,21B,S04,E-W,,5,11,south,cordon,north,7-May-20,Wt-b5,,y
-82,Whitetail,B,Riesling,21B,S04,E-W,,5,12,south,cordon,south,7-May-20,Wt-b5,,y
-83,Whitetail,B,Riesling,21B,S04,E-W,,5,13,south,cordon,south,7-May-20,Wt-b5,,y
-84,Whitetail,B,Riesling,21B,S04,E-W,,5,14,south,cane,north,7-May-20,Wt-b5,,y
-85,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cordon,south,7-May-20,Wt-b11,check plant position,y
-86,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cane/cordon,south,7-May-20,Wt-b11,check plant position,y
-87,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cordon,north,7-May-20,Wt-b11,check plant position,y
-88,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cane/cordon,north,7-May-20,Wt-b11,check plant position,y
-89,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cordon,south,7-May-20,Wt-b11,check plant position,y
-90,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cane/cordon,south,7-May-20,Wt-b11,check plant position,y
-91,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cordon,north,7-May-20,Wt-b11,check plant position,y
-92,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,check plant position,y
-93,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,check plant position,y
-94,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cordon,north,7-May-20,Wt-b11,check plant position,y
-95,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,check plant position,y
-96,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,check plant position,y
-97,Whitetail,B,Riesling,21B,S04,E-W,,16,6,north,cordon,north,7-May-20,098 (Wt-b16),,y
-98,Whitetail,B,Riesling,21B,S04,E-W,,16,7,north,cane/cordon,south,7-May-20,098 (Wt-b16),,y
-99,Whitetail,B,Riesling,21B,S04,E-W,,16,8,north,cane,north,7-May-20,98 (Wt-b16),,y
-100,Whitetail,B,Riesling,21B,S04,E-W,,16,9,north,cordon,north,7-May-20,98 (Wt-b16),,y
-101,Whitetail,B,Riesling,21B,S04,E-W,,16,10,north,cane,north,7-May-20,98 (Wt-b16),,y
-102,Whitetail,B,Riesling,21B,S04,E-W,,16,11,north,cane,north,7-May-20,98 (Wt-b16),,y
-103,Whitetail,B,Riesling,21B,S04,E-W,,15,11,north,cane,north,7-May-20,98 (Wt-b16),,y
-104,Whitetail,B,Riesling,21B,S04,E-W,,15,12,north,cane/cordon,north,7-May-20,98 (Wt-b16),,y
-105,Whitetail,B,Riesling,21B,S04,E-W,,15,13,north,cordon,north,7-May-20,98 (Wt-b16),no south cordon,y
-106,Whitetail,B,Riesling,21B,S04,E-W,,15,14,north,cordon,south,7-May-20,98 (Wt-b16),,y
-107,Whitetail,B,Riesling,21B,S04,E-W,,15,15,north,cordon,north,7-May-20,98 (Wt-b16),,y
-108,Whitetail,B,Riesling,21B,S04,E-W,,15,16,north,cordon,south,7-May-20,98 (Wt-b16),,y
-109,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,7,north,cane/cordon,north,7-May-20,Wt-c30,,y
-110,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,8,north,cordon,south,7-May-20,Wt-c30,,y
-111,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,9,north,cordon,north,7-May-20,Wt-c30,,y
-112,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,10,north,cane,south,7-May-20,Wt-c30,,y
-113,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,11,north,cane/cordon,south,7-May-20,Wt-c30,,y
-114,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,12,north,cane,south,7-May-20,Wt-c30,,y
-115,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,7,north,cordon,north,7-May-20,Wt-c30,,y
-116,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,8,north,cane/cordon,north,7-May-20,Wt-c30,,y
-117,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,9,north,cordon,south,7-May-20,Wt-c30,north cordon 2 buds,y
-118,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,10,north,cordon,south,7-May-20,Wt-c30,,y
-119,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,11,north,cane/cordon,north,7-May-20,Wt-c30,,y
-120,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,12,north,cordon,south,7-May-20,Wt-c30,,y
-121,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,6,south,cordon,south,7-May-20,Wt-c30s,,y
-122,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,7,south,cordon,south,7-May-20,Wt-c30s,2 buds on north cordon,y
-123,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,9,south,cordon,south,7-May-20,Wt-c30s,plant 8 is unhealthy,y
-124,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,10,south,cordon,south,7-May-20,Wt-c30s,,y
-125,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,11,south,cane/cordon,south,7-May-20,Wt-c30s,cordon did not have 3 buds so cane chosen,y
-126,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,12,south,cordon,north,7-May-20,Wt-c30s,no live buds on north cordon,y
-127,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,6,south,cordon,south,7-May-20,Wt-c30s,,y
-128,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,7,south,cordon,north,7-May-20,Wt-c30s,,y
-129,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,8,south,cane/cordon,south,7-May-20,Wt-c30s,,y
-130,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,9,south,cordon,north,7-May-20,Wt-c30s,,y
-131,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,10,south,cordon,south,7-May-20,Wt-c30s,11 had only small canes so skipped,y
-132,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,12,south,cordon,south,7-May-20,Wt-c30s,North codon has only 2 buds,y
-133,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,7,north,cane,south,7-May-20,Wt-d29,,y
-134,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,8,north,cordon,south,7-May-20,Wt-d29,,y
-135,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,9,north,cane/cordon,north,7-May-20,Wt-d29,,y
-136,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,10,north,cordon,north,7-May-20,Wt-d29,,y
-137,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,11,north,cordon,north,7-May-20,Wt-d29,,y
-138,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,12,north,cordon,north,7-May-20,Wt-d29,,y
-139,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,7,north,cordon,north,7-May-20,Wt-d29,,y
-140,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,8,north,cordon,south,7-May-20,Wt-d29,,y
-141,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,9,north,cordon,north,7-May-20,Wt-d29,,y
-142,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,10,north,cordon,north,7-May-20,Wt-d29,,y
-143,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,11,north,cordon,north,7-May-20,Wt-d29,,y
-144,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,13,north,cane,south,7-May-20,Wt-d29,plant 12 had no live buds,y
-145,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,7,south,cordon,south,7-May-20,WT-D29S,,y
-146,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,8,south,cordon,south,7-May-20,WT-D29S,,y
-147,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,9,south,cordon,south,7-May-20,WT-D29S,,y
-148,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,10,south,cordon,south,7-May-20,WT-D29S,,y
-149,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,11,south,cordon,north,7-May-20,WT-D29S,,y
-150,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,12,south,cordon,north,7-May-20,WT-D29S,,y
-151,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,7,south,cane,south,7-May-20,WT-D29S,,y
-152,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,8,south,cordon,north,7-May-20,WT-D29S,no south cordon,y
-153,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,9,south,cordon,north,7-May-20,WT-D29S,,y
-154,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,10,south,cane/cordon,north,7-May-20,WT-D29S,,y
-155,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,11,south,cordon,north,7-May-20,WT-D29S,,y
-156,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,12,south,cordon,north,7-May-20,WT-D29S,,y
-157,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,67,south,cane/cordon,south,7-May-20,WT-D29mid,top of hill,y
-158,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,68,south,cordon,north,7-May-20,WT-D29mid,top of hill,y
-159,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,69,south,cordon,north,7-May-20,WT-D29mid,top of hill,y
-160,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,70,south,cordon,north,7-May-20,WT-D29mid,top of hill,y
-161,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,72,south,cordon,south,7-May-20,WT-D29mid,"top of hill, 71 was baby vine - skipped",y
-162,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,73,south,cordon,north,7-May-20,WT-D29mid,top of hill,y
-163,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,67,south,cordon,north,7-May-20,WT-D29mid,,y
-164,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,68,south,cordon,south,7-May-20,WT-D29mid,,y
-165,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,69,south,cordon,north,7-May-20,WT-D29mid,,y
-166,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,70,south,cordon,south,7-May-20,WT-D29mid,,y
-167,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,71,south,cane,south,7-May-20,WT-D29mid,,y
-168,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,73,south,cordon,north,7-May-20,WT-D29mid,72 was baby vine - skipped,y
-169,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,7,north,cordon,north,7-May-20,WT-F15nw,,y
-170,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,9,north,cordon,south,7-May-20,WT-F15nw,plant 8 too young,y
-171,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,10,north,cordon,south,7-May-20,WT-F15nw,,y
-172,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,11,north,cordon,north,7-May-20,WT-F15nw,,y
-173,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,12,north,cordon,south,7-May-20,WT-F15nw,,y
-174,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,13,north,cordon,north,7-May-20,WT-F15nw,,y
-175,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,10,north,cordon,north,7-May-20,WT-F15nw,,y
-176,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,11,north,cordon,north,7-May-20,WT-F15nw,,y
-177,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,12,north,cordon,south,7-May-20,WT-F15nw,,y
-178,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,14,north,cordon,south,7-May-20,WT-F15nw,plant 14 too young,y
-179,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,15,north,cordon,north,7-May-20,WT-F15nw,,y
-180,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,16,north,cordon,north,7-May-20,WT-F15nw,,y
-181,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,147,north,cane/cordon,south,7-May-20,WT-F15mid,,y
-182,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,148,north,cane/cordon,north,7-May-20,WT-F15mid,,y
-183,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,149,north,cordon,north,7-May-20,WT-F15mid,no south cordon,y
-184,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,150,north,cane,north,7-May-20,WT-F15mid,,y
-185,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,151,north,cordon,north,7-May-20,WT-F15mid,,y
-186,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,152,north,cane/cordon,south,7-May-20,WT-F15mid,,y
-187,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,148,north,cane/cordon,north,7-May-20,WT-F15mid,,y
-188,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,149,north,cane/cordon,north,7-May-20,WT-F15mid,,y
-189,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,150,north,cordon,south,7-May-20,WT-F15mid,,y
-190,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,151,north,cane,south,7-May-20,WT-F15mid,,y
-191,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,152,north,cane/cordon,south,7-May-20,WT-F15mid,,y
-192,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,153,north,cane/cordon,north,7-May-20,WT-F15mid,,y
-193,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,50,north,cordon,south,7-May-20,WT-F58mid,,y
-194,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,51,north,cane/cordon,north,7-May-20,WT-F58mid,,y
-195,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,52,north,cordon,north,7-May-20,WT-F58mid,,y
-196,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,53,north,cane/cordon,north,7-May-20,WT-F58mid,,y
-197,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,54,north,cane/cordon,south,7-May-20,WT-F58mid,,y
-198,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,56,north,cordon,north,7-May-20,WT-F58mid,plant 55 too young,y
-199,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,57,north,cordon,north,7-May-20,WT-F58mid,,y
-200,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,58,north,cordon,north,7-May-20,WT-F58mid,,y
-201,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,59,north,cordon,north,7-May-20,WT-F58mid,,y
-202,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,60,north,cordon,north,7-May-20,WT-F58mid,,y
-203,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,61,north,cane/cordon,north,7-May-20,WT-F58mid,,y
-204,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,62,north,cordon,south,7-May-20,WT-F58mid,,y
+73,Whitetail,B,Riesling,21B,S04,E-W,,4,9,south,cane/cordon,south,7-May-20,Wt-b5,FLAGS REMOVED,
+74,Whitetail,B,Riesling,21B,S04,E-W,,4,10,south,cane,south,7-May-20,Wt-b5,FLAGS REMOVED,
+75,Whitetail,B,Riesling,21B,S04,E-W,,4,12,south,cordon,south,7-May-20,Wt-b5,FLAGS REMOVED,
+76,Whitetail,B,Riesling,21B,S04,E-W,,4,15,south,cordon,south,7-May-20,Wt-b5,FLAGS REMOVED,
+77,Whitetail,B,Riesling,21B,S04,E-W,,4,16,south,cane,south,7-May-20,Wt-b5,FLAGS REMOVED,
+78,Whitetail,B,Riesling,21B,S04,E-W,,4,17,south,cordon,north,7-May-20,Wt-b5,FLAGS REMOVED,
+79,Whitetail,B,Riesling,21B,S04,E-W,,5,9,south,cane,north,7-May-20,Wt-b5,FLAGS REMOVED,
+80,Whitetail,B,Riesling,21B,S04,E-W,,5,10,south,cane/cordon,north,7-May-20,Wt-b5,FLAGS REMOVED,
+81,Whitetail,B,Riesling,21B,S04,E-W,,5,11,south,cordon,north,7-May-20,Wt-b5,FLAGS REMOVED,
+82,Whitetail,B,Riesling,21B,S04,E-W,,5,12,south,cordon,south,7-May-20,Wt-b5,FLAGS REMOVED,
+83,Whitetail,B,Riesling,21B,S04,E-W,,5,13,south,cordon,south,7-May-20,Wt-b5,FLAGS REMOVED,
+84,Whitetail,B,Riesling,21B,S04,E-W,,5,14,south,cane,north,7-May-20,Wt-b5,FLAGS REMOVED,
+85,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+86,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cane/cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+87,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cordon,north,7-May-20,Wt-b11,FLAGS REMOVED,
+88,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cane/cordon,north,7-May-20,Wt-b11,FLAGS REMOVED,
+89,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+90,Whitetail,B,Riesling,21B,S04,E-W,,11,,south,cane/cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+91,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cordon,north,7-May-20,Wt-b11,FLAGS REMOVED,
+92,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+93,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+94,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cordon,north,7-May-20,Wt-b11,FLAGS REMOVED,
+95,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+96,Whitetail,B,Riesling,21B,S04,E-W,,12,,south,cane/cordon,south,7-May-20,Wt-b11,FLAGS REMOVED,
+97,Whitetail,B,Riesling,21B,S04,E-W,,16,6,north,cordon,north,7-May-20,098 (Wt-b16),FLAGS REMOVED,
+98,Whitetail,B,Riesling,21B,S04,E-W,,16,7,north,cane/cordon,south,7-May-20,098 (Wt-b16),FLAGS REMOVED,
+99,Whitetail,B,Riesling,21B,S04,E-W,,16,8,north,cane,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+100,Whitetail,B,Riesling,21B,S04,E-W,,16,9,north,cordon,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+101,Whitetail,B,Riesling,21B,S04,E-W,,16,10,north,cane,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+102,Whitetail,B,Riesling,21B,S04,E-W,,16,11,north,cane,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+103,Whitetail,B,Riesling,21B,S04,E-W,,15,11,north,cane,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+104,Whitetail,B,Riesling,21B,S04,E-W,,15,12,north,cane/cordon,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+105,Whitetail,B,Riesling,21B,S04,E-W,,15,13,north,cordon,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+106,Whitetail,B,Riesling,21B,S04,E-W,,15,14,north,cordon,south,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+107,Whitetail,B,Riesling,21B,S04,E-W,,15,15,north,cordon,north,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+108,Whitetail,B,Riesling,21B,S04,E-W,,15,16,north,cordon,south,7-May-20,98 (Wt-b16),FLAGS REMOVED,
+109,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,7,north,cane/cordon,north,7-May-20,Wt-c30,FLAGS REMOVED,
+110,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,8,north,cordon,south,7-May-20,Wt-c30,FLAGS REMOVED,
+111,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,9,north,cordon,north,7-May-20,Wt-c30,FLAGS REMOVED,
+112,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,10,north,cane,south,7-May-20,Wt-c30,FLAGS REMOVED,
+113,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,11,north,cane/cordon,south,7-May-20,Wt-c30,FLAGS REMOVED,
+114,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,12,north,cane,south,7-May-20,Wt-c30,FLAGS REMOVED,
+115,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,7,north,cordon,north,7-May-20,Wt-c30,FLAGS REMOVED,
+116,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,8,north,cane/cordon,north,7-May-20,Wt-c30,FLAGS REMOVED,
+117,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,9,north,cordon,south,7-May-20,Wt-c30,FLAGS REMOVED,
+118,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,10,north,cordon,south,7-May-20,Wt-c30,FLAGS REMOVED,
+119,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,11,north,cane/cordon,north,7-May-20,Wt-c30,FLAGS REMOVED,
+120,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,12,north,cordon,south,7-May-20,Wt-c30,FLAGS REMOVED,
+121,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,6,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+122,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,7,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+123,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,9,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+124,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,10,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+125,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,11,south,cane/cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+126,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,32,12,south,cordon,north,7-May-20,Wt-c30s,FLAGS REMOVED,
+127,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,6,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+128,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,7,south,cordon,north,7-May-20,Wt-c30s,FLAGS REMOVED,
+129,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,8,south,cane/cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+130,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,9,south,cordon,north,7-May-20,Wt-c30s,FLAGS REMOVED,
+131,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,10,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+132,Whitetail,C,Chardonnay,95,3309,E-W,overhead sprinklers,31,12,south,cordon,south,7-May-20,Wt-c30s,FLAGS REMOVED,
+133,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,7,north,cane,south,7-May-20,Wt-d29,FLAGS REMOVED,
+134,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,8,north,cordon,south,7-May-20,Wt-d29,FLAGS REMOVED,
+135,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,9,north,cane/cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+136,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,10,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+137,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,11,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+138,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,12,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+139,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,7,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+140,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,8,north,cordon,south,7-May-20,Wt-d29,FLAGS REMOVED,
+141,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,9,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+142,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,10,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+143,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,11,north,cordon,north,7-May-20,Wt-d29,FLAGS REMOVED,
+144,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,13,north,cane,south,7-May-20,Wt-d29,FLAGS REMOVED,
+145,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,7,south,cordon,south,7-May-20,WT-D29S,FLAGS REMOVED,
+146,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,8,south,cordon,south,7-May-20,WT-D29S,FLAGS REMOVED,
+147,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,9,south,cordon,south,7-May-20,WT-D29S,FLAGS REMOVED,
+148,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,10,south,cordon,south,7-May-20,WT-D29S,FLAGS REMOVED,
+149,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,11,south,cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+150,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,12,south,cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+151,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,7,south,cane,south,7-May-20,WT-D29S,FLAGS REMOVED,
+152,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,8,south,cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+153,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,9,south,cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+154,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,10,south,cane/cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+155,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,11,south,cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+156,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,12,south,cordon,north,7-May-20,WT-D29S,FLAGS REMOVED,
+157,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,67,south,cane/cordon,south,7-May-20,WT-D29mid,FLAGS REMOVED,
+158,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,68,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+159,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,69,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+160,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,70,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+161,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,72,south,cordon,south,7-May-20,WT-D29mid,FLAGS REMOVED,
+162,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,29,73,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+163,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,67,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+164,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,68,south,cordon,south,7-May-20,WT-D29mid,FLAGS REMOVED,
+165,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,69,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+166,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,70,south,cordon,south,7-May-20,WT-D29mid,FLAGS REMOVED,
+167,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,71,south,cane,south,7-May-20,WT-D29mid,FLAGS REMOVED,
+168,Whitetail,D,Sauvignon blanc,317,3309,E-W,drip and overhead,30,73,south,cordon,north,7-May-20,WT-D29mid,FLAGS REMOVED,
+169,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,7,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+170,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,9,north,cordon,south,7-May-20,WT-F15nw,FLAGS REMOVED,
+171,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,10,north,cordon,south,7-May-20,WT-F15nw,FLAGS REMOVED,
+172,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,11,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+173,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,12,north,cordon,south,7-May-20,WT-F15nw,FLAGS REMOVED,
+174,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,13,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+175,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,10,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+176,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,11,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+177,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,12,north,cordon,south,7-May-20,WT-F15nw,FLAGS REMOVED,
+178,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,14,north,cordon,south,7-May-20,WT-F15nw,FLAGS REMOVED,
+179,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,15,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+180,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,16,north,cordon,north,7-May-20,WT-F15nw,FLAGS REMOVED,
+181,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,147,north,cane/cordon,south,7-May-20,WT-F15mid,FLAGS REMOVED,
+182,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,148,north,cane/cordon,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+183,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,149,north,cordon,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+184,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,150,north,cane,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+185,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,151,north,cordon,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+186,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,16,152,north,cane/cordon,south,7-May-20,WT-F15mid,FLAGS REMOVED,
+187,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,148,north,cane/cordon,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+188,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,149,north,cane/cordon,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+189,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,150,north,cordon,south,7-May-20,WT-F15mid,FLAGS REMOVED,
+190,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,151,north,cane,south,7-May-20,WT-F15mid,FLAGS REMOVED,
+191,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,152,north,cane/cordon,south,7-May-20,WT-F15mid,FLAGS REMOVED,
+192,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,15,153,north,cane/cordon,north,7-May-20,WT-F15mid,FLAGS REMOVED,
+193,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,50,north,cordon,south,7-May-20,WT-F58mid,FLAGS REMOVED,
+194,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,51,north,cane/cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+195,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,52,north,cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+196,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,53,north,cane/cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+197,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,54,north,cane/cordon,south,7-May-20,WT-F58mid,FLAGS REMOVED,
+198,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,58,56,north,cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+199,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,57,north,cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+200,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,58,north,cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+201,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,59,north,cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+202,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,60,north,cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+203,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,61,north,cane/cordon,north,7-May-20,WT-F58mid,FLAGS REMOVED,
+204,Whitetail,F,Cabernet sauvignon,191,101-14,SW-NE,drip and overhead,57,62,north,cordon,south,7-May-20,WT-F58mid,FLAGS REMOVED,
 205,McIntyre,Q,Cabernet sauvignon,15,B,E-W,drip and overhead,68,11,north,cane/cordon,south,7-May-20,MC-Q70n,weather data logger on row 68,
 206,McIntyre,Q,Cabernet sauvignon,15,B,E-W,drip and overhead,68,12,north,cane/cordon,south,7-May-20,MC-Q70n,check that rows are not switched,
 207,McIntyre,Q,Cabernet sauvignon,15,B,E-W,drip and overhead,68,13,north,cordon,south,7-May-20,MC-Q70n,,
