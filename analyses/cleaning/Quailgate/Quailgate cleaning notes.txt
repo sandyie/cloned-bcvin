@@ -1,45 +1,45 @@
-Here is a information on the Quailsgate data and list of the cleaning tasks that need doing for the data.
+Here is a information on the Quail's Gate data and list of the cleaning tasks that need doing for the data.
 
 Files
 -----
 
 Viticulture Summary History (up to 2008)
-* this is the summary of what wines were grown where, how much they prodcued and how much they cost
+* this is the summary of what wines were grown where, how much they produced and how much they cost
 * this file needs a fair bit of cleaning because they layout is rather unhelpful. at the end of each 
-  variety-vinyard section there is a "total" section which contains information on costsings 
-* i think that we need a column for vinyard and teh "total" data needs removing and perhaps remerging 
+  variety-vineyard section there is a "total" section which contains information on costings 
+* i think that we need a column for vineyard and the "total" data needs removing and perhaps remerging 
   as another column in the main rows 
-* this file also doesnt seem to have feild or block information, it only lists the vinyards 
+* this file also doesn't seem to have field or block information, it only lists the vineyards 
 
 VITICULTURE SUMMARY
 * i put a more complete description of what i think is in this file in "ViticultureSummaryExplinationFJ.txt" 
   in the same directory
 * this is a series of different data sheets on different tabs. 
-* teh most useful one is probably "QGV Sum". This contains the year, feild, block, variety, age of stand,
+* the most useful one is probably "QGV Sum". This contains the year, field, block, variety, age of stand,
   productivity, Brix, pH, TA,and cost of the crop
 * In terms of cleaning, there are Total sections that need removing.  The data are also split into 
-  vinyards, and these need a column making for them instead of excel subsections   
-* the blks tab shpreadsheet might also be useful as it has data on what teh different blocks are, when 
+  vineyards, and these need a column making for them instead of excel subsections   
+* the blks tab spreadsheet might also be useful as it has data on what the different blocks are, when 
   they were planted and how many vines 
 
 Phenological Data Report 2012 - 2016
-*  this file contains data on some phenological events such as budburst (Right after wooly bud stage),
+*  this file contains data on some phenological events such as budburst (Right after woolly bud stage),
    full bloom and lag phase. 
-*  There is a column with location and sub location info, but it needs seperating out  
-*  the phenology column needs cleaning a bit because sometimes there are commenst like "Around 5% winter bud damage (primary bud) Riesling BudBreak April-20th B1, B2,B4" 
+*  There is a column with location and sub location info, but it needs separating out  
+*  the phenology column needs cleaning a bit because sometimes there are comments like "Around 5% winter bud damage (primary bud) Riesling BudBreak April-20th B1, B2,B4" 
 *  there is a lot of values like "E-L 24" in the phenology column - what do they mean?
 *  the different subsections need removing so it is a single cohesive spreadsheet 
 *  blank rows need removing 
 
 PHENOLOGICAL_DATA_ed_MY
-* phenological data for 2000 - 2012 including feild id, block, planting date, and columsn for different 
+* phenological data for 2000 - 2012 including field id, block, planting date, and columns for different 
   phenological events. 
-* this fiel has already undergone a bit of manual cleaning by Mika, but needs the different tabs for each 
-  year combining and some rehsaping
-*WHen cleaning this data, FJ did teh follwoing:
-	* when there where date ranges, i used teh first date and then made a comments column for
+* this field has already undergone a bit of manual cleaning by Mika, but needs the different tabs for each 
+  year combining and some reshaping
+*WHen cleaning this data, FJ did the following:
+	* when there where date ranges, i used the first date and then made a comments column for
 	  that variable where i noted the original data 
-	* i tried to match all teh column names of teh different spreadsheets, but i was not sure about one because there seemed to be two berry and bunch weight columns. I named teh second one in teh seet "Av.Berry.Weight.Grams.1"
+	* i tried to match all the column names of the different spreadsheets, but i was not sure about one because there seemed to be two berry and bunch weight columns. I named the second one in the sheet "Av.Berry.Weight.Grams.1"
 	* teh variables in a column of phenology events are flowering date, lag phase date, 50 and 80% verasion date, budburst and picking date   
 
 /vinyardmaps/vinyardMapsDataCompiled_MY 
@@ -50,43 +50,43 @@ PHENOLOGICAL_DATA_ed_MY
 
 nektar/qg_phenology2017_19
 * I think this file is dates when various phenology events took place. I think the information on which 
-  event the row refers to is in the "Stage" colun but it is numeric and I have not yet found the explination 
+  event the row refers to is in the "Stage" column but it is numeric and I have not yet found the explanation 
   for each code
 * other than the code issue in the task column this data looks fairly clean  
 * data from 2017-2019
 
 2019May23_Full/2015 - Viticulture Summary
-* this sheet is almost the same as the "QGV Sum" sheet in the VITICULTURE_SUMMERY excel file. Exept for a 
-  few column name differences it shoudl be relativly streight forward to bind with the historical data 
+* this sheet is almost the same as the "QGV Sum" sheet in the VITICULTURE_SUMMERY excel file. Except for a 
+  few column name differences it shoudl be relatively straight forward to bind with the historical data 
 
 2019May23_Full/2015 Initial Analysis
-* I dont think this contains extra information, but I am not super sure. It seems to be working out how much 
-  they are expecting, and hwo that compares to how much they grew? There is average Brix/pH/TA data as we
-  alreay have that data elsewhere? Maybe the block codes and vinyard information coudl be useful? The Vinyards
+* I don't think this contains extra information, but I am not super sure. It seems to be working out how much 
+  they are expecting, and how that compares to how much they grew? There is average Brix/pH/TA data as we
+  already have that data elsewhere? Maybe the block codes and vineyard information could be useful? The Vineyards
   are described in code. 
 
-2019May23_Full/2015 Vinyard Harvest Data
+2019May23_Full/2015 Vin yard Harvest Data
 * this file contains multiple tabs, but in general seems to have data for 2013, 2014 and 2015
-* 13-14-15 Tons - For each vinyard, block and variety, how many tuns and acres of winegrapes were harvested 
+* 13-14-15 Tons - For each vineyard, block and variety, how many tuns and acres of winegrapes were harvested 
   In terms of cleaning, this spreadsheets needs the variety names filled in, and the "total" sections removed 
-* 2014 T per Acre - this tabe contains some of the same info as "13-14-15 Tons", and also tons/acre for 2013 and 2014
-* 2015 Harvest - thsi data contains harvest data Brix, pH, TA, YAN, GDD data for 2015, although it would need a fair bit 
+* 2014 T per Acre - this table contains some of the same info as "13-14-15 Tons", and also tons/acre for 2013 and 2014
+* 2015 Harvest - this data contains harvest data Brix, pH, TA, YAN, GDD data for 2015, although it would need a fair bit 
   of cleaning in terms of filling gaps and removing total sections
-* Printable Format - the most usable tab. it contains a list of the 2015 harvet data, including the varieties, blocks,
-  vinyards, productivity and grape qualities  Brix, pH, TA, YAN, GDD data. This spreadsheet needs soem row values 
-  filling in and teh total sections removed 
+* Printable Format - the most usable tab. it contains a list of the 2015 harvest data, including the varieties, blocks,
+  vineyards, productivity and grape qualities  Brix, pH, TA, YAN, GDD data. This spreadsheet needs some row values 
+  filling in and the total sections removed 
 
-2019May23_Full/2016 Vinyard Harvest Data
-* this is the same format of data as "2015 Vinyard Harvest Data", except for 2016. 
-* the previous two year's yeild is shown in teh first tab of this file, so that teh growers can see how their crop are 
-  doing in compariosn to previous years. 
+2019May23_Full/2016 Vineyard Harvest Data
+* this is the same format of data as "2015 Vineyard Harvest Data", except for 2016. 
+* the previous two year's yield is shown in the first tab of this file, so that the growers can see how their crop are 
+  doing in comparison to previous years. 
 
 2019May23_Full/2017 Initial Analysis and Pick Dates
-* data on what happened to teh grapes after they were picked - what tanks they went in, what yeast they used and stuff.
-  There are picking data data which might be useful if this isnt stored elsewhere 
+* data on what happened to the grapes after they were picked - what tanks they went in, what yeast they used and stuff.
+  There are picking data data which might be useful if this isn't stored elsewhere 
 
 2019May23_Full/2017 Analysis and Pick Dates
-* this file contains replicates of tabs in other excel spreadsheets in this folder. In addition, there is yeild data 
+* this file contains replicates of tabs in other excel spreadsheets in this folder. In addition, there is yield data 
   for 2018 grape varieties 
 
 
