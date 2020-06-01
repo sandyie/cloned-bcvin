@@ -173,7 +173,7 @@ floweringDate <- readr::parse_number(phen0012AllCh$Flowering2) # select just teh
 floweringMonth <- gsub("[[:digit:]]| ", "", phen0012AllCh$Flowering2) # select just the months
 FloweringDateNoYear <- paste(floweringMonth, floweringDate, sep = "-")#make up a string of numbers for the date
 FloweringDateYear <- paste(phen0012AllCh$Year, FloweringDateNoYear, sep = "-")
-phen0012AllCh$Flowering2 [FloweringDateYear  %in% c("-NA", "NA-NA")] <- NA
+FloweringDateYear [FloweringDateYear  %in% c("-NA", "NA-NA")] <- NA
 phen0012AllCh$Flowering <- as.Date(FloweringDateYear, format = "%Y-%B-%d" )#convert to as.date format
 
 #lag dates - just a simple conversion to dates 
@@ -294,18 +294,26 @@ phen0012AllCh$X2008.Actual <- as.numeric(phen0012AllCh$X2008.Actual)
 
 head(phen0012AllCh)
 
-phen0012AllCh$Flowering
 
 #make a column for phenology date and one for phenology event
 #------------------------------------
 
 phenologyColumns <- c("Flowering", "Lag.Phase.Date", "X50.Veraison.Date", "X80.Veraison.Date", "Budburst", "Pick.Date")
 
+#remove columns i just used for teh cleaning process
+phen0012AllCh$Flowering2 <- NULL
+
 PhenologyData<- phen0012AllCh %>%
 	gather(key = "phenologyEvent", value = "phenologyDate", phenologyColumns, na.rm = TRUE)
 
+#remove the comments columns for now
+PhenologyData$CommentsBudburst <- NULL
+PhenologyData$CommentsPlanted <- NULL
+PhenologyData$CommentsVerasion <- NULL
+PhenologyData$CommentsFlowering	<- NULL
+
 head(PhenologyData)
-write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/Quailgate/PhenologyData2001to2012.csv")
+write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/PhenologyData2001to2012.csv")
 
 
 
