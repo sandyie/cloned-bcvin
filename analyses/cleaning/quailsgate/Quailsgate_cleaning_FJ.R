@@ -315,5 +315,25 @@ PhenologyData$CommentsFlowering	<- NULL
 head(PhenologyData)
 write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/PhenologyData2001to2012.csv")
 
+#Cleaning teh newer data 
+#
+#-------------------------------------------------------
 
+pheno1216Data2 <- read.csv("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/qg_PhenoDataReport_2012-2016.csv", skip = 2)
+#this code remove the first 2 rows 
 
+#Remove empty rows 
+pheno1216Data3 <- pheno1216Data2[!pheno1216Data2$Location...Sub == "",]
+pheno1216Data <- pheno1216Data3[!pheno1216Data3$Location...Sub =="Q G ~ Q   u   a   i   l   s       G   a   t   e       E   s   t   a   t   e       W   i   n   e   r   y   .",]
+head(pheno1216Data)
+
+#Split the vineyard name from the blocks
+
+vinetardAndCode <- lapply(strsplit(as.character(pheno1216Data$Location...Sub), "/") , "[" , 1)
+pheno1216Data$VineyardCode <- lapply(strsplit(as.character(vinetardAndCode), " - ") , "[" , 1)
+pheno1216Data$Vineyard <- lapply(strsplit(as.character(vinetardAndCode), " - ") , "[" , 2)
+
+pheno1216Data$blocks<- lapply(strsplit(pheno1216Data$Location...Sub, "/") , "[" , 2)
+
+#make a function or loop that goes though each block value, sees how many blocks there are,
+#makes a new row for each block, and checks the right phenology data is in the right cell 
