@@ -12,6 +12,7 @@ library(data.table) # for binding lists together
 library(dplyr)
 library(readr) # getting numbers from strings 
 library(tidyr) # for reshaping data
+library(stringr) # for detecting strings of characters (/n in my case)
 
 #read in spreadsheets
 #--------------------------------------------------
@@ -313,19 +314,35 @@ PhenologyData$CommentsVerasion <- NULL
 PhenologyData$CommentsFlowering	<- NULL
 
 head(PhenologyData)
-write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/PhenologyData2001to2012.csv")
+#write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/PhenologyData2001to2012.csv")
 
-#Cleaning teh newer data 
+#Cleaning the newer data 
 #
 #-------------------------------------------------------
 
+# remove the first 2 rows of th ephenology 2012-16 data because we dont want them  
 pheno1216Data2 <- read.csv("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/qg_PhenoDataReport_2012-2016.csv", skip = 2)
-#this code remove the first 2 rows 
+
+#this is data taken from maps, and has which blocks have which varieties planted. 
+varietyInfo <- read.csv("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/vineyardmaps/VineyardMapsDataCompiled.csv")
+
+#removing a few empty columns
+pheno1216Data2$Note.....................................Acres <- NULL
+pheno1216Data2$X.2 <- NULL
+pheno1216Data2$Type <- NULL
+pheno1216Data2$X.4 <- NULL
+pheno1216Data2$acres <- NULL # We can get this from the variety data
+
+#Correct names - my best guess based on loking at the data sheet
+
+names(pheno1216Data2)[c(2,4,5)] <- c("Type", "PhenoEvent", "Acres")
+
 
 #Remove empty rows 
 pheno1216Data3 <- pheno1216Data2[!pheno1216Data2$Location...Sub == "",]
 pheno1216Data <- pheno1216Data3[!pheno1216Data3$Location...Sub =="Q G ~ Q   u   a   i   l   s       G   a   t   e       E   s   t   a   t   e       W   i   n   e   r   y   .",]
 head(pheno1216Data)
+
 
 #Split the vineyard name from the blocks
 
@@ -333,7 +350,300 @@ vinetardAndCode <- lapply(strsplit(as.character(pheno1216Data$Location...Sub), "
 pheno1216Data$VineyardCode <- lapply(strsplit(as.character(vinetardAndCode), " - ") , "[" , 1)
 pheno1216Data$Vineyard <- lapply(strsplit(as.character(vinetardAndCode), " - ") , "[" , 2)
 
-pheno1216Data$blocks<- lapply(strsplit(pheno1216Data$Location...Sub, "/") , "[" , 2)
+pheno1216Data$blocks <- lapply(strsplit(pheno1216Data$Location...Sub, "/") , "[" , 2)
 
+#strip white space from the columns
+pheno1216Data$blocks <- trimws(pheno1216Data$blocks)
+pheno1216Data$Vineyard <- trimws(pheno1216Data$Vineyard)
+pheno1216Data$VineyardCode <- trimws(pheno1216Data$VineyardCode)
+
+#Tidy the phenology column up a bit 
+unique(pheno1216Data$PhenoEvent)
+pheno1216Data$PhenoEvent[pheno1216Data$PhenoEvent %in% c("Full bloom", "FULL BLOOM")] <- "Full Bloom"
+pheno1216Data$PhenoEvent[pheno1216Data$PhenoEvent == "Full bloom-Foch"] <- "Foch Full Bloom"
+pheno1216Data$PhenoEvent[pheno1216Data$PhenoEvent %in% c("budbreak", "BudBreak", "Budbreak!!", "Budbreak")] <- "Budburst"
+
+#Select easier to deal with rwos without complicated phenology values
+phenDataOne <- pheno1216Data[!str_detect(pheno1216Data$PhenoEvent, "\n"),]
+phenDataOne$BlockID <- NA
+head(phenDataOne)
 #make a function or loop that goes though each block value, sees how many blocks there are,
-#makes a new row for each block, and checks the right phenology data is in the right cell 
+#makes a new row for each block
+
+blockDataAll <- list() #make a list to hold rows 
+
+
+for (n in 1:nrow(phenDataOne)){ #loop through all the phenology data that is simple is fix 
+	rowData <- phenDataOne [n,]
+	rowData$blocks
+	splitBlocks <- unlist(strsplit(rowData$blocks,split=','))
+	nBlock <- length(splitBlocks) # how many blocks are there?
+	rowDataRep <- do.call("rbind", replicate(nBlock, rowData, simplify = FALSE)) #repeat row as many times as there are blocks
+
+	for (nb in 1:nBlock) {
+		rowDataRep$BlockID[nb]<- splitBlocks[nb] #put block names where they belong 
+	}
+	blockDataAll[[n]] <- rowDataRep
+}
+
+cleanBlocksOne <- rbindlist(blockDataAll)
+
+
+#select phenology values with more than one phenology date in one row so I can correct this individually
+#these are a bit trickier so I am going to go through each one seperatly instead of making a loop
+#especially because the variety is sometimes used to say which date goes with which block, and variety data 
+#is not in this spreadsheet. I had to look at VITICULTURE_SUMMARY.xls in the data folder to see which blocks
+#have which varieties in them.
+#I realise I will need to incude variety data as well in the final spreadsheet   
+
+phenDataMTO <- pheno1216Data[str_detect(pheno1216Data$PhenoEvent, "\n"),]
+phenDataMTO$BlockID <- NA
+phenDataMTO$Comments <- NA 
+
+#1st row - "Full Bloom\nSYRAH-Full Bloom June-02"
+#block 2 is Syrah, block 3 is Chenin Blanc
+PhenoR1 <- phenDataMTO[1,]
+PhenoR1$blocks
+
+rowData1 <- do.call("rbind", replicate(2, PhenoR1, simplify = FALSE)) #repeat row as many times as there are blocks
+rowData1$BlockID [1] <- "B2" # Syrah
+rowData1$BlockID [2] <-  "B3" #ChenB
+
+rowData1$Comments <- rowData1$PhenoEvent # keep original value for reference 
+rowData1$PhenoEvent <- "Full Bloom" # correct phenology description
+
+rowData1$Date [1] <-  "2016-06-02" # add correct date to the Syrah (block B2) Data 
+
+#2nd row - "Full Bloom\nSYRAH-Full Bloom June-04"
+#block 2 is Syrah, block 3 is Chenin Blanc
+
+PhenoR2 <- phenDataMTO[2,]
+PhenoR2$blocks
+
+rowData2 <- do.call("rbind", replicate(3, PhenoR2, simplify = FALSE)) #repeat row as many times as there are blocks
+splitBlocks2 <- unlist(strsplit(rowData2$blocks[1],split=','))#get block names 
+
+rowData2$BlockID [1] <- splitBlocks2[1] # Chardonnay, but has the different phenology date 
+rowData2$BlockID [2] <- splitBlocks2[2] # Chardonnay
+rowData2$BlockID [3] <- splitBlocks2[3] # Chardonnay
+
+rowData2$Comments <- rowData2$PhenoEvent # save the info in case we need it 
+rowData2$PhenoEvent <- "Full Bloom" # correct phenology description
+
+rowData2$Date [1] <-  "2015-06-04" # add correct date to the Syrah (block B2) Data 
+
+
+#3rd row - Chardonnay block F3B4 has a different date.
+#I think F4 should be F3B4 because the other blocks are not Chardonnay and QGV doesnt use block IDs withonly a field number
+
+PhenoR3 <- phenDataMTO[3,]
+PhenoR3$blocks
+
+rowData3 <- do.call("rbind", replicate(4, PhenoR3, simplify = FALSE)) #repeat row as many times as there are blocks
+splitBlocks3 <- unlist(strsplit(rowData3$blocks[1],split=','))#get block names 
+
+rowData3$BlockID [1] <- splitBlocks3[1] # 
+rowData3$BlockID [2] <- splitBlocks3[2] # 
+rowData3$BlockID [3] <- splitBlocks3[3] #
+rowData3$BlockID [4] <- "F3B4" # Chardonnay? 
+
+rowData3$Comments <- rowData3$PhenoEvent # save the info in case we need it 
+rowData3$PhenoEvent <- "Full Bloom" # correct phenology description
+
+rowData3$Date [4] <-  "2015-06-04" # add correct date to block F3B4 Chardonnay June 04 
+
+#4th row - Pinot Noir block F5 B5 full bloom June 05
+# I think this is spposed to be block "F5" in the block ID
+
+PhenoR4 <- phenDataMTO[4,]
+PhenoR4$blocks
+
+rowData4 <- do.call("rbind", replicate(4, PhenoR4, simplify = FALSE)) #repeat row as many times as there are blocks
+splitBlocks4 <- unlist(strsplit(rowData4$blocks[1],split=','))#get block names 
+
+rowData4$BlockID [1] <- splitBlocks4[1] # 
+rowData4$BlockID [2] <- splitBlocks4[2] # 
+rowData4$BlockID [3] <- splitBlocks4[3] #
+rowData4$BlockID [4] <- "F5B5" # Pinot Noir? 
+
+rowData4$Comments <- rowData4$PhenoEvent # save the info in case we need it 
+rowData4$PhenoEvent <- "Full Bloom" # correct phenology description
+
+rowData4$Date [4] <-  "2015-06-05" # add correct date to the Syrah (block B2) Data 
+
+#5th row
+#I assume block "F" is  F1B7
+
+PhenoR5 <- phenDataMTO[5,]
+PhenoR5$blocks
+
+rowData5 <- do.call("rbind", replicate(4, PhenoR5, simplify = FALSE)) #repeat row as many times as there are blocks
+splitBlocks5 <- unlist(strsplit(rowData5$blocks[1],split=','))#get block names 
+
+rowData5$BlockID [1] <- splitBlocks5[1] # 
+rowData5$BlockID [2] <- splitBlocks5[2] # 
+rowData5$BlockID [3] <- splitBlocks5[3] #
+rowData5$BlockID [4] <- "F1B7" # Chasselas? 
+
+rowData5$Comments <- rowData5$PhenoEvent # save the info in case we need it 
+rowData5$PhenoEvent <- "Budburst" # correct phenology description
+
+rowData5$Date [3:4] <-  "2015-04-24" #
+
+
+#6th row
+PhenoR6 <- phenDataMTO[6,]
+PhenoR6$blocks
+
+rowData6 <- do.call("rbind", replicate(3, PhenoR6, simplify = FALSE)) #repeat row as many times as there are blocks
+splitBlocks6 <- unlist(strsplit(rowData6$blocks[1],split=','))#get block names 
+
+rowData6$BlockID [1] <- splitBlocks6[1] # 2-6 Chenin Blanc
+rowData6$BlockID [2] <- splitBlocks6[2] # 5-5 Pinto noir
+rowData6$BlockID [3] <- splitBlocks6[3] # 5-6 Pinot noir 
+
+rowData6$Comments <- rowData6$PhenoEvent # save the info in case we need it 
+rowData6$PhenoEvent <- "Budburst" # correct phenology description
+
+rowData6$Date [1] <-  "2015-04-13" # add correct date to the Syrah (block B2) Data 
+
+#7th row
+#this one was a bit odd because there are extra blocks mentioned in the phenology column, I think I sorted it ok
+#by adding in the Riesling blocks and assuming the original date refers to the Gewurtzbudbreake
+PhenoR7 <- phenDataMTO[7,]
+PhenoR7$blocks
+
+rowData7 <- do.call("rbind", replicate(5, PhenoR7, simplify = FALSE)) #repeat row as many times as there are blocks
+splitBlocks7 <- unlist(strsplit(rowData7$blocks[1],split=','))#get block names 
+
+rowData7$BlockID [1] <- splitBlocks7[1] # Gewurztraminer
+rowData7$BlockID [2] <- splitBlocks7[2] # Gewurztraminer
+rowData7$BlockID [3] <- "B1" # Riesilng
+rowData7$BlockID [4] <- "B2" # Riesilng
+rowData7$BlockID [5] <- "B4" # Riesilng 
+
+rowData7$Comments <- rowData7$PhenoEvent # save the info in case we need it 
+rowData7$PhenoEvent <- "Budburst" # correct phenology description
+
+rowData7$Date [3:5] <-  "2015-04-20" # add correct date to the Syrah (block B2) Data 
+
+#8th row
+#
+PhenoR8 <- phenDataMTO[8,]
+PhenoR8$blocks
+
+rowData8 <- do.call("rbind", replicate(2, PhenoR7, simplify = FALSE)) #repeat twice because another block is mentioned in the PhenoEVent column
+ 
+rowData8$BlockID[1] <- PhenoR8$blocks # only one block mentioned in blocks column, other one in PhenoEvent
+rowData8$BlockID[2] <- "B2" # Syrah
+
+rowData8$Comments <- rowData8$PhenoEvent # save the info in case we need it 
+rowData8$PhenoEvent <- "Budburst" # correct phenology description
+
+rowData8$Date [2] <-  "2015-04-15" # add correct date to the Syrah (block B2) Data 
+
+#Just run teh resto of the lines through the same loop I used on the easier to clean data 
+NoExtraPhenoData <- phenDataMTO[9:nrow(phenDataMTO),]
+
+blockDataAll2 <- list() #make a list to hold rows 
+
+
+for (n in 1:nrow(NoExtraPhenoData)){ #loop through all the phenology data that is simple is fix 
+	rowData <- NoExtraPhenoData [n,]
+	rowData$blocks
+	splitBlocks <- unlist(strsplit(rowData$blocks,split=','))
+	nBlock <- length(splitBlocks) # how many blocks are there?
+	rowDataRep <- do.call("rbind", replicate(nBlock, rowData, simplify = FALSE)) #repeat row as many times as there are blocks
+
+	for (nb in 1:nBlock) {
+		rowDataRep$BlockID[nb]<- splitBlocks[nb] #put block names where they belong 
+	}
+	blockDataAll2[[n]] <- rowDataRep
+}
+
+cleanBlocksOne2 <- rbindlist(blockDataAll2)
+
+#Change yeild estimate to a better label
+
+cleanBlocksOne2$Comments <- as.character(cleanBlocksOne2$Comments )#this has to happen for the code below to work 
+cleanBlocksOne2[str_detect(cleanBlocksOne2$PhenoEvent, "clusters/vine"), "Comments"] <- cleanBlocksOne2[str_detect(cleanBlocksOne2$PhenoEvent, "clusters/vine"), "PhenoEvent"] 
+cleanBlocksOne2$PhenoEvent[str_detect(cleanBlocksOne2$PhenoEvent, "clusters/vine")] <- "Yeild Estimate" 
+
+
+#Bring the data together
+#-------------------------
+
+phenoData12to16 <- data.frame(rbind(cleanBlocksOne, cleanBlocksOne2,rowData1, rowData2, rowData3,
+	rowData4, rowData5, rowData6,rowData7, fill=TRUE))
+
+#Combine with variety Info
+#------------------------------
+
+head(varietyInfo)
+
+#Get block codes to match the phenology data
+varietyInfo$BlockID2 <- paste("F", varietyInfo$block, sep = "")
+varietyInfo$BlockID <- gsub("-","B",varietyInfo$BlockID2)
+
+varietyInfo$BlockID2 <- NULL#remove thsi now because I dont need it any more
+
+#rename block column to avoid confusion 
+names(varietyInfo)[3] <- "OriginalBlockName"
+
+#Merge varety info
+phenoData12to16Var <- merge(phenoData12to16, varietyInfo, by = "BlockID")
+
+
+#Merge the newer and older data together into a single data sheet
+#--------------------------------------------------------------
+
+head(phenoData12to16Var)
+head(PhenologyData)
+
+#Make sure important columns have matching column names 
+names(phenoData12to16Var)
+names(PhenologyData)
+
+names(PhenologyData)[names(PhenologyData) == "phenologyEvent"] <- "PhenoEvent"
+names(PhenologyData)[names(PhenologyData) == "Acres"] <- "acres"
+names(phenoData12to16Var)[names(phenoData12to16Var) == "year"] <- "YearPlanted"
+names(PhenologyData)[names(PhenologyData) == "Planted"] <- "YearPlanted"
+names(phenoData12to16Var)[names(phenoData12to16Var) == "Comments"] <- "Notes"
+names(phenoData12to16Var)[names(phenoData12to16Var) == "Date"] <- "phenologyDate"
+names(phenoData12to16Var)[names(phenoData12to16Var) == "variety"] <- "Variety"
+
+names(phenoData12to16Var) [names(phenoData12to16Var) %in% names(PhenologyData)]
+
+#combine field and block in older data 
+PhenologyData$BlockID <- paste(PhenologyData$Field, PhenologyData$Block)
+
+#Remove superfluous columns
+PhenologyData$Type <- NULL
+PhenologyData$X <- NULL #when data was taken from maps. Not needed for this.
+PhenologyData$Field <- NULL
+PhenologyData$Block <- NULL
+
+phenoData12to16Var$date <- NULL #when data was taken from maps. Not needed for this.
+phenoData12to16Var$Location...Sub <- NULL
+
+
+
+#bind all data using code from https://amywhiteheadresearch.wordpress.com/2013/05/13/combining-dataframes-when-the-columns-dont-match/
+#because my usual methods for this wouldnt work. 
+rbind.all.columns <- function(x, y) {
+ 
+    x.diff <- setdiff(colnames(x), colnames(y))
+    y.diff <- setdiff(colnames(y), colnames(x))
+ 
+    x[, c(as.character(y.diff))] <- NA
+ 
+    y[, c(as.character(x.diff))] <- NA
+ 
+    return(rbind(x, y))
+}
+
+rbind.all.columns(PhenologyData,phenoData12to16Var)
+
+
+phenologQGAll <-  data.frame(rbind(PhenologyData,phenoData12to16Var, fill=TRUE)) 
+rbindlist(list(PhenologyData,phenoData12to16Var), fill = TRUE)
