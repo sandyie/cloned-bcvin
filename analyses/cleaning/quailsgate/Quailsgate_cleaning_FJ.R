@@ -58,12 +58,10 @@ for (yearData in sheetNameList){
 
 	phenSheeti <- phenology0012List[[yearData]]
 
-	#remove "total" rows 
-	if("Total" %in% phenSheeti$Variety){
-		totalRowStart <- min(rownames (phenSheeti[phenSheeti$Variety == "Total",]))
-		phenSheeti <- phenSheeti[-(totalRowStart:nrow(phenSheeti)),]
-	}
-
+	#remove "total" and "T-bar" rows 
+	phenSheeti <- phenSheeti[!phenSheeti$Variety == "Total",]
+	phenSheeti <- phenSheeti[!phenSheeti$Variety == "T-bar",]
+	
 	#matching all the columns - i do thsi in the loop because sometimes sheets have the same mistake 
 	#there are sometimes two columns called average berry weight in teh same year 
 
@@ -121,21 +119,110 @@ for (yearData in sheetNameList){
 	#add year column 
 	phenSheeti$Year <- gsub("_PhenologicalData", "", yearData)
 
-	
-	phenology0012ListCh[[yearData]] <- data.frame(lapply(phenSheeti, as.character))
+	#get Vineyard names 
+	tail(phenSheeti)
 
+	#There are Osoyoos blocks thare are unhelpfully labeles. I looked at VineyardMapsDataCompiled.csv to fix this
+	#these bloks are only in the 2006 data onwardd. Before that I assume it is just the main vineyard data 
+
+		phenSheeti$VineyardCode <- NA
+
+	if("Vineyard" %in% colnames(phenSheeti) & "PAT" %in% phenSheeti$Field){
+		osRow1<- which(phenSheeti$Field == "Osy") #rown number where Osoyoos vineyards blocks start 
+		patRow <- which(phenSheeti$Field == "PAT") # Patrichia????
+		mrtRow <- which(phenSheeti$Field == "MRT")#I assume Martyna Vineyard 
+		manRow <- which(phenSheeti$Vineyard == "Mannhardt")
+
+		phenSheeti$Vineyard[1:(osRow-1)] <- "Quails Gate Vineyard" # I assume most blocks are the main site vineyard
+		phenSheeti$VineyardCode[1:(osRow-1)] <- "QGV"
+
+		phenSheeti$Vineyard[osRow1:(patRow - 1)] <- "Osoyoos Vineyard"
+		phenSheeti$VineyardCode[osRow1:(patRow - 1)] <- "OSY"
+
+		phenSheeti$Vineyard[patRow] <- "Patricia Vineyard"
+		phenSheeti$VineyardCode[patRow] <- "PAT"
+
+		phenSheeti$Vineyard[mrtRow:(manRow[1] - 1)] <- "Martyna Vineyard"
+		phenSheeti$VineyardCode[mrtRow:(manRow[1] - 1)] <- "MRT"
+
+		phenSheeti$Vineyard[manRow] <- "Mannhardt"
+		phenSheeti$VineyardCode[manRow] <- "MAN"
+	
+
+	} else if("Vineyard" %in% colnames(phenSheeti) & !"East" %in% phenSheeti$Field & !"PAT" %in% phenSheeti$Field){
+		osRow <- which(phenSheeti$Field == "Osy")
+		manRow <- which(phenSheeti$Vineyard == "Mannhardt")
+
+		phenSheeti$Vineyard[1:(osRow-1)] <- "Quails Gate Vineyard" # I assume most blocks are the main site vineyard
+		phenSheeti$VineyardCode[1:(osRow-1)] <- "QGV"
+
+		phenSheeti$Vineyard[osRow:(manRow[1]-1)] <- "Osoyoos Vineyard" # I assume most blocks are the main site vineyard
+		phenSheeti$VineyardCode[osRow:(manRow[1]-1)] <- "OSY"
+
+				phenSheeti$Vineyard[manRow] <- "Mannhardt"
+		phenSheeti$VineyardCode[manRow] <- "MAN"
+
+	} else if("Vineyard" %in% colnames(phenSheeti) & "East" %in% phenSheeti$Field){
+		ekRow <- which(phenSheeti$Field == "East") # the row with East Kelowna Vineyard
+		osRow <- which(phenSheeti$Field == "Osy")
+		manRow <- which(phenSheeti$Vineyard == "Mannhardt-Sunnyside")
+
+		phenSheeti$Vineyard[1:(ekRow-1)] <- "Quails Gate Vineyard" # 
+		phenSheeti$VineyardCode[1:(ekRow-1)] <- "QGV"
+
+		phenSheeti$Vineyard[ekRow:(osRow-1)] <- "East Kelowna Vineyard" #
+		phenSheeti$VineyardCode[ekRow:(osRow-1)] <- "EKE"
+
+		phenSheeti$Vineyard[osRow:(manRow[1] - 1)] <- "Osoyoos Vineyard" #
+		phenSheeti$VineyardCode[osRow:(manRow[1]-1)] <- "OSY"
+
+		phenSheeti$Vineyard[manRow] <- "Mannhardt"
+		phenSheeti$VineyardCode[manRow] <- "MAN"
+
+	} else{
+
+		phenSheeti$Vineyard <- NA
+
+		phenSheeti$Vineyard <- "Quails Gate Vineyard" # I assume most blocks are the main site vineyard
+		phenSheeti$VineyardCode <- "QGV"
+
+	}
+
+	phenology0012ListCh[[yearData]] <- data.frame(lapply(phenSheeti, as.character)) 
 }
 
 #combine the years into a single dataset where all the data are in character format
 phen0012AllCh <- data.table::rbindlist(phenology0012ListCh, fill = TRUE)
 phen0012AllCh$Year <- as.numeric(phen0012AllCh$Year )
 
-
 head(phen0012AllCh[order(phen0012AllCh$Year)])
 phen0012AllCh <- data.table(phen0012AllCh %>%
   mutate_all(as.character) )
 
-phen0012AllCh$Vineyard <- NULL # this column is only used for totals that we will remove anyway
+#Adding Field block names for Oysyoos and Martyana vineyards based on the data scraped from maps (VineyardMapsDataCompiled.csv)
+#no blocks, just Field IDs I think 
+#----Osoyoos "Old Foch". 
+phen0012AllCh$Field[phen0012AllCh$Vineyard == "Osoyoos" & phen0012AllCh$Variety == "Old Foch" ] <- 5 #planted 1978 so I assume is "old"
+#----Osoyoons "Young Foch". Needs 3 rows i think because three blocks of Foch planted 2006-7
+phen0012AllCh$Field[phen0012AllCh$Vineyard == "Osoyoos" & phen0012AllCh$Variety == "Young Foch" ] <- 1 #planted 2006-7 so I assume is "young"
+FochRows <- do.call("rbind", replicate(2, phen0012AllCh[phen0012AllCh$Vineyard == "Osoyoos" & phen0012AllCh$Variety == "Young Foch" ], simplify = FALSE)) 
+FochRows$Field <- rep(c(4, 6), each = 7)
+phen0012AllCh <- rbind(phen0012AllCh, FochRows)
+#----Osoyoos "Syrah"
+phen0012AllCh$Field[phen0012AllCh$Vineyard == "Osoyoos" & phen0012AllCh$Variety == "Syrah" ] <- 2
+#----Osoyoos "Chenin Blanc"
+phen0012AllCh$Field[phen0012AllCh$Vineyard == "Osoyoos" & phen0012AllCh$Variety == "Chenin Blanc" ] <- 3
+
+#----Martyna Riesling 
+phen0012AllCh$Field[phen0012AllCh$Vineyard == "Martyna" & phen0012AllCh$Variety == "Riesling"] <-  1 # there are 3 Riesling blocks 
+riesRows <- do.call("rbind", replicate(2, phen0012AllCh[phen0012AllCh$Vineyard == "Martyna" & phen0012AllCh$Variety == "Riesling" ], simplify = FALSE)) 
+riesRows$Field <- rep(c(2, 4), each = 2)
+phen0012AllCh <- rbind(phen0012AllCh, riesRows)
+#-----Martyna Gewurtz
+phen0012AllCh$Field[phen0012AllCh$Vineyard == "Martyna" & phen0012AllCh$Variety == "Gewurztraminer"] <-  2 # there are 2 Gewurtz blocks 
+G2 <- phen0012AllCh[phen0012AllCh$Vineyard == "Martyna" & phen0012AllCh$Variety == "Gewurztraminer",] 
+G2$Field[G2$Vineyard == "Martyna" & G2$Variety == "Gewurztraminer"] <-  5
+phen0012AllCh <- rbind(phen0012AllCh, G2)
 
 #date planted 
 #make a comments column 
@@ -304,7 +391,7 @@ phenologyColumns <- c("Flowering", "Lag.Phase.Date", "X50.Veraison.Date", "X80.V
 #remove columns i just used for teh cleaning process
 phen0012AllCh$Flowering2 <- NULL
 
-PhenologyData<- phen0012AllCh %>%
+PhenologyData <- phen0012AllCh %>%
 	gather(key = "phenologyEvent", value = "phenologyDate", phenologyColumns, na.rm = TRUE)
 
 #remove the comments columns for now
@@ -314,6 +401,7 @@ PhenologyData$CommentsVerasion <- NULL
 PhenologyData$CommentsFlowering	<- NULL
 
 head(PhenologyData)
+trimws(PhenologyData$BlockID)
 #write.csv( PhenologyData, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/PhenologyData2001to2012.csv")
 
 #Cleaning the newer data 
@@ -585,13 +673,26 @@ head(varietyInfo)
 varietyInfo$BlockID2 <- paste("F", varietyInfo$block, sep = "")
 varietyInfo$BlockID <- gsub("-","B",varietyInfo$BlockID2)
 
+#thsi vineyard has a different nameing convention 
+varietyInfo$BlockID[varietyInfo$Vineyard == "Martyna Vineyard"] <- gsub("F", "B", varietyInfo$BlockID[varietyInfo$Vineyard == "Martyna Vineyard"]
+)
+ 
 varietyInfo$BlockID2 <- NULL#remove thsi now because I dont need it any more
 
 #rename block column to avoid confusion 
 names(varietyInfo)[3] <- "OriginalBlockName"
 
+#Tidy vineyard column so both data sheets match
+unique(varietyInfo$vineyard) 
+unique(phenoData12to16$Vineyard)
+varietyInfo$Vineyard <- as.factor(varietyInfo$vineyard)
+levels(varietyInfo$Vineyard) <- c("Blue Fox Vineyard", "Mannhardt", "Martyna Vineyard", "Osoyoos Vineyard", "Quails Gate Vineyard")
+varietyInfo$Vineyard <- as.character(varietyInfo$Vineyard)
+
 #Merge varety info
-phenoData12to16Var <- merge(phenoData12to16, varietyInfo, by = "BlockID")
+phenoData12to16Var <- merge(phenoData12to16, varietyInfo, by = c("BlockID", "Vineyard"))
+
+phenoData12to16Var$vineyard <- NULL #we dont need this now, Vineyard is better
 
 
 #Merge the newer and older data together into a single data sheet
@@ -611,39 +712,55 @@ names(PhenologyData)[names(PhenologyData) == "Planted"] <- "YearPlanted"
 names(phenoData12to16Var)[names(phenoData12to16Var) == "Comments"] <- "Notes"
 names(phenoData12to16Var)[names(phenoData12to16Var) == "Date"] <- "phenologyDate"
 names(phenoData12to16Var)[names(phenoData12to16Var) == "variety"] <- "Variety"
+names(phenoData12to16Var)[names(phenoData12to16Var) == "Location...Sub"] <- "OriginalVineyardBlocks"
 
-names(phenoData12to16Var) [names(phenoData12to16Var) %in% names(PhenologyData)]
 
 #combine field and block in older data 
-PhenologyData$BlockID <- paste(PhenologyData$Field, PhenologyData$Block)
+PhenologyData$BlockID <- paste(PhenologyData$Field, PhenologyData$Block, sep = "")
 
 #Remove superfluous columns
-PhenologyData$Type <- NULL
 PhenologyData$X <- NULL #when data was taken from maps. Not needed for this.
 PhenologyData$Field <- NULL
 PhenologyData$Block <- NULL
 
 phenoData12to16Var$date <- NULL #when data was taken from maps. Not needed for this.
-phenoData12to16Var$Location...Sub <- NULL
+phenoData12to16Var$Acres <- NULL # i am keeping data scraped from map
+phenoData12to16Var$blocks <- NULL # i am keeping data scraped from map
+phenoData12to16Var$Type <- NULL
 
+#Add some columsn so rbinding is easier 
+PhenologyData$rootstock <- NA
+PhenologyData$clone <- NA
+PhenologyData$OriginalVineyardBlocks <- NA
+PhenologyData$OriginalBlockName <- NA
+PhenologyData$Notes <- NA
 
+str(PhenologyData)
+str(phenoData12to16Var)
 
-#bind all data using code from https://amywhiteheadresearch.wordpress.com/2013/05/13/combining-dataframes-when-the-columns-dont-match/
-#because my usual methods for this wouldnt work. 
-rbind.all.columns <- function(x, y) {
- 
-    x.diff <- setdiff(colnames(x), colnames(y))
-    y.diff <- setdiff(colnames(y), colnames(x))
- 
-    x[, c(as.character(y.diff))] <- NA
- 
-    y[, c(as.character(x.diff))] <- NA
- 
-    return(rbind(x, y))
-}
+phenoData12to16Var$phenologyDate <- as.Date(phenoData12to16Var$phenologyDate, format = "%Y-%m-%d")
 
-rbind.all.columns(PhenologyData,phenoData12to16Var)
+names(PhenologyData)[names(PhenologyData) %in% names(phenoData12to16Var)]
 
 
 phenologQGAll <-  data.frame(rbind(PhenologyData,phenoData12to16Var, fill=TRUE)) 
 rbindlist(list(PhenologyData,phenoData12to16Var), fill = TRUE)
+
+phenologQGAll <- bind_rows(PhenologyData,phenoData12to16Var, .id = "df")
+head(phenologQGAll)
+
+#Checking all looks ok
+unique(phenologQGAll$PhenoEvent)
+unique(phenologQGAll$phenologyDate)
+unique(phenologQGAll$Vineyard) # where is the Martyna data?
+
+
+#remove "vineyard"
+phenologQGAll$Vineyard <- gsub(" Vineyard", "", phenologQGAll$Vineyard)
+
+phenologQGAll$df <- NULL # I just needed this to make the rbind work. 
+
+#write out the table
+#-------------------------------
+
+write.csv(phenologQGAll, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/quailsGatePhenology.csv")
