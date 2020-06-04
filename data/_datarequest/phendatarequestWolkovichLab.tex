@@ -1,0 +1,58 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{url}
+
+\newenvironment{smitemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}
+{\end{itemize}
+}
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\begin{document}
+\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
+\renewcommand{\refname}{\CHead{}}
+\pagenumbering{gobble}
+
+% This is doc, started for Mission Hill, but hopefully will eventually adapting to asking growers for data
+\begin{center}
+{\Large Data requested to build phenological models}
+\end{center}
+This document outlines data that---if shared with the Wolkovich lab---can help build improved phenological models, from budburst to sugar maturity. Please contact Lizzie (\url{e.wolkovich@ubc.ca}) with any questions or concerns.\\
+
+{\bf Phenological data (including Brix)}\\
+
+The most critical data are dates of the main phenological stages (budburst, flowering, veraison and sugar maturity). Ideally we hope for:
+\begin{smitemize}
+\item Budburst: green tips stage (if another stage close to this we can use, just be clear in what stage you are reporting)
+\item 50\% flowering (we can use other percentages, just be clear in what stage you are reporting)
+\item 50\% veraison (we can use other percentages, just be clear in what stage you are reporting)
+\item Sugar maturity: The models benefit from \emph{all} Brix measurements (multiple time points of the same block/variety are very helpful). 
+\end{smitemize}
+For budburst, flowering and veraison, please indicate which percent of the buds and/or vines are at each stage (e.g., do you report 50\% flowering when most vines are at that stage? Or some other way?). We don't need data on all events (though that is most useful); we can use data on just one or a couple events (e.g., if you only have budburst data, they are still useful). 
+\vspace{2ex}\\
+{\bf For each event we need to know the date, variety and vineyard block.}
+\vspace{2ex}\\
+Our models allow us to use data from any variety (as long as we know which one it is), however, \emph{we are especially interested in data for:} Cabernet Sauvignon, Chardonnay, Chasselas, Grenache, Merlot, Mourvedre (Monastrell), Pinot Noir, Riesling, Syrah, Sauvignon blanc and Tempranillo.\\
+
+{\bf Climate data}\\
+The models work best given the most local climate data, so any data for relevant vineyards you can share is helpful. We ideally want it from 1 September of the year {\bf before} budburst though the whole next season for each year with phenological data. We most critically need {\bf air temperature minima and maxima} but may try to use precipitation, humidity and other metrics if possible.\\
+
+{\bf Format of data}\\
+The lab can re-format data, so the main thing we need is just the data in a way we can interpret. We do not want data formatting to be a major hurdle for sharing the data, so please let Lizzie know if it is and hopefully we can figure something out. We can read most file formats or pull data from AdCon etc. if you provide us access. Please feel free to ask any questions about this! 
+
+
+\end{document}
+
+\emph{References}
+\bibliography{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/LizzieMainMinimal}
+A note about yield: Vines carrying higher yields generally develop slower. Our models to try to account for this by modeling different vineyard blocks separately but actual yield data or metrics related to yield could improve the models. \emph{If you can share any yield data we'd appreciate it, but they are {\bf not critical}.} So, please, no worries if you prefer not to share these data.\\

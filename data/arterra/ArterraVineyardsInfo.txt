@@ -1,0 +1,1 @@
+Faith extracted the data from the maps Mike gave us into ArterraVineyard.csv in 2020

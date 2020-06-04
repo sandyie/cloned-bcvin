@@ -1,0 +1,12 @@
+4 September 2018
+Blurb for Pat
+
+
+I am interested in improved phenological models for a suite of winegrape varieties, with the long term goal to improve future matching of winegrape varieties to regional and local climates. Along with several other colleagues I have developed phenological models for 11 major winegrape varieties (see below) and would be interested in testing and adjusting our models for the Okanagan winegrowing region. 
+
+Data needs: Dates of budburst (ideally green tips stage), flowering (ideally 50%), veraison (ideally 50%) and Brix (any matched sugar and date data) for the studied varieties. As we model each stage separately (but sequentially) any one part of these data needs helps. 
+
+11 current varieties studied:
+Cabernet-Sauvignon, Chasselas, Chardonnay, Grenache, Merlot, Monastrell (syn. Mourvedre), Pinot noir, Riesling, Sauvignon Blanc, Syrah and Ugni blanc
+
+Note that we anonymize all data. Currently we are testing the models at a very large spatial scale, though we hope to work on down-scaling them next. I'd be happy to provide more details on the project and answer any questions.

@@ -1,0 +1,164 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+\usepackage{hyperref}%helps with the email address 
+\usepackage{graphicx} %including pictures 
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\newenvironment{smitemize}{
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0.8pt}
+  \setlength{\parsep}{0pt}}
+{\end{itemize}
+}
+
+\graphicspath{ {./protPhotos/} }% tell latex where to find photos 
+
+\begin{document}
+\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
+\renewcommand{\refname}{\CHead{}}
+
+\title{Wolkovich Phenology Monitoring Protocol\\
+Dark Horse Vineyard}
+\date{ }
+\maketitle
+
+Thank you for helping with phenological monitoring! We've provided a full set of detailed instructions for how to do the monitoring in this document. Check out the second page for a short overview and reminders of what to do and bring in the field each time. 
+\vspace{2ex}
+\tableofcontents
+
+\newpage
+\section{The short version} % try to keep to one page or under
+Here we provide short version to review more regularly. \emph{(Read the whole document before you first go out, or if you have questions; check out this page more regularly.)}\\
+
+{\bf Always bring:} datasheets, clipboard, pencil, Plant ID information (and often you need a camera).\\
+
+{\bf How often?:} Try to visit each flagged vine at least once a week (twice is even better, if you have time).\\
+
+{\bf In the vineyard:} 
+\begin{smitemize}
+\item You should be visiting: 24 plants per block, 3 buds/clusters per plant
+\item Plants should be labeled with their Plant ID number
+\item Buds are numbered 1 to 3. Bud 1 is always the bud closest to the trunk.
+\item What to record? Depends on stage ... 
+\begin{smitemize}
+\item Budburst and leafout: Record Eichorn-Lorenz stages
+\item Flowering: Record percent flowering
+\item Veraison: Record percent veraison
+\end{smitemize}
+\item Check -- did you record data on 96 plants (288 buds/clusters)?
+\end{smitemize}
+
+{\bf Back in the office:} scan datasheet, label photos. Send to Faith Jones.
+
+\newpage
+
+\section{Objectives}
+We aim to characterize the phenology of a large number of winegrape varieties planted in vineyards around the Okanagan Valley in BC. Our primary goal is to improve grower models of plant development with relation to climate. To this end, we aim to monitor a diversity of varieties that capture differences in phenology. We will record the phenology for selected vines for 2-3 growing seasons from budburst through the summer to veraison. We will also take Brix measurements several times after veraison. Due to the limitations on travel and fieldwork during Covid-19, we are not able to monitor the plants throughout the summer this year. Mike Watson has kindly agreed to some surveying through Arterra employees at the Dark Horse vineyard. Thank you for your help!
+
+\section{Overview}
+\begin{enumerate}
+  \item Lizzie's team (Mira and Faith) flagged vines and started surveying phenology in early May. % We were not out early enough for budburst. 
+  \item We aim to monitor four phenological stages:
+  \begin{enumerate}
+	\item Budburst (approximately mid April/early May). Until EL stage 9, record the EL stage of buds on three spurs. Once EL stage is at 9 you can stop recording until flowering starts (note that you may need to record higher than stage 9 at times in order to record whatever stage you see after 8, even if it is 12 or such if you have not yet recorded stage 9, more on this below).
+	\item Bloom (approximately May/early June)
+  	\item Veraison (approximately mid July-mid August)
+  	\item Ripening (Brix - approximately mid August-end September)
+  \end{enumerate}
+  \item We hope to bring someone back at least for Brix sampling, so we mostly need help with flowering and veraison monitoring. 
+  \item We aim to sample at least once a week. If you have more time, especially if it has been a warm week, then twice a week would be even better.
+
+\end{enumerate}
+
+\section{Sampling population at Dark Horse}
+\begin{figure}%this will always show at this point 
+  \includegraphics[width=0.9\linewidth]{DH_map.jpg}
+  \caption{A map of the location of the vines we are sampling. Each point is a collection of 12 vines labeled with the row numbers of the vines.}
+  \label{fig:DH_map}
+\end{figure}
+
+We are monitoring vines in the following locations: \\
+Block G - rows 4-5 south end, 10-11 middle \\
+Block J - rows 7-8 south end and middle \\
+Block E - rows 5-6 north end, 2-3 middle \\
+Block 1 - rows 26-27 west end and middle \\
+
+See Figure \ref{fig:DH_map} for a map of the locations. \\
+
+There are 6 plants on each row at each location so with the adjacent row, there will be groups of 12 flagged plants. There are 24 plants flagged per block. More information about location and individual Plant ID numbers is in the spreadsheet called darkhorsePlantID.csv
+
+
+\begin{figure}%this will always show at this point 
+  \includegraphics[width=\linewidth]{CordonPruned.jpg}
+  \caption{A diagram of a cordon pruned vine, showing which spurs we would monitor. Buds were numbered from east to west or south to north, and any spur that's base was more than 5cm below the wire the cordon was trained on was not sampled.}
+  \label{fig:CordonPruned}
+\end{figure}
+
+\begin{figure}%this will always show at this point 
+  \includegraphics[width=\linewidth]{CanePruned.jpg}
+  \caption{A diagram of a cane pruned vine, with the buds we would monitor and their numbering shown. Note that we do not sample buds too close to the head of the vine.}
+  \label{fig:CanePruned}
+\end{figure}
+
+\begin{figure}%this will always show at this point 
+  \includegraphics[width=\linewidth]{TwoSpurs.jpg}
+  \caption{A diagram of an arm of a cordon that had two spurs on it. In this case we chose to focus on the lower bud of the higher of the two spurs for monitoring. }
+  \label{fig:TwoSpurs}
+\end{figure}
+
+\section{Finding the buds}
+We flagged three buds/shoots on each of the vines in our monitoring program. We randomly chose one of the canes or cordons on each plant, and flagged three arms/spurs on the chosen cordon (Figure \ref{fig:CordonPruned}) or three buds/shoots on the chosen cane (Figure \ref{fig:CanePruned}). We flagged a bud close to the trunk, a middle bud, and the bud at the end of the cordon/cane. We flagged as close to the bud as we could when we initially placed the flagging tape, and later flagged some of the shoots once they were big enough. For the cordon pruned vines, we monitor the lowest bud/shoot of the highest spur of the arm (Figure \ref{fig:TwoSpurs}). If you find a flag is missing, figure out which bud position is missing and flag a bud in this position. Note the change on the datasheet.
+
+\section{Selecting clusters to monitor flowering/veraison} % follow Davis protocol
+\begin{enumerate}
+	\item Once the shoot we are monitoring becomes well-developed (12 leaves and developed inflorescence), move the flagging to a specific inflorescence (cluster). This is probably best done just before you start monitoring \% flowering. 
+	\item We will sample one cluster per shoot. Select the dominant cluster (usually the most basal cluster of the monitored cane/shoot); if during the season your cluster dies or is removed for some reason, select a nearby dominant cluster and make a note. 
+
+\end{enumerate}
+
+\section{Observing Phenology}
+We are using the Eichorn-Lorenz system for monitoring phenology until flowering described in this PDF: \\
+
+\begin{figure}%this will always show at this point 
+  \includegraphics[width=\linewidth]{ELScale.jpg}
+  \caption{ Modified Eichorn-Lorenz (EL) scale that our lab uses for monitoring phenology until flowering }
+  \label{fig:ELScale}
+\end{figure}
+
+Our goal is to have standardized observations of phenological stages for analysis. There are four main widely observed stages for winegrapes: (1) budburst, (2) flowering, (3) veraison, and (4) ripening and harvest. For the first stage, budburst, we will use the stage numbers from the Modified Eichorn-Lorenz system (see Figure \ref{fig:ELScale}).For flowering and veraison, we will estimate the percent occurrence of the stage (proportion of berries on a selected cluster have gone through the stage of flowering or color change/softening, respectively). We will measure ripening quantitatively, using a refractometer to measure Brix. \\
+
+For each vine:
+\begin{enumerate}
+	\item Stand facing the vine. Double-check Plant ID (labeled on one of the flags), block, and row number before recording in correct place on data sheet that we will provide. You do not need to record information about the varieties on the datasheets.
+	\item Bud numbers are not written on the flags but are numbered 1 to 3 with Bud 1 being the bud closest to the trunk.
+	\item For pre-bloom, record the appropriate E-L stage of the shoot that was flagged, or the shoot closest to the flagging that matches our selection criteria laid out in the section above. Record its EL stage (number from “1”: still dormant, to “17”: twelve leaves separated- see \ref{fig:ELScale}) until EL stage 9. Once EL stage is at 9 you can stop recording until flowering starts (note that you may need to record higher than stage 9 at times in order to record whatever stage you see after 8, even if it is 12 or such if you have not yet recorded stage 9, more on this below).
+	\item  For flowering (EL 23) and veraison (EL 35), look at each cluster (\#1, \#2, \#3) and estimate the percent (from 0-100\%) of berries on the sample cluster that have achieved that stage. 
+	\item Take photos of representative illustrations for different varieties of target \% at stage (e.g., clusters at 5\%, 25\%, 50\%, 75\%, 95\% flowering) for different varieties. aim for 3-5 photos of each percentage taken across a diversity of varieties and across a couple different sampling dates, and make sure vine number and date are visible in photo for identification. {\bf Label the filename with the percent.}
+	\item For ripening, our current plan is to send one of our team to collect berries so we can analyze Brix. We will aim to collect samples starting around 12-15 Brix until commercial harvest. % 18 Brix is quite high ... lower would be better!
+
+\end{enumerate}
+
+
+\section{What to do with the data}
+After each round of monitoring, scan the datasheet and send to Faith. If you have taken photos, label them with the percent and the data then send them as well.
+
+\section{Contact details}
+Mira Garner -- mgarne02@mail.ubc.ca, Cell: 608-228-5215\\
+Faith Jones -- faith.jones@ubc.ca, Cell: 604-786-2574\\
+Lizzie Wolkovich -- e.wolkovich@ubc.ca, Cell: 603.667.5099\\
+
+
+\end{document}
+
+This is a short protocol designed for Mike and his team to continue gathering data while we are away. 
+https://docs.google.com/document/d/13JRKCdJJOEcVo9Vh5Hub2SRHbJnhbqi8qDhj7a_kgiA/edit#

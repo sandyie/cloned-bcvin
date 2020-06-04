@@ -1,0 +1,20 @@
+Email from Carl on 22 May 2020
+
+Hi Lizzie,
+
+Remember, when we last met a couple of weeks ago, I said there were likely mistakes in the latest versions of the models I had sent you and Faith.  Well … I found a big one in the Chardonnay model where my tabulation of the LTE data for the 4th order polynomial was not right.  (It had fallen prey to Excel’s oldest operational flaw where data can be easily and unintentionally shifted using copy and paste.)  I found this mistake when I had decided to write out the step by step process for creating in Excel the 4th order polynomial curve.  (The explicit instructions for doing this is now a new tab in the Chardonnay model “How to (Chard 4th order poly)”.)  The new curve now contains all the LTE data for all 8 years, Oct 2012 to Mar 2020, and with the new curve I had to rewrite all the IF and IF(AND statements.  The good news is the model is better than before and is more logically organized.  I’ve now added labels to some columns; (Initial IF statements, Initial Predicted LTE, Second Predicted LTE and Final Predicted LTE), and have grouped Limiting IF statements between Initial and Second Predicted LTE and between Second and Final Predicted LTE.  I’ve also rewritten/updated the Chard model instructions to somewhat explain this reorganization. 
+
+Attached is the newest version for predicting hardiness in Chardonnay along with its instructions.  I’m sure you’ll have questions so don’t hesitate to give me a call.  I now plan to go through the Merlot model next week, maybe reorganize it and hopefully not uncover any major mistakes.  After that I’ll do a new model for Shiraz.
+
+I also have an idea which would be a lot of work for Faith but it might be good for her to become familiar with Excel and really understand its IF and IF(AND statements.  I think this would be helpful in understanding the relationship between daily mean temperature and bud hardiness’s ups and downs.
+
+So there you go.  I hope you have something better to do this weekend than thinking about this model!
+
+All the best,   Carl
+
+PS.  Please forward this to Faith – I can’t find her email address in my gmail inbox.
+
+
+Email from Carl on 11 April 2020
+
+It’s Saturday afternoon and it’s very windy and cold outside.  So instead of working in the garden I thought I’d tinker with the Merlot and Chardonnay hardiness models.  They are both attached.  These latest versions now have all of the 2019 – 2020 winter data included.  It’s unfortunate that I was not allowed to get any of this week’s bud hardiness measurements, having those early and late season hardiness values are important!

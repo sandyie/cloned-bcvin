@@ -1,0 +1,7 @@
+2019 June 23
+Miscellaneous stuff to remember to do/think on for BC phenology models
+
+- Review Garcia de Cortazar Atuari et al. 2009 `Asynchronous …’]
+- Brix is usually 7-8 Brix at 50% veraison (check literature on this though! Maybe ask Kees, Pat etc. also for what their guesses) so if we start Brix with other models we’ll need to model as latent with priors 
+- ask Kees for VitAdapt data (offer many options to share or not) 
+- check Perpheclim does not include any data we did not have for Nacho’s repo ….

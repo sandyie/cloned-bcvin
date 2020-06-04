@@ -1,0 +1,87 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{textcomp}%amoung other things, it allows degrees C to be added
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc} % allow funny letters in citaions 
+\usepackage[nottoc]{tocbibind} %should add Refences to the table of contents?
+\usepackage{amsmath} % making nice equations 
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\title{Winegrape hardiness research \\ Carl and Lizzie meeting 6$^t$$^h$ May 2020 }
+\date{\today}
+\author{Faith Jones}
+
+\begin{document}
+
+\maketitle
+
+
+\section{General comments}
+Riperia rootstock - shallow rooted, so is useful for controlling vigour.\\
+
+In Washington it is common to grow vines on their won rootstock so vines can be brought back after cold damage. But they are getting philopthera problems now. Eek.
+
+We should watch for rattle snakes.  
+
+\section{Growers and how they interact with hardiness data}
+The growers use Carl's projected hardiness to decide whether or not to use their fans. These fans are expensive to run and so they don't want to over use them. Carl said the fans are not actually really useful either for many situations because they only help when its a little to cold and the air is really still. Before Carl started to update the growers, they used to use the fans way more. \\ 
+
+We should make a super cool "dashboard" of interactive GIS maps where we scrape climate data from Ag Canada and combine with a hardiness model so growers can see hardiness predictions. We should use Penticton weather station data to do this because growers have a good idea of where they lie in relation to this point.\\
+
+\section{Hardiness ideas and comments}
+Merlot and Chardonnay have quite different hardiness curves in Carl's model \\
+
+Carl was wondering about the Arctic Outflows that flow down the Okenagan valley, bringing really cold weather all of a sudden. How quickly do the vines acclimate, and how does this affect their hardiness for the rest of the season? \\
+
+Maybe we could do an experiment where we cool canes taken from different vineyards and varieties and see if they all reach the same amount of cold hardiness? \\
+
+Xylem is less cold hardy bey a few degrees than buds, but takes more damage before it is a problem because it can recover better. More like 80 per cent damage before the vine really suffers. So providing Xylem LTE$_{50}$ or lower is not really useful and just worries growers unduly. \\
+
+Harvest date affects winter hardiness acclimation. \\
+
+Pinot gris is the hardiest variety according to Carl. \\
+
+Most differences between varieties occur in the autumn acclimation period because then all the growing season's differences come into play. Things reset in the winter, so that deacclimation and budbreak more similar between vines. \\
+
+Temperatures below -21\textdegree C will cause buds to die and so growers loose a crop. Below -25\textdegree C growers can lose the whole vine. \\
+
+Young vines are less winter hardy. \\
+
+Vines less cold hardy on their own roots. \\
+
+Above LTE$_{50}$ of -10\textdegree C, LTE values are not reliable. This is because of problems with more water in the buds. \\
+
+In the East (i.e. Ontario) they have more problems with spring cold temperates. In the West (Okanagan) there are more problems with autumn cold snaps so acclimation hardiness really important here. \\
+
+Carl said that the Ferguson model (Washington) doesn't work well for other data because it is calibrated only on a single site's data.Carl's model is just as good even without the special tweaks.\\
+
+Cordons are more hardy than canes. \\
+
+The variation around the LTE$_{50}$ values for individual buds is kind of a bell curve, except less variation to colder temperatures. \\
+
+If there is a really warm spell in January (which sometimes happens in the Okanagan) then vines can lose hardiness. Carl is not sure if reacclimation will be the same rate as deacclimation. \\
+
+The South of the valley breaks bud earlier because there is no lake to keep temperatures from fluctuating a lot. But they also have more issues of spring cold snaps. \\ 
+
+\section {Carl's hardiness model}
+The start and end date of the model (and sections of the model) are best guesses from Carl.\\
+
+Now the average hardiness over the years is calculated using a 4th order quadratic model that fits well the smiley face shape of the winter hardiness curve. Then Carl has lost of little "tweaks" that shift values from the general average based on how warmer or colder the temperatures were that year from average. \\
+
+Carl chose 2 day average temp because that works best. Min and max temperatures don't work as well as mean. \\
+
+Temperatures never change more than 0.5\textdegree C. Its a best guess of Mike. The biggest changes happen at lowest hardiness, and by midwinter there is very little change in hardiness even with big changes in temperatures. \\
+
+There are some times when acclimating when vines can't loose hardiness, and \textit{visa versa} for deacclimation. \\
+
+Tweaks between Merlot and Chardonnay models are similar. Next Carl might do Riesling and Syrah/Shiraz. \\
+
+
+\end{document} e
