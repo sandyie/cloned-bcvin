@@ -140,7 +140,7 @@ What about how variable varieties are between sites? If I take the same varietie
 What would I expect it to correlate with? What is an important thing?
 \begin{itemize}
 \item heat and/or drought tolerance. Will new areas really become available because of warmer winter temperatures, or will these areas become to extreme during the summer?
-\item Wine quality/verasion timing/phenology
+\item Wine quality/verasion timing/phenology{}
 \item yield
 \item where does cold hardiness fit into syndromes?
 \item what trade-offs are there physiologically in becoming and maintaining cold hardiness?  
@@ -149,6 +149,15 @@ What would I expect it to correlate with? What is an important thing?
 \cite{Ferguson2014} – more variation in Hc max than Hc initial between varieties. Doesn't that suggest that some varieties must get hardier quicker? How does that work physiologically, and what are the costs of this? Does microclimate affect the rate of change of hardiness in relation to temperature? Or will Riesling always get (for example) 1 degree more cold tolerant for a unit of chilling whereas Merlot only 0.5 degrees of cold tolerance? If rate does change, would I expect more variation for a hardier grape? If the rate is invariable I would expect less between site variation (if micro climates are taken into consideration). \\
 
 \section{Hardiness modeling}
+
+What about growth modeling? I would need to make sure temperatures were all positive though. \\
+
+Another dynamic model that is much simpler than the \cite{Ferguson2011} model, was made for Cherries by \cite{Salazar-Gutierrez2020} used a quadratic equation to model the observed temperature changes over the winter (I think?). With these temperatures they then built a non-linear model that regressed maximum temp, teh last two day's hardiness values and and the cumulative Julian day (squared) against today's hardiness. This model dealt with different cultivators separately. I like this model because it is relatively simple and allows plants to gain and lose hardiness. I should try it, but where would I allow variety and site variation? A less good thing about this model is that it is not just regressing against a temperature - you need to look at the temp of each day in order. 
+\begin{equation*}
+Y_{jk} = B_{0} + B_{1}Y_{j-1k} + B_{2}Y_{j-2k} + B_{3}d^{2}_{jk} + B_{4}mxt_{jk} + \epsilon_{jk} 
+\end{equation*} 
+In this equation $Y_{jk}$ is the modeled LTE value for percentage j and day $k$. So when they model LTE50 j is 50. Parameter $B_{0}$ is the intercept and parameters $B_{2}$, $B_{3}$ and $B_{4}$ are slopes in the model. Parameters $B_{1}Y_{j-1k}$ and $B_{2}Y_{j-2k}$ are yesterday's and the day before's hardiness value. Parameter $d$ is the number of days since the start of season where cherries acquire/have hardiness. Note it is squared!. Parameter $mxt_{jk}$ is the maximum temperature on day $k$. \\
+
 Processed based modeling – can I think of a simpler one that would still work? \\
 
 Should I focus on maximum hardiness or the rate of deac/acc? (related to potential risk of False Springs vs very cold periods midwinter). \cite{Charrier2013} mentioned that it has been observed that maximum hardiness achieved in winter is not dependent on environment (need to take another look at this).\\
@@ -180,6 +189,8 @@ Maybe uses a logistic regression? \cite{Kovaleski2018a} used a logistic regressi
 Deacclimation happens much faster than acclimation in plants \citep{Kalberer2006}. So I expect two different curves for change in hardiness with air temp during endo and ectodormancy. \\ 
 
 How can I get at deacclimation rates through modeling? And how would I predict deacclimation rates should correlate with general hardiness?\\
+
+It has not been done yet that I know of, but I could try using growth models. This would be cool if it works because it would hopefully take into consideration that hardiness doesn't change as much once it gets really cold.\\ 
 
 \subsection{Physiology and hardiness mechanisms}  
 Energy is necessary to drive acclimation and sugars play an essential role in freezing tolerance, the
