@@ -4,8 +4,8 @@ library(tidyverse)
 
 ####   Climate Projections Summary   ####
 
-##   GDD from May to October (GDD > 5)
-##   GDD from April to September (GDD > 5)
+##   GDD from May to October (GDD > 5 & 0)
+##   GDD from April to September (GDD > 5 & 0)
 ##   precipitation in September NEED TO UPDATE SCRIPT 
 ##   precipitation in October 
 ##   max temp in June 
