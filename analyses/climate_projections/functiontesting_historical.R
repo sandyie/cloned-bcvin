@@ -2,8 +2,13 @@ library(raster)
 library(sp)
 library(tidyverse)
 
-#The plan is to use these functions as a pseudo package by calling this file using source("functions.R")
-#in the analysis 
+################################################################################################
+####                 CHANGING FILE EXTENSIONS FOR HISTORICAL NAMING SCHEME                  ####
+################################################################################################
+
+#####################################
+##  Write #finished next to the script after it has been updated
+#####################################
 
 ####   Climate Projections Summary   ####
 
@@ -27,275 +32,6 @@ library(tidyverse)
 ##   Plot histograms for each 20 year period
 ##   Precipitation most likley non-normal, check plots (maybe use IQR or CV) (no precipitation in this file yet)
 ##   For nw, mw, and hw: take SD for each MEMBER (5 counts) then average them
-
-##function that reads the output folders of ClimateBC and assigns them logical variable names 
-open_MAT <- function(startYear, endYear, member_as.string){
-  for (i in startYear:endYear) {
-    assign(paste("mat_", i, sep = ""), 
-           raster(
-             paste("bcvin_raster/CanESM2_RCP85_",
-                   member_as.string,
-                   "_", 
-                   i, 
-                   "MSY/MAT.asc", 
-                   sep = "")
-           ), envir = parent.frame()
-       )
-    
-    }
-  
-  
-}
-
-open_MAT(2040, 2059, "r11i1p1")
-
-##open & assign funciton for monthly Tmax
-open_Tmax_m <- function(startYear, endYear, startMonth, endMonth, member_as.string){
-  
-  for (i in startYear:endYear) {
-  for (j in startMonth:endMonth) {
-    if(j < 10){
-      assign(paste("tmax_0", j, "_", i, sep = ""), 
-             raster(
-               paste("bcvin_raster/CanESM2_RCP85_",
-                     member_as.string,
-                     "_",
-                     i,
-                     "MSY/Tmax",
-                     "0",
-                     j,
-                     ".asc",
-                     sep = "")
-               
-             ),
-             envir = parent.frame()
-      )
-    }
-    else{
-      assign(paste("tmax_", j, "_", i, sep = ""), 
-             raster(
-               paste("bcvin_raster/CanESM2_RCP85_",
-                     member_as.string,
-                     "_",
-                     i,
-                     "MSY/Tmax",
-                     j,
-                     ".asc",
-                     sep = "")
-             ),
-             envir = parent.frame()
-      )
-      
-    }
-  }
-}
-}
-
-open_Tmax_m(2040, 2059, 1, 12, "r11i1p1")
-
-##open & assign funciton for monthly Tmin
-
-open_Tmin_m <- function(startYear, endYear, startMonth, endMonth, member_as.string){
-  for (i in startYear:endYear) {
-    for (j in startMonth:endMonth) {
-      if(j < 10){
-        assign(
-          paste("tmin_0", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/Tmin",
-                  "0",
-                  j,
-                  ".asc",
-                  sep = "")
-            
-          ),
-          envir = parent.frame()
-        ) #end assign
-        
-      }
-      else{
-        assign(
-          paste("tmin_", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/Tmin",
-                  j,
-                  ".asc",
-                  sep = "")
-          ),
-          envir = parent.frame()
-        )#end assign
-        
-      }
-    }
-  }
-  
-}
-
-open_Tmin_m(2040, 2059, 1, 12, "r11i1p1")
-
-##open & assign funciton for monthly precipitation
-#####################################################################NEED TO TEST USING DIFFERENT MEMBER OR START YEAR
-#####################################################################I deleted PPT data in r1i1p1 mw
-open_PPT_m <- function(startYear, endYear, startMonth, endMonth, member_as.string){
-  
-  for (i in startYear:endYear) {
-    for (j in startMonth:endMonth) {
-      if(j < 10){
-        assign(
-          paste("ppt_0", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/PPT",
-                  "0",
-                  j,
-                  ".asc",
-                  sep = "")
-            
-          ),
-          envir = parent.frame()
-        ) #end assign
-        
-      }
-      else{
-        assign(
-          paste("ppt_", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/PPT",
-                  j,
-                  ".asc",
-                  sep = "")
-          ),
-          envir = parent.frame()
-        )#end assign
-        
-      }
-    }
-    
-    
-  }
-  
-}
-
-open_PPT_m(2050, 2059, 9, 10, "r11i1p1")
-
-#open & assign function for GDD > 5
-
-open_GDD5_m <- function(startYear, endYear, startMonth, endMonth, member_as.string) {
-  for (i in startYear:endYear) {
-    for (j in startMonth:endMonth) {
-      if(j < 10){
-        assign(
-          paste("GDD5_0", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/DD5",
-                  "_0",
-                  j,
-                  ".asc",
-                  sep = "")
-            
-          ),
-          envir = parent.frame()
-        ) #end assign
-        
-      }
-      else{
-        assign(
-          paste("GDD5_", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/DD5",
-                  "_",
-                  j,
-                  ".asc",
-                  sep = "")
-          ),
-          envir = parent.frame()
-        )#end assign
-        
-      }
-    }
-    
-    
-  }
-  
-}
-
-open_GDD5_m(2050, 2059, 9, 10, "r11i1p1")
-
-#open & assign function for GDD > 0
-open_GDD0_m <- function(startYear, endYear, startMonth, endMonth, member_as.string) {
-  for (i in startYear:endYear) {
-    for (j in startMonth:endMonth) {
-      if(j < 10){
-        assign(
-          paste("GDD0_0", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/DD_0",
-                  "_0",
-                  j,
-                  ".asc",
-                  sep = "")
-            
-          ),
-          envir = parent.frame()
-        ) #end assign
-        
-      }
-      else{
-        assign(
-          paste("GDD0_", j, "_", i, sep = ""), 
-          raster(
-            paste("bcvin_raster/CanESM2_RCP85_",
-                  member_as.string,
-                  "_",
-                  i,
-                  "MSY/DD_0",
-                  "_",
-                  j,
-                  ".asc",
-                  sep = "")
-          ),
-          envir = parent.frame()
-        )#end assign
-        
-      }
-    }
-    
-    
-  }
-  
-}
-
-open_GDD0_m(2050, 2059, 9, 10, "r11i1p1")
-
-#########################################################same functions but for the historical dataset
-
 
 ##function that reads the output folders of ClimateBC and assigns them logical variable names 
 open_MAT_historical <- function(startYear, endYear){ #finished & works
@@ -535,9 +271,10 @@ open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
 }
 
 
+
 #aggregating monthly variable over the 20 year period, averaging, and SD 
-#NOTE: these are going to eventually be averaged between member_as.strings. STORE IN A DESCRIPTIVE FOLDER
-#Names do not include which member_as.string the data is from to simplify code
+#NOTE: these are going to eventually be averaged between members. STORE IN A DESCRIPTIVE FOLDER
+#Names do not include which member the data is from to simplify code
 #labels will be as follows: myVariable_as.string_month_warmingScenario_as.string
 #myVariable_as.string = Tmax, Tmin, PPT, GDD0, or GDD5
 #month = 1 : 12 depending on what month it is. This function should cycle through all interested months
@@ -545,11 +282,10 @@ open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
 
 
 ########################################################################################
-###TESTING
-##CURRENTLY WORKS FOR: Tmax, Tmin
-##Doesn't work for PPT (the SD is on the magnitude of 10's ) and I think GDD but I haven't tried yet
+##CURRENTLY WORKS FOR: Tmax, Tmin, GDD, ppt (not SD)
+##Doesn't work for PPT (the SD is on the magnitude of 10's ) 
 ##Check with Geoff if dividing SD by 10 is a rational decision
-aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth, myVariable_as.string){
+aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth, myVariable_as.string){ #finished and works except for SD for ppt
   
   for(i in startMonth:endMonth) {
     
@@ -711,20 +447,20 @@ aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth
   }
 }
 
-aggregate_warmingScenario_as.string_m(2040, 2050, 1, 1, "tmax")
+
 ########################################################################################
 
 #function to aggregate MAT
 
 
-aggregate_mat <- function(startYear, endYear, warmingScenario_as.string){
+aggregate_mat <- function(startYear, endYear, warmingScenario_as.string){ #finished and works
   assign(
     paste("mat_", warmingScenario_as.string, sep = ""), 
-    lapply( paste("mat_", startYear:endYear, sep = ""), get ) %>%
-      stack() %>%
-      calc(fun = mean, na.rm = TRUE) %>%
-      calc( . , fun = function(x){x/10}),
-    envir = parent.frame()
+         lapply( paste("mat_", startYear:endYear, sep = ""), get ) %>%
+           stack() %>%
+           calc(fun = mean, na.rm = TRUE) %>%
+           calc( . , fun = function(x){x/10}),
+         envir = parent.frame()
   )
   assign(paste("mat_", warmingScenario_as.string, "_sd", sep = ""),
          lapply( paste("mat_", startYear:endYear, sep = ""), get ) %>%
@@ -736,9 +472,10 @@ aggregate_mat <- function(startYear, endYear, warmingScenario_as.string){
   
 }
 
+
 #function to write monthly for mw/hw/nw 
 
-write_monthly_var <- function(startMonth, endMonth, myVariable_as.string, warmingScenario_as.string){ 
+write_monthly_var <- function(startMonth, endMonth, myVariable_as.string, warmingScenario_as.string){ #finished and works
   for(i in startMonth:endMonth){ 
     if(i < 10){ #for aggregated mean file
       writeRaster(
@@ -770,13 +507,13 @@ write_monthly_var <- function(startMonth, endMonth, myVariable_as.string, warmin
 
 #function to write yearly for mw/hw/nw
 
-write_yearly_MAT <- function(warmingScenario_as.string){
+write_yearly_MAT <- function(warmingScenario_as.string){ #finished and works
   writeRaster(
-    x = paste("mat_", warmingScenario_as.string, sep = ""),
+    x = get(paste("mat_", warmingScenario_as.string, sep = "")),
     filename = paste("mat_", warmingScenario_as.string, ".asc", sep = "")
-    )
+  )
   writeRaster(
-    x = paste("mat_", warmingScenario_as.string, "_sd", sep = ""),
+    x = get(paste("mat_", warmingScenario_as.string, "_sd", sep = "")),
     filename = paste("mat_", warmingScenario_as.string, "_sd.asc", sep = "")
   )
   
@@ -785,25 +522,23 @@ write_yearly_MAT <- function(warmingScenario_as.string){
 #function to aggregate myVariable_as.string to any groups of months
 #I won't be creating a custom writeRaster function for these because they will all be one-offs
 #I don't think that SD should be included in this output because it would be artificially high.
-#If SD is desired, calculate it with the difference between member_as.strings to get worthwhile data
+#If SD is desired, calculate it with the difference between members to get worthwhile data
 #Incomplete
 
-combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, warmingScenario_as.string) { #finished and works for ppt & nw at least
+
+combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, warmingScenario_as.string) { #didn't compute the mean... find bug
   if(startMonth > endMonth){ #i.e. Monthly Tmin between October and March:
-    for(i in c(startMonth:12, 1:endMonth)) { 
+    
       
       if(startMonth >= 10 && endMonth < 10){ #when start month is double digit and end month is single digit
         assign(
           x = paste(myVariable_as.string, "_", startMonth, "_0", endMonth, "_", warmingScenario_as.string, sep = ""),
           
           value = lapply( #if statements are to determine which naming scheme to write
-            {if(i < 10){
-              paste(myVariable_as.string, "_0", i, "_", warmingScenario_as.string, sep = "")
+            {
+              c(paste(myVariable_as.string, "_0", 1:endMonth, "_", warmingScenario_as.string, sep = ""),
+              paste(myVariable_as.string, "_", startMonth:12, "_", warmingScenario_as.string, sep = ""))
             }
-              
-              else{
-                paste(myVariable_as.string, "_", i, "_", warmingScenario_as.string, sep = "")
-              }}
             , 
             FUN = get) %>%
             stack() %>%
@@ -831,19 +566,17 @@ combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, war
         )
         
       }
-    }
-    
   }
   ######################ELSE IS NOT DONE. MAKE SURE TO CHANGE THE ASSIGNED VARIABLE NAME AND ANY PRINTING 
   else{ #three cases: single w/ double, single w/ single, double w/ double
-    for(i in startMonth:endMonth) { #i.e. June, July, August Tmax 
+    { #i.e. June, July, August Tmax 
       #passes my logic & visual check      
       if(startMonth < 10 && endMonth < 10){ #i.e. 01 - 09
         assign(
           x = paste(myVariable_as.string, "_0", startMonth, "_0", endMonth, "_", warmingScenario_as.string, sep = ""),
           
           value = lapply( 
-            paste(myVariable_as.string, "_0", i, "_", warmingScenario_as.string, sep = "")
+            paste(myVariable_as.string, "_0", startMonth:endMonth, "_", warmingScenario_as.string, sep = "")
             , 
             FUN = get) %>%
             stack() %>%
@@ -861,14 +594,12 @@ combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, war
           x = paste(myVariable_as.string, "_0", startMonth, "_", endMonth, "_", warmingScenario_as.string, sep = ""),
           
           value = lapply( #if statements are to determine which naming scheme to write
-            {if(i < 10){
-              paste(myVariable_as.string, "_0", i, "_", warmingScenario_as.string, sep = "")
-            }
-              
-              else{
-                paste(myVariable_as.string, "_", i, "_", warmingScenario_as.string, sep = "")
-              }}
-            , 
+            {
+             c(paste(myVariable_as.string, "_0", startMonth:9, "_", warmingScenario_as.string, sep = ""),
+           
+              paste(myVariable_as.string, "_", 10:endMonth, "_", warmingScenario_as.string, sep = ""))
+              }
+            ,
             FUN = get) %>%
             stack() %>%
             calc(. , fun = mean)
@@ -884,7 +615,7 @@ combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, war
           x = paste(myVariable_as.string, "_", startMonth, "_", endMonth, "_", warmingScenario_as.string, sep = ""),
           
           value = lapply(
-            paste(myVariable_as.string, "_", i, "_", warmingScenario_as.string, sep = "")
+            paste(myVariable_as.string, "_", startMonth:endMonth, "_", warmingScenario_as.string, sep = "")
             , 
             FUN = get) %>%
             stack() %>%
@@ -897,93 +628,13 @@ combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, war
       }
       
       
-    }
+    }#end for loop
     
   }
   
 }
 
-########################################################################################################################
-#open all members
-#myDescriptiveVariable should be the exact filename, as a string without the file extension, that was output by any of the writeRaster functions 
-#the output variable names are truncated to keep clutter down
 
-open_members <- function(myDescriptiveVariable){ #NOT tested
- 
-  assign(
-    x = paste(myDescriptiveVariable, "_r1", sep = ""),
-    value = raster(paste( "bcvin_raster/r11i1p1/", myDescriptiveVariable, ".asc", sep = "")),
-    envir = parent.frame()
-  )
- 
-  assign(
-    x = paste(myDescriptiveVariable, "_r2", sep = ""),
-    value = raster(paste( "bcvin_raster/r21i1p1/", myDescriptiveVariable, ".asc", sep = "")), 
-    envir = parent.frame()
-  )
- 
-  assign(
-    x = paste(myDescriptiveVariable, "_r3", sep = ""),
-    value = raster(paste( "bcvin_raster/r31i1p1/", myDescriptiveVariable, ".asc", sep = "")), 
-    envir = parent.frame()
-  )
- 
-  assign(
-    x = paste(myDescriptiveVariable, "_r4", sep = ""),
-    value = raster(paste( "bcvin_raster/r41i1p1/", myDescriptiveVariable, ".asc", sep = "")), 
-    envir = parent.frame()
-  )
-  
-  assign(
-    x = paste(myDescriptiveVariable, "_r5", sep = ""),
-    value = raster(paste( "bcvin_raster/r51i1p1/", myDescriptiveVariable, ".asc", sep = "")), 
-    envir = parent.frame()
-  )
-  
-}
-
-#in this case myDescriptiveVariable does NOT include any individual r's
-combine_and_members <- function(myDescriptiveVariable){ #NOT tested
-  assign(
-    x = paste(myDescriptiveVariable, "_combined", sep = ""),
-    value = 
-      lapply(paste(myDescriptiveVariable, "_r", 1:5, sep = "")) %>%
-      stack() %>%
-      calc(. , fun = mean),
-    envir = parent.frame()
-  )
-  assign(
-    x = paste(myDescriptiveVariable, "_combined_sd", sep = ""),
-    value = 
-      lapply(paste(myDescriptiveVariable, "_r", 1:5, sep = "")) %>%
-      stack() %>%
-      calc(. , fun = sd),
-    envir = parent.frame()
-  )
-  
-  
-}
-  
-  
-#No function to open historical because there is only one final file in the historical group
-
-
-#function to plot histograms
-#outputs faceted histogram for all 5 members 
-#myDescriptiveVariable = variable name without the *r*!!!!
-plot_histogram <- function(myDescriptiveVariable){
-  #assign a local environment df with variable names that are for each member (r1i1p1, r2i1p1 etc.)
-  #use all dataframe variables and add respective column with an identifier for which member it is
-  #rbind the dataframes
-  #use ggplot2 syntax to plot all the histograms in an appropriate faceted chart 
-  
-}
-
-  
-  
-  
-  
-  
 #Testing to prove logic in dividing by 10 after SD is taken in Tmax & Tmin 
 #testSd2 = testSd1
 
@@ -1002,22 +653,130 @@ testSd2 <- testStack2 %>%
   calc(fun = sd)
 
 
-#testing if histograms work with rasters in ggplot2
-
-df <- as.data.frame(ppt_10_nw)
-df$member <- "r1"
-str(df)
-summary(df)
-
-df2 <- as.data.frame(ppt_09_nw)
-df2$member <- "r2"
-
-bound <- rbind(df, df2)
-
-ggplot(bound, aes(x = layer, y = ..count.., fill = member)) +
-  geom_histogram(bins = 38)+
-  xlab("Accumulated Precipitation (mm)") +
-  ylab("Count")+
-  facet_wrap(~member)+
-  theme(legend.position = "none")
-
+#######################################MAKE THIS SO I CAN ENTER myVariable_as.string & change output
+#######################################This version is an archive just in case I ruin the testing function
+aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth, myVariable_as.string){
+  
+  for(i in startMonth:endMonth) {
+    
+    
+    if(startYear >= 2040 && startYear <= 2059){
+      if(i < 10) {
+        assign(
+          paste(myVariable_as.string, "_0", i, "_", "mw", sep = ""),
+          lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = mean, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+        assign(
+          paste(myVariable_as.string, "_0", i, "_", "mw_sd", sep = ""),
+          lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = sd, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+      }
+      if(i >= 10) {
+        assign(
+          paste(myVariable_as.string, "_", i, "_", "mw", sep = ""),
+          lapply( paste(myVariable_as.string, "_", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = mean, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+        assign(
+          paste(myVariable_as.string, "_", i, "_", "mw_sd", sep = ""),
+          lapply( paste(myVariable_as.string, "_", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = sd, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )
+      }
+    }#end if statement that determines mw 
+    
+    
+    if(startYear >= 2070 && startYear <= 2089){
+      if(i < 10) {
+        assign(
+          paste(myVariable_as.string, "_0", i, "_", "hw", sep = ""),
+          lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = mean, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+        assign(
+          paste(myVariable_as.string, "_0", i, "_", "hw_sd", sep = ""),
+          lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = sd, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+      }
+      if(i >= 10) {
+        assign(
+          paste(myVariable_as.string, "_", i, "_", "hw", sep = ""),
+          lapply( paste(myVariable_as.string, "_", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = mean, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+        assign(
+          paste(myVariable_as.string, "_", i, "_", "hw_sd", sep = ""),
+          lapply( paste(myVariable_as.string, "_", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = sd, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )
+      }
+    }#end if statement that determines hw 
+    
+    
+    if(startYear >= 1970 && startYear <= 1989){
+      if(i < 10) {
+        assign(
+          paste(myVariable_as.string, "_0", i, "_", "nw", sep = ""),
+          lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = mean, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+        assign(
+          paste(myVariable_as.string, "_0", i, "_", "nw_sd", sep = ""),
+          lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = sd, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+      }
+      if(i >= 10) {
+        assign(
+          paste(myVariable_as.string, "_", i, "_", "nw", sep = ""),
+          lapply( paste(myVariable_as.string, "_", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = mean, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )#end assign
+        assign(
+          paste(myVariable_as.string, "_", i, "_", "nw_sd", sep = ""),
+          lapply( paste(myVariable_as.string, "_", i,"_", startYear:endYear, sep = ""), get) %>%
+            stack() %>%
+            calc(fun = sd, na.rm = TRUE) %>%
+            calc(fun = function(x){x/10}),
+          envir = parent.frame()
+        )
+      }
+    }#end if statement that determines nw
+  }
+}
