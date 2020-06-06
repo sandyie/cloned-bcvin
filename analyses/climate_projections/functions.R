@@ -2,34 +2,10 @@ library(raster)
 library(sp)
 library(tidyverse)
 
-#The plan is to use these functions as a pseudo package by calling this file using source("functions.R")
-#in the analysis 
-#For this to work, you must have the original folders output by ClimateBC stored in a folder named "bcvin_raster" in your current wd
-
-####   Climate Projections Summary   ####
-
-##   GDD from May to October (GDD > 5 & 0)
-##   GDD from April to September (GDD > 5 & 0)
-##   precipitation in September NEED TO UPDATE SCRIPT 
-##   precipitation in October 
-##   max temp in June 
-##   max temp in July
-##   max temp in August
-##   max temp in September
-##   min temperature in October 
-##   min temperature in September 
-##   min temp in April 
-##   min temp in March 
-##   min temp of December to March 
-
-####   Projection Variation   ####
-
-##   SD is created for each variable for each month after aggregated over the 20 year period
-##   CV is created for only PPT but can easily be changed to include all variables
-##   Histogram function allows any variable to be plotted in three different regimes (can do this manually with ggplot2 if they aren't satisfactory)
-##   For nw, mw, and hw: take SD for each MEMBER (5 counts) then average them (created SD & CV for ppt for variation between members as well)
+#This file is for sourcing in other scripts. There are only functions and no code that will create any variables without being called
 
 ##function that reads the output folders of ClimateBC and assigns them logical variable names 
+##Less notes as well
 open_MAT <- function(startYear, endYear, member_as.string){
   for (i in startYear:endYear) {
     assign(paste("mat_", i, sep = ""), 
@@ -41,70 +17,57 @@ open_MAT <- function(startYear, endYear, member_as.string){
                    "MSY/MAT.asc", 
                    sep = "")
            ), envir = parent.frame()
-       )
+    )
     
-    }
+  }
   
   
 }
 
-#only do one member at a time!
-open_MAT(2070, 2071, "r11i1p1")
-open_MAT(2070, 2071, "r21i1p1")
-open_MAT(2070, 2071, "r31i1p1")
-open_MAT(2070, 2071, "r41i1p1")
-open_MAT(2070, 2071, "r51i1p1")
 
 ##open & assign funciton for monthly Tmax
 open_Tmax_m <- function(startYear, endYear, startMonth, endMonth, member_as.string){
   
   for (i in startYear:endYear) {
-  for (j in startMonth:endMonth) {
-    if(j < 10){
-      assign(paste("tmax_0", j, "_", i, sep = ""), 
-             raster(
-               paste("bcvin_raster/CanESM2_RCP85_",
-                     member_as.string,
-                     "_",
-                     i,
-                     "MSY/Tmax",
-                     "0",
-                     j,
-                     ".asc",
-                     sep = "")
-               
-             ),
-             envir = parent.frame()
-      )
-    }
-    else{
-      assign(paste("tmax_", j, "_", i, sep = ""), 
-             raster(
-               paste("bcvin_raster/CanESM2_RCP85_",
-                     member_as.string,
-                     "_",
-                     i,
-                     "MSY/Tmax",
-                     j,
-                     ".asc",
-                     sep = "")
-             ),
-             envir = parent.frame()
-      )
-      
+    for (j in startMonth:endMonth) {
+      if(j < 10){
+        assign(paste("tmax_0", j, "_", i, sep = ""), 
+               raster(
+                 paste("bcvin_raster/CanESM2_RCP85_",
+                       member_as.string,
+                       "_",
+                       i,
+                       "MSY/Tmax",
+                       "0",
+                       j,
+                       ".asc",
+                       sep = "")
+                 
+               ),
+               envir = parent.frame()
+        )
+      }
+      else{
+        assign(paste("tmax_", j, "_", i, sep = ""), 
+               raster(
+                 paste("bcvin_raster/CanESM2_RCP85_",
+                       member_as.string,
+                       "_",
+                       i,
+                       "MSY/Tmax",
+                       j,
+                       ".asc",
+                       sep = "")
+               ),
+               envir = parent.frame()
+        )
+        
+      }
     }
   }
 }
-}
-
-open_Tmax_m(2070, 2071, 9, 10, "r11i1p1")
-open_Tmax_m(2070, 2071, 9, 10, "r21i1p1")
-open_Tmax_m(2070, 2071, 9, 10, "r31i1p1")
-open_Tmax_m(2070, 2071, 9, 10, "r41i1p1")
-open_Tmax_m(2070, 2071, 9, 10, "r51i1p1")
 
 ##open & assign funciton for monthly Tmin
-
 open_Tmin_m <- function(startYear, endYear, startMonth, endMonth, member_as.string){
   for (i in startYear:endYear) {
     for (j in startMonth:endMonth) {
@@ -149,16 +112,9 @@ open_Tmin_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
   
 }
 
-open_Tmin_m(2070, 2071, 9, 10, "r11i1p1")
-open_Tmin_m(2070, 2071, 9, 10, "r21i1p1")
-open_Tmin_m(2070, 2071, 9, 10, "r31i1p1")
-open_Tmin_m(2070, 2071, 9, 10, "r41i1p1")
-open_Tmin_m(2070, 2071, 9, 10, "r51i1p1")
 
 
 ##open & assign funciton for monthly precipitation
-#####################################################################NEED TO TEST USING DIFFERENT MEMBER OR START YEAR
-#####################################################################I deleted PPT data in r1i1p1 mw
 open_PPT_m <- function(startYear, endYear, startMonth, endMonth, member_as.string){
   
   for (i in startYear:endYear) {
@@ -206,14 +162,8 @@ open_PPT_m <- function(startYear, endYear, startMonth, endMonth, member_as.strin
   
 }
 
-open_PPT_m(2070, 2071, 9, 10, "r11i1p1")
-open_PPT_m(2070, 2071, 9, 10, "r21i1p1")
-open_PPT_m(2070, 2071, 9, 10, "r31i1p1")
-open_PPT_m(2070, 2071, 9, 10, "r41i1p1")
-open_PPT_m(2070, 2071, 9, 10, "r51i1p1")
 
 #open & assign function for GDD > 5
-
 open_GDD5_m <- function(startYear, endYear, startMonth, endMonth, member_as.string) {
   for (i in startYear:endYear) {
     for (j in startMonth:endMonth) {
@@ -260,12 +210,6 @@ open_GDD5_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
   }
   
 }
-
-open_GDD5_m(2070, 2071, 9, 10, "r11i1p1")
-open_GDD5_m(2070, 2071, 9, 10, "r21i1p1")
-open_GDD5_m(2070, 2071, 9, 10, "r31i1p1")
-open_GDD5_m(2070, 2071, 9, 10, "r41i1p1")
-open_GDD5_m(2070, 2071, 9, 10, "r51i1p1")
 
 
 #open & assign function for GDD > 0
@@ -316,11 +260,6 @@ open_GDD0_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
   
 }
 
-open_GDD0_m(2070, 2071, 9, 10, "r11i1p1")
-open_GDD0_m(2070, 2071, 9, 10, "r21i1p1")
-open_GDD0_m(2070, 2071, 9, 10, "r31i1p1")
-open_GDD0_m(2070, 2071, 9, 10, "r41i1p1")
-open_GDD0_m(2070, 2071, 9, 10, "r51i1p1")
 
 #########################################################same functions but for the historical dataset
 
@@ -342,7 +281,7 @@ open_MAT_historical <- function(startYear, endYear){ #finished & works
   
 }
 
-open_MAT_historical(1970, 1971)
+
 
 ##open & assign funciton for monthly Tmax
 open_Tmax_m_historical <- function(startYear, endYear, startMonth, endMonth){ #finished & works
@@ -382,7 +321,7 @@ open_Tmax_m_historical <- function(startYear, endYear, startMonth, endMonth){ #f
   }
 }
 
-open_Tmax_m_historical(1970, 1971, 9, 10)
+
 
 ##open & assign funciton for monthly Tmin
 
@@ -426,11 +365,10 @@ open_Tmin_m_historical <- function(startYear, endYear, startMonth, endMonth){ #f
   
 }
 
-open_Tmin_m_historical(1970, 1971, 9, 10)
+
 
 ##open & assign funciton for monthly precipitation
-#####################################################################NEED TO TEST USING DIFFERENT MEMBER OR START YEAR
-#####################################################################I deleted PPT data in r1i1p1 mw
+
 open_PPT_m_historical <- function(startYear, endYear, startMonth, endMonth){ #finished & works
   
   for (i in startYear:endYear) {
@@ -474,7 +412,6 @@ open_PPT_m_historical <- function(startYear, endYear, startMonth, endMonth){ #fi
   
 }
 
-open_PPT_m_historical(1970, 1971, 9, 10)
 
 #open & assign function for GDD > 5
 
@@ -521,7 +458,7 @@ open_GDD5_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
   
 }
 
-open_GDD5_m_historical(1970, 1971, 9, 10)
+
 
 #open & assign function for GDD < 0
 open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #finished
@@ -567,7 +504,7 @@ open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
   
 }
 
-open_GDD0_m_historical(1970, 1971, 9, 10)
+
 
 #aggregating monthly variable over the 20 year period, averaging, and SD 
 #NOTE: these are going to eventually be averaged between member_as.strings. STORE IN A DESCRIPTIVE FOLDER
@@ -576,14 +513,6 @@ open_GDD0_m_historical(1970, 1971, 9, 10)
 #myVariable_as.string = Tmax, Tmin, PPT, GDD0, or GDD5
 #month = 1 : 12 depending on what month it is. This function should cycle through all interested months
 #warmingScenario_as.string = moderate warming, mw (2040-2059); high warming, hw (2070-2089); no warming, nw (1970 - 1989)
-
-
-########################################################################################
-###TESTING
-##CURRENTLY WORKS FOR: Tmax, Tmin
-##Doesn't work for PPT (the SD is on the magnitude of 10's ) and I think GDD but I haven't tried yet
-##Check with Geoff if dividing SD by 10 is a rational decision
-##MUST USE MORE THAN ONE YEAR 
 aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth, myVariable_as.string){
   
   for(i in startMonth:endMonth) {
@@ -614,14 +543,14 @@ aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth
           envir = parent.frame()
         )#end assign
         if(str_detect(myVariable_as.string, "ppt")){
-        assign(
-        paste(myVariable_as.string, "_0", i, "_", "mw_cv", sep = ""),
-        lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
-          stack() %>%
-          calc(fun = cv, na.rm = TRUE) 
-        ,
-        envir = parent.frame()
-        )#end assign
+          assign(
+            paste(myVariable_as.string, "_0", i, "_", "mw_cv", sep = ""),
+            lapply( paste(myVariable_as.string, "_0", i,"_", startYear:endYear, sep = ""), get) %>%
+              stack() %>%
+              calc(fun = cv, na.rm = TRUE) 
+            ,
+            envir = parent.frame()
+          )#end assign
         }
       }
       if(i >= 10) {
@@ -805,21 +734,6 @@ aggregate_warmingScenario_m <- function(startYear, endYear, startMonth, endMonth
     }#end if statement that determines nw
   }
 }
-#startYear, endYear, startMonth, endMonth, myVariable_as.string
-#run for every member
-aggregate_warmingScenario_m(2070, 2071, 9, 10, "tmax")
-aggregate_warmingScenario_m(2070, 2071, 9, 10, "tmin")
-aggregate_warmingScenario_m(2070, 2071, 9, 10, "ppt")
-aggregate_warmingScenario_m(2070, 2071, 9, 10, "GDD5")
-aggregate_warmingScenario_m(2070, 2071, 9, 10, "GDD0")
-
-#only run once
-aggregate_warmingScenario_m(1970, 1971, 9, 10, "tmax")
-aggregate_warmingScenario_m(1970, 1971, 9, 10, "tmin")
-aggregate_warmingScenario_m(1970, 1971, 9, 10, "ppt")
-aggregate_warmingScenario_m(1970, 1971, 9, 10, "GDD5")
-aggregate_warmingScenario_m(1970, 1971, 9, 10, "GDD0")
-
 
 ########################################################################################
 
@@ -845,8 +759,7 @@ aggregate_mat <- function(startYear, endYear, warmingScenario_as.string){
   
 }
 
-aggregate_mat(2070, 2071, "hw")
-aggregate_mat(1970, 1971, "nw")
+
 
 #function to write monthly for mw/hw/nw 
 
@@ -893,19 +806,6 @@ write_monthly_var <- function(startMonth, endMonth, myVariable_as.string, warmin
   }
 }
 
-#run for every member
-write_monthly_var(9, 10, "tmax", "hw")
-write_monthly_var(9, 10, "tmin", "hw")
-write_monthly_var(9, 10, "GDD5", "hw")
-write_monthly_var(9, 10, "GDD0", "hw")
-write_monthly_var(9, 10, "ppt", "hw")
-
-#only run once
-write_monthly_var(9, 10, "tmax", "nw")
-write_monthly_var(9, 10, "tmin", "nw")
-write_monthly_var(9, 10, "GDD5", "nw")
-write_monthly_var(9, 10, "GDD0", "nw")
-write_monthly_var(9, 10, "ppt", "nw")
 
 #function to write yearly for mw/hw/nw
 
@@ -913,7 +813,7 @@ write_yearly_MAT <- function(warmingScenario_as.string){
   writeRaster(
     x = get(paste("mat", warmingScenario_as.string, sep = "_")),
     filename = paste("mat_", warmingScenario_as.string, ".asc", sep = "")
-    )
+  )
   writeRaster(
     x = get(paste("mat_", warmingScenario_as.string, "_sd", sep = "")),
     filename = paste("mat_", warmingScenario_as.string, "_sd.asc", sep = "")
@@ -921,10 +821,10 @@ write_yearly_MAT <- function(warmingScenario_as.string){
   
 }
 
-write_yearly_MAT("hw")
+
 
 #only run once
-write_yearly_MAT("nw")
+
 
 #function to aggregate myVariable_as.string to any groups of months
 #I won't be creating a custom writeRaster function for these because they will all be one-offs
@@ -1046,18 +946,7 @@ combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, war
   }
   
 }
-#remember to manually write these with writeRaster()
-combine_monthly_vars(9, 10, "tmax", "hw")
-combine_monthly_vars(9, 10, "tmin", "hw")
-combine_monthly_vars(9, 10, "ppt", "hw")
-combine_monthly_vars(9, 10, "GDD5", "hw")
-combine_monthly_vars(9, 10, "GDD0", "hw")
 
-combine_monthly_vars(9, 10, "tmax", "nw")
-combine_monthly_vars(9, 10, "tmin", "nw")
-combine_monthly_vars(9, 10, "GDD5", "nw")
-combine_monthly_vars(9, 10, "GDD0", "nw")
-combine_monthly_vars(9, 10, "ppt", "nw")
 
 
 
@@ -1067,25 +956,25 @@ combine_monthly_vars(9, 10, "ppt", "nw")
 #the output variable names are truncated to keep clutter down
 
 open_members <- function(myDescriptiveVariable_as.string){ #tested and works
- 
+  
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r1", sep = ""),
     value = raster(paste( "bcvin_raster/r11i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")),
     envir = parent.frame()
   )
- 
+  
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r2", sep = ""),
     value = raster(paste( "bcvin_raster/r21i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = parent.frame()
   )
- 
+  
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r3", sep = ""),
     value = raster(paste( "bcvin_raster/r31i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = parent.frame()
   )
- 
+  
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r4", sep = ""),
     value = raster(paste( "bcvin_raster/r41i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
@@ -1104,18 +993,6 @@ open_members <- function(myDescriptiveVariable_as.string){ #tested and works
   )
   
 }
-
-open_members("tmax_09_hw")
-open_members("tmax_10_hw")
-open_members("tmin_09_hw")
-open_members("tmin_10_hw")
-open_members("GDD0_09_hw")
-open_members("GDD0_10_hw")
-open_members("GDD5_09_hw")
-open_members("GDD5_10_hw")
-open_members("ppt_09_hw")
-open_members("ppt_10_hw")
-open_members("mat_hw")
 
 #in this case myDescriptiveVariable does NOT include any individual r's
 combine_all_members <- function(myDescriptiveVariable){ #tested and works
@@ -1150,19 +1027,6 @@ combine_all_members <- function(myDescriptiveVariable){ #tested and works
   
   
 }
-  
-combine_all_members("tmax_09_hw")
-combine_all_members("tmax_10_hw")
-combine_all_members("tmin_09_hw")
-combine_all_members("tmin_10_hw")
-combine_all_members("GDD0_09_hw")
-combine_all_members("GDD0_10_hw")
-combine_all_members("GDD5_09_hw")
-combine_all_members("GDD5_10_hw")
-combine_all_members("ppt_09_hw")
-combine_all_members("ppt_10_hw")
-combine_all_members("mat_hw")
-
 
 #No function to open historical because there is only one final file in the historical group
 
@@ -1175,23 +1039,23 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   #would be nice to have a subtitle that describes the month or group of months but that can be added later using str_detect
   
   for( i in 1:5 ){
-  assign(
-    x = paste("df_r", i, sep = ""),
-    value = {
-      get(paste(myDescriptiveVariable, "_r", i, sep = "")) %>%
-        as.data.frame() %>%
-      mutate(. , member = paste("r", i, sep = "")) %>%
-        rename(., value = str2lang(paste(myDescriptiveVariable)), member = member) 
-    },
-    envir = parent.frame()
-    #should only exist in local environment, but I don't know how to do that syntactically yet
-  )
+    assign(
+      x = paste("df_r", i, sep = ""),
+      value = {
+        get(paste(myDescriptiveVariable, "_r", i, sep = "")) %>%
+          as.data.frame() %>%
+          mutate(. , member = paste("r", i, sep = "")) %>%
+          rename(., value = str2lang(paste(myDescriptiveVariable)), member = member) 
+      },
+      envir = parent.frame()
+      #should only exist in local environment, but I don't know how to do that syntactically yet
+    )
   }
   assign( 
     x = "df_combined",
     value = rbind(df_r1, df_r2, df_r3, df_r4, df_r5)      ,
     envir = parent.frame()
-      )
+  )
   
   if(str_detect(myDescriptiveVariable, "ppt") == TRUE){ 
     lab = "Accumulated Precipitation (mm)"
@@ -1203,7 +1067,7 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
     lab = "Temperature (°C)"
     plotTitle = "Comparing Mean Maximum Temperature Projections Between CanESM2 Members"
     nbins = 14
-    }
+  }
   else if(str_detect(myDescriptiveVariable, "tmin") == TRUE){
     lab = "Temperature (°C)"
     plotTitle = "Comparing Mean Minimum Temperature Projections Between CanESM2 Members"
@@ -1221,7 +1085,7 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   else if(str_detect(myDescriptiveVariable, "GDD0") == TRUE){
     lab = "Degree Days < 0"
     plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
-    }
+  }
   
   if(plotStyle == "facet"){
     aesthetics <-
@@ -1247,7 +1111,7 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   
   if(plotStyle == "density") {
     aesthetics <- 
-    ggplot(df_combined, mapping = aes(x = value, fill = member)) +
+      ggplot(df_combined, mapping = aes(x = value, fill = member)) +
       geom_density(alpha = 0.8) + 
       xlab(lab) +
       ylab("Density") +
@@ -1256,16 +1120,7 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   }
   
   aesthetics
-        
   
-  }
   
+}
 
-
-plot_histogram_allmembers("ppt_10_hw", "density")
-  
-test <- ppt_09_hw_combined %>%
-  as.data.frame() %>%
-  rename(value = layer) 
-
-IQR(test$value, na.rm = TRUE)
