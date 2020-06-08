@@ -1,16 +1,27 @@
 HardinessAnalysesReadme
 
-These R files contain longwinded loops to replicate Carl's excel spreadsheet model 
-ColumnCC_function.R
-ColumnCE_function.R
-ColumnCF_function.R
-ColumnCG_function.R - thsi one does the rest of the columns as well in one giant loop 
+oldCarlModel/
+Files in this folder peratin to an old verion of Carl's model that Faith coded up. 
+	These R files contain longwinded loops to replicate Carl's excel spreadsheet model 
+	ColumnCC_function.R
+	ColumnCE_function.R
+	ColumnCF_function.R
+	ColumnCG_function.R - thsi one does the rest of the columns as well in one giant loop 
 
-hardiness_stab.r 
-This script replicates Carl's spreadshee, and needs the Column_function.R scripts to run
+	hardiness_stab.r 
+	This script replicates Carl's spreadshee, and needs the Column_function.R scripts to run
 
-LinearModelHardiness.R
+LinearModelHardiness_slopes.R
 Here I am trying to model hardiness as a linear process of temperature. There is a mix of simulating data, running models in stanrarm, predictive checks and stan models. Still a work in process
+
+LinearModelHardiness_slopes_sim.R
+Here I am running the linear hardiness model, but using simulated data. 
+
+LinearModelHardiness_slopes_quad.R
+This model is similar to the LinearModelHardiness model, but contains a quadratic element. 
+
+LinearModelHardiness_slopes_sim_quad.R
+The same as the quadratic model exept using simulated rather than real data.  
 
 simulatingFerguson_stab.R 
 Here i simulated data based on teh parameters provided by ferguson et al 2011. I also 
