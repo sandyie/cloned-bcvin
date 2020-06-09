@@ -28,25 +28,12 @@ singlelinecheck=false % <-- important
 \bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
 \renewcommand{\refname}{\CHead{}}
 
-\title{Protocol for bcvin set-up and monitoring}
+\title{Protocol for Okanagan winegrape phenological \\ set-up and monitoring}
 \date{ }
 \maketitle
 \tableofcontents
 
-\section{Glossary}
 
-\begin{smitemize}
-\item {\bf vine}: an individual plant of Vitis vinifera. 
-\item {\bf permanent part of the vine}: vine parts which are not pruned, and persist from year to year (ex: trunk and cordons).
-\item {\bf cordon}: parts of the vine (two per vine at RMI) that extend horizontally from the trunk, parallel to the ground, along a horizontal training wire in the trellis. (See Figure \ref{fig:CordonPruned}) They are a permanent part of the vine, may be many years old, and develop bark. 
-\item {\bf arm}: a vertical permanent protuberance with bark arising from a cordon. Age three or more years. (Labeled in Figures \ref{fig:CordonPruned} \& \ref{fig:TwoSpurs}). Arms are also called {\bf â€œpositionsâ€} on the grapevine, as they are selected and maintained to have good spacing, light, and airflow through the canopy, etc. 
-\item {\bf cane}: developed shoots grown this year (â€œone-year-oldâ€ by the end of the growing season). Over the course of the season, this yearâ€™s leaves and clusters grow from buds on the cane. There are differences in terms of cane management between cordon pruned vines (Figure \ref{fig:CordonPruned}) and cane pruned vines (Figure \ref{fig:CanePruned}).\\
-{\bf For cordon pruned vines:} At the end of the season when the cordon pruned vines are pruned, a section of one cane on each arm from last year is retained (this will become a {\bf â€œspurâ€}. This cane is cut to two buds on a vine of average vigor, one bud on a weak vine, and three on a strong vine, to match the growing points to the vineâ€™s capacity. The two buds kept will become next yearâ€™s canes. The second cane (which grew from the upper bud kept from last year) is removed during pruning (Figure \ref{fig:TwoSpurs}). \\
-{\bf For cane pruned vines:} a single full cane is retained at the end of each growing season to serve as bud for the following year (Figure \ref{fig:CaneCrossing}). This cane will be removed at the end of the second growing season so a new cane can take its place. Extra canes may be retained at the head of the trunk to serve as a source of next year's cane. 
-\item {\bf spur}: two-year-old wood (meaning, what is left of last yearâ€™s canes). This will be cut in pruning to retain just the lowest buds. (Labeled in Figure \ref{fig:CanePruned}).
-\item {\bf buds}: the compound buds, occurring at nodes, from which this yearâ€™s growth will happen. This yearâ€™s shoots will turn into canes, which will eventually bear leaves and clusters. Each of the buds marked â€œbuds for monitoringâ€ in Figure \ref{fig:TwoSpurs} are what will go through budburst. These bud should be monitored for EL stages numbers 1-15, which refer to the vegetative part of the plant (leaves or shoots), not the reproductive part (clusters). 
-\item {\bf cluster}: (AKA {\bf bunch} for table grapes when ripe; AKA {\bf inflorescence}, botanically)-- the fruit of the grapevine, consisting of many berries attached to a {\bf rachis} (the skeleton left behind after you eat a bunch of grapes). The cluster consists of many flowers, which bloom and go through {\bf set} (pollination), in the process shedding their {\bf â€œcapâ€} covering the flowers. Flowers that have set go on to ripen into fruit, the individual berries on the cluster. Clusters are found on the 2nd and 3rd nodes (fruitful nodes) of a cane that grew this year from one of the two buds originally retained at pruning.
-\end{smitemize}
 
 \section{Objectives}
 We aim to characterize the phenology of seven of the most commonly planted winegrape varieties in vineyards throughout the Okanagan Valley in British Columbia. Our primary goal is to improve grower models of plant development with relation to climate. To this end, we will monitor a diversity of varieties that capture differences in phenology. We will record the phenology for selected vines for 2-3 growing seasons from budburst through the summer to veraison. We will also track fruit development through periodic Brix measurements after veraison.
@@ -54,9 +41,9 @@ We aim to characterize the phenology of seven of the most commonly planted wineg
 \section{Set up Protocol}
 
 \subsection{Sampling Population}
-Varieties sampled: Merlot, Pinot noir, Chardonnay, Riesling, Sauvignon blanc, Syrah (Shiraz), Cabernet sauvignon \\
+Varieties sampled: Merlot, Pinot noir, Chardonnay, Riesling, Sauvignon blanc, Syrah (Shiraz), Cabernet-Sauvignon \\
 Arterra sites: McIntyre, Dark Horse, NK'MIP Cellars \\ %removed Whitetail 
-Quail's Gate sites: Quail's Gate Estate vineyard, Mannhardt \\
+Quails' Gate sites: Quails' Gate Estate vineyard, Mannhardt \\
 % Sebastian Farms (Mission Hill) sites:
 
 \subsection{Choosing Vines}
@@ -78,11 +65,12 @@ Using the maps and rootstock information provided, we chose the blocks with the 
 
 \end{smitemize}
 
-Tip: If you are not flagging all the buds at once, flag the final bud/spur as this one will always be monitored. Doing this saves time because otherwise you may have to move the flag to another spur. We would recommend flagging with flagging tape all the buds at once to save time.
+Tip for when selecting buds each year: If you are not flagging all the buds at once, flag the final bud/spur as this one will always be monitored. Doing this saves time because otherwise you may have to move the flag to another spur. We would recommend flagging with flagging tape all the buds at once to save time.\\
 
-The location of each plant we monitor, as well as which side of the plant we chose to monitor, (see Choosing Buds below) is recorded in the plantsinfo.csv file on the repo.
+The location of each plant we monitor, as well as which side of the plant we chose to monitor, (see Choosing Buds below) is recorded in the \verb|plantsinfo.csv| file on the repo.
 
 \section{Choosing Buds}
+
 
 \begin{figure}
   \includegraphics[width=\linewidth]{CordonPruned.jpg}
@@ -114,18 +102,18 @@ The location of each plant we monitor, as well as which side of the plant we cho
   \label{fig:TwoSpurs}
 \end{figure}
 
-If plant was either cordon pruned (Figure \ref{fig:CordonPruned}) or cane pruned (Figure \ref{fig:CanePruned}, we flipped a coin to determine which side was flagged (heads = south or east, tails = north or west). If one side of the plant did not have enough buds, we chose the other side. When the cordons were clearly different ages, we chose to sample the larger/stronger cordon because it will be more representative of the plant. If a plant had a cane and a cordon (Figure \ref{fig:CordonCane}, we flagged the cordon unless it did not have at least three spurs, then the cane was flagged. Occasionally, a cane would be trained back to the trunk in a loop or had come loose from the wire. In these cases, we flagged the other cane. If the cane started on one side but was trained to cross over and end on the other side, we used the direction of the end of the cane. (Figure \ref{fig:CaneCrossing})
+If plant was either cordon pruned (Figure \ref{fig:CordonPruned}) or cane pruned (Figure \ref{fig:CanePruned}, we flipped a coin to determine which side was flagged (heads = south or east, tails = north or west). If one side of the plant did not have enough buds, we chose the other side. When the cordons were clearly different ages, we chose to sample the larger/stronger cordon because it will be more representative of the plant. If a plant had a cane and a cordon (Figure \ref{fig:CordonCane}), we flagged the cordon unless it did not have at least three spurs, then the cane was flagged. Occasionally, a cane would be trained back to the trunk in a loop or had come loose from the wire. In these cases, we flagged the other cane. If the cane started on one side but was trained to cross over and end on the other side, we used the direction of the end of the cane. (Figure \ref{fig:CaneCrossing})
 
 
 \subsection{Cordon Buds}
 
-We flagged the spur (or arm if it was present) on the furthest from the trunk, a middle spur, and the first spur on the cordon with a base less than 5cm below the wire (Figure \ref{fig:CordonPruned}. Spurs 5 or more centimeters below the wire were considered basal. If there was an even number of spurs, a coin flip determined which middle spur was chosen. 
+We flagged the spur (or arm if it was present) on the furthest from the trunk, a middle spur, and the first spur on the cordon with a base less than 5cm below the wire (Figure \ref{fig:CordonPruned}). Spurs 5 cm or more below the wire were considered basal. If there was an even number of spurs, a coin flip determined which middle spur was chosen. \\
 
 If there was more than one spur on an arm (Figure \ref{fig:TwoSpurs}) then we focused on the higher spur. We monitored the lowest bud on this spur. 
 
 \subsection{Cane Buds}
 
-We flagged the bud furthest from the trunk, the middle bud, and the first but that was farther than 15 centimeters from the trunk (Figure \ref{fig:CanePruned}). If there was an even number of middle buds, a coin flip determined which bud was chosen. 
+We flagged the bud furthest from the trunk, the middle bud, and the first but that was farther than 15 cm from the trunk (Figure \ref{fig:CanePruned}). If there was an even number of middle buds, a coin flip determined which bud was chosen. \\
 
 If there were two buds in the same place in a position that was flagged, we chose to monitor the bud that was more upright. If both buds were equally upright facing, we monitored the one in a southerly or easterly direction. 
 
@@ -138,9 +126,9 @@ Number buds 1 to 3 with bud 1 being the bud closest to the trunk (see Figures \r
 \section{Choosing Clusters}
 From each bud selected for monitoring during budburst, a cane will arise bearing one or more clusters of grapes. For the remaining pheno stages (bloom, veraison, Brix), we want to select a specific cluster for monitoring rather than a cane. Select the basal cluster (the lower one, originating closest to the ground) on the chosen cane (which will arise from the lowest bud position on the flagged arm, see Choosing Buds section). This will generally be the strongest cluster; especially in warm climates, there may be a big developmental difference between upper and lower clusters on the same shoot (Figure \ref{fig:Bunches}). \\
 
-This cluster will first be visible during the first pass for bloom. Note the lowest cluster on the first pass and make sure the same cluster will be monitored throughout the rest of the season. If you feel it will be difficult to keep track of the monitored cluster you can loosely ({\bf loosely!}) flag it. Do not flag tightly before this as it can prevent the growing tissue from maturing regularly. If a flagged cluster dies, disappears or somehow becomes no longer suitable for monitoring: Reflag nearest cluster and note in datasheet. In no case should you select, flag, or sample from a cluster that is more than 3-4 nodes along the cane (such a â€œsecond cropâ€ cluster will not be representative). \\
+This cluster will first be visible during the first pass for bloom. Note the lowest cluster on the first pass and make sure the same cluster will be monitored throughout the rest of the season. If you feel it will be difficult to keep track of the monitored cluster you can loosely ({\bf loosely!}) flag it. Do not flag tightly before this as it can prevent the growing tissue from maturing regularly. If a flagged cluster dies, disappears or somehow becomes no longer suitable for monitoring: Reflag nearest cluster and note in datasheet. In no case should you select, flag, or sample from a cluster that is more than 3-4 nodes along the cane (such a `€œsecond crop'€ cluster will not be representative). \\
 
-Once the green vines become woody (this is often after flower set or post-scatter, that is when you can shake the cluster and a few berries fall off) you can flag the cluster normally. You will take all remaining phenological samples from this cluster. It is important to flag the cluster to ensure repeatability in subsequent samplings by different observers. It may seem obvious at this early stage, but the selected cluster can get a lot more confusing with subsequent growth throughout the season.
+Once the green vines become woody (this is often after flower set or post-scatter, that is when you can shake the cluster and a few berries fall off) you can flag the cluster normally. You will take all remaining phenological samples from this cluster. It is important to flag the cluster to ensure repeatability in subsequent samplings by the same observer across different days (or by different observers). It may seem obvious at this early stage, but the selected cluster can get a lot more confusing with subsequent growth throughout the season.
 
 \begin{figure}
   \includegraphics[scale = .25]{Gadoruy2012Bunches.png}
@@ -151,7 +139,7 @@ Once the green vines become woody (this is often after flower set or post-scatte
 
 \begin{figure}
   \includegraphics[width=\linewidth]{ELScale.jpg}
-  \caption{ Modified Eichorn-Lorenz (EL) scale that our lab uses for monitoring phenology until flowering }
+  \caption{ Modified Eichorn-Lorenz (EL) scale that our lab uses for monitoring phenology until flowering. There are different versions of Eichorn-Lorenz so please follow this one! }
   \label{fig:ELScale}
 \end{figure}
 
@@ -171,24 +159,26 @@ Our goal is to have standardized observations of phenological stages for analysi
 \item We estimate that observing pheno stages for each vine (budburst, bloom, and veraison) will take approximately 90s per vine. 
 90 sec per vine x 256 vines.
 \item Once at least 5\% of the phenological stage (i.e., 5\% bloom) is seen, go out to the field until stage is complete for all varieties being monitored. 
-\item During peak sampling, we will aim for techs to make pheno observations every 3 days (2x/week). 
-\item Following the end of one pheno stage, techs will do a weekly vineyard walk-through starting 2-3 weeks before the anticipated beginning of the next stage, to make sure to catch early varieties entering the next stage.
+\item During peak sampling, we will aim for techs to make pheno observations every 3 days (2x/week) \emph{if possible}.  
+\item Following the end of one pheno stage, techs will do a weekly vineyard walk-through starting 2-3 weeks before the anticipated beginning of the next stage, to make sure to catch early varieties entering the next stage. {\bf Let us know how this goes!} This is the first time the lab has worked in such a large climate gradient so we are unsure how much time there will be in the end between events (i.e., will there a period when no plants are undergoing flowering or veraison or will veraison start for early varieties in the south when flowering is still happening in the north?).
 \end{enumerate}
 
 \subsection{Fieldwork Prep}
+Be sure to coordinate with vineyards before you visit to make sure you can access the vines. Generally the main issue is avoiding vines after spraying.\\
+
 Field work materials:
 \begin{smitemize}
 \item Vineyard map
 \item Sampling protocol
 \item Description of grapevine phenological stages (see Figure \ref{fig:ELScale}, Modified Eichorn Lorennz system)
 \item Field tablet for recording data
-\item Pen/paper and data entry sheets as backup if tablet fails (print-outs of .xls)
+\item Pen/paper and data entry sheets as backup if tablet fails (print-outs of \verb|.xls| files)
 \item Field notebook
 \item Sharpie pens
 \item Camera to record each stage for reference
 \item Paper tags with attached string (like larger versions of yardsale pricetags) to help with labeling plants for photos 
 \item Flagging tape for marking selected arms and clusters.
-\item During ripening (August-September): a refractometer and Ziploc bags to measure Brix. 
+\item During ripening (August-September): Ziploc bags for berry collection.
 \item Nice to have: paper towels \& handy wipes for cleanup (especially during Brix)
 \item Hand sanitizer for use when touching any communal equipment, for example gates or portable washrooms.
 \end{smitemize}
@@ -198,36 +188,38 @@ For each vine:
 \begin{enumerate}
 \item Stand facing the vine. Double-check Plant ID (labeled on one of the flags), block, and row number before recording in correct place on data sheet that we will provide. You do not need to record information about the varieties on the datasheets.
 \item Bud numbers are not written on the flags but are numbered 1 to 3 with Bud 1 being the bud closest to the trunk.
-\item {\bf For pre-bloom}, record the appropriate E-L stage of the shoot that was flagged, or the shoot closest to the flagging that matches our selection criteria laid out in the section above. 
+\item {\bf For pre-bloom (we record EL stages)}, record the appropriate E-L stage of the shoot that was flagged, or the shoot closest to the flagging that matches our selection criteria laid out in the section above. 
 	\begin{smitemize}
-	\item Record its EL stage (number from â€œ1â€: still dormant, to â€œ17â€: twelve leaves separated (see Figure \ref{fig:ELScale}) until EL stage 12. 
+	\item Record its EL stage (number from ``1'': still dormant, to ``17'': twelve leaves separated (see Figure \ref{fig:ELScale}) until EL stage 12. 
 	\item Once EL stage is at 12 you can stop recording until flowering starts (note that you may need to record higher than stage 12 at times in order to record whatever stage you see after 11, even if it is 13 or such if you have not yet recorded stage 12, more on this below).
 	\item You should count even small leaves at the very base of the shoot. 
 	\item However, do not count lateral shoots, which start as one leaf and grow into a separate shoot, as these will be removed later. Lateral shoots can be distinguished by the fact that they have more than one leaf (see Figure 2 above, where an emerging lateral shoot is visible in the axis of a leaf). 
-	\item it may happen that more than one shoot grows from the bud on the arm. In this case, the non-dominant shoot will be removed later (the one that will not bear clusters).  
-	\item Feel free to take photos of the various stages as a reference. 
+	\item It may happen that more than one shoot grows from the bud on the arm. In this case, the non-dominant shoot will usually be removed later (the one that will not bear clusters).  
+	\item Feel free to take photos of the various stages as a reference, and ask questions if you are unsure! 
 	\end{smitemize}
 	
-\item  {\bf For flowering} (EL 23) look at each cluster (\#1, \#2, \#3) and visually estimate the percent (from 0-100\%) of berries on the sample cluster that have achieved that stage. 
+\item  {\bf For flowering (we record percentages)} (EL 23) look at each cluster (\#1, \#2, \#3) and visually estimate the percent (from 0-100\%) of berries on the sample cluster that have achieved that stage. 
 	\begin{smitemize}
-	\item During bloom, the flower petals separate from the base of the flower and form a â€œcapâ€ on top of the flower structure. These caps eventually dry out, going from green to yellow or brown. When the caps have fallen off, bloom is said to have occurred.  EL stages 19-26 refer to the amount of berries in a cluster that have experienced â€œcapfallâ€ so that the flower parts below (stamen, pistils, etc.) are now visible.
-	\item Take photos of a full series of your percentages (5\%, 25\%, 50\%, 75\%, 95\%). 
-	\item Note in data sheet when a certain variety is "done" (past desired phenological stage) and skip it on all further visits during sampling of that phenological stage. Put another way, once a cluster has reached 100\% bloom you can make a note in your datasheet and skip recording it on future dates when you are monitoring bloom.
+          \item We record the percent of all buds on the cluster in flower (from 0-100\%),  in units of  5\% (i.e., no need to estimate 3\% or 34\%, just report 5\% and 35\% ... aim to be accurate within 10\% but most important is consistency and taking photos).
+	% \item During bloom, the flower petals separate from the base of the flower and form a ``cap'' on top of the flower structure. These caps eventually dry out, going from green to yellow or brown. When the caps have fallen off, bloom is said to have occurred.  EL stages 19-26 refer to the amount of berries in a cluster that have experienced `capfall' so that the flower parts below (stamen, pistils, etc.) are now visible.
+	\item Take photos of a full series of your percentages (5\%, 25\%, 50\%, 75\%, 95\%).
+	\item Note in data sheet when a certain variety is ``done'' (past desired phenological stage) and skip it on all further visits during sampling of that phenological stage. Put another way, once a cluster has reached 100\% bloom you can make a note in your datasheet and skip recording it on future dates when you are monitoring bloom. You can also skip clusters that have been at 95\% for more than two visits.
 	\end{smitemize}
 	
-\item {\bf For veraison} (EL 35), look at each cluster (\#1, \#2, \#3) and visually estimate the percent (from 0-100\%) of berries on the sample cluster that have achieved that stage. 
+\item {\bf For veraison (we record percentages)} (EL 35), look at each cluster (\#1, \#2, \#3) and visually estimate the percent (from 0-100\%) of berries on the sample cluster that have achieved that stage. 
 	\begin{smitemize}
-	\item We will count veraison as any detectable color change (e.g., a light pink berry is counted as well as a dark purple one.) If color change is not obvious, you may need to feel the berries (give them a light pinch) to detect if veraison has begun, as evidenced by softening (grapes that have not gone through veraison will be very hard to the touch). See \textit{Understanding Veraison} below for more information.
+       \item We record the percent of all berries on the cluster that have undergone veraison (from 0-100\%), in units of 5\% (i.e., no need to try to estimate 3\% versus 5\% ... hope to be accurate within 10\% but most important is consistency and taking photos).
+	\item We will count veraison as any detectable color change (e.g., a light pink berry is counted as well as a dark purple one) of the berries. If color change is not obvious, you may need to feel the berries (give them a light pinch) to detect if veraison has begun, as evidenced by softening (grapes that have not gone through veraison will be very hard to the touch). See \textit{Understanding Veraison} below for more information.
 	\item Take photos of a full series of your percentages (5\%, 25\%, 50\%, 75\%, 95\%) for both red and white varieties. 
 	\item Try to note softness on red grapes too and if you find any that have changed their softness before color please make a note in the notes field of the datasheet.
-	\item Note in data sheet when a certain variety is "done" (past desired stage) and skip it on all further visits during sampling of that phenological stage. Put another way, once a cluster has reached 100\% veraison you can make a note in your datasheet and skip recording it on future dates when you are monitoring veraison.
+	\item Note in data sheet when a certain variety is ``done'' (past desired stage) and skip it on all further visits during sampling of that phenological stage. Put another way, once a cluster has reached 100\% veraison you can make a note in your datasheet and skip recording it on future dates when you are monitoring veraison. You can also skip clusters that have been at 95\% for more than two visits.
 	\end{smitemize}
-\item Take photos of representative illustrations for different varieties of target \% at stage (e.g., clusters at 5\%, 25\%, 50\%, 75\%, 95\% flowering) for different varieties. Aim for 3-5 photos of each percentage taken across a diversity of varieties and across a couple different sampling dates, and make sure vine number and date are visible in photo for identification. {\bf Label the filename with the percent.}
-\item For ripening, our current plan is to send one of our team to collect berries so we can analyze Brix, or you may need to send us the berry samples in Ziplock bags. We will aim to collect samples starting around 12-15 Brix until commercial harvest. 
+\item Take photos of representative illustrations for different varieties of target \% at stage (e.g., clusters at 5\%, 25\%, 50\%, 75\%, 95\% flowering) for different varieties. Aim for 3-5 photos of each percentage taken across a diversity of varieties and across a couple different sampling dates, and make sure vine number and date are visible in photo for identification. {\bf Label the filename with the percent.} If possible, you can also use tags to label the percent in the photo. 
+\item For ripening, we collect berries so we can analyze Brix. We will aim to collect samples starting around 12-15 Brix until commercial harvest. \\
 	
-Note that vineyards cluster thin lateral shoots and prune extra canes before bloom to preserve good light and air circulation in the canopy. Some of the flagged buds/clusters may be removed. If this happens, simply flag the closest replacement bud/dominant cluster for observation and note the change in the datasheet.
+Note that vineyards usually cluster thin lateral shoots and prune extra canes before bloom to preserve good light and air circulation in the canopy. Some of the flagged buds/clusters may be removed. If this happens, simply flag the closest replacement bud/dominant cluster for observation and note the change in the datasheet.\\
 
-Note that in counting leaves to determine EL stage, you should count even small leaves at the very base of the shoot (see figure 6, below). However, do not count lateral shoots, which start as one leaf and grow into a separate shoot, as these will be removed later. Lateral shoots can be distinguished by the fact that they have more than one leaf (see Figure \ref{fig:Bettiga2003Diagram} above, where an emerging lateral shoot is visible in the axis of a leaf). Additionally, it may happen that more than one shoot grows from the bud on the arm. In this case, the non-dominant shoot will be removed later (the one that will not bear clusters).
+Note that in counting leaves to determine EL stage, you should count even small leaves at the very base of the shoot (see figure 6). However, do not count lateral shoots, which start as one leaf and grow into a separate shoot, as these will be removed later. Lateral shoots can be distinguished by the fact that they have more than one leaf (see Figure \ref{fig:Bettiga2003Diagram}, where an emerging lateral shoot is visible in the axis of a leaf). Additionally, it may happen that more than one shoot grows from the bud on the arm. In this case, the non-dominant shoot will be removed later (the one that will not bear clusters).\\
 
 \begin{figure}
   \includegraphics[scale = 0.65]{flowerlabels}
@@ -257,7 +249,7 @@ Some French colleagues have noted to us that a couple red varieties sometimes be
 \section{Site Directions and Access}
 
 {\bf Quails' Gate: Main Estate vineyards} \\
-The main Quail's Gate vineyard is easy to find using Google Maps if you use the Quails' Gate Wineshop as the destination. 
+The main Quails' Gate vineyard is easy to find using Google Maps if you use the Quails' Gate Wineshop as the destination. 
 From BC-97 North, turn right onto Gellatly Rd then left on Boucherie Rd. Quails' Gate Wineshop is about 5.5 km up the road. The parking lot for the main vineyard is a little bit before the Wineshop and is labeled with a "Staff Parking Only" sign. You can park here for the upper and lower vineyards (just across the road). We do not drive in the estate vineyards.
 
 \begin{figure} [h]
@@ -313,6 +305,7 @@ Get permission to be in the vineyard from Scott Carlson - he will tell you when 
 % Get permission to be in the vineyard from Scott Carlson - he will tell you when they have sprayed. There should also be a spray board on the office according to Mike Watson. \\
 
 \section{Contacting vineyards}
+Please ask Mira and/or Faith to introduce you before reaching out to these folks! If you have any issues, let us know.\\
 
 %Sebastian Farms
 %Rob Achurch (250) 490-6162
@@ -324,7 +317,7 @@ Get permission to be in the vineyard from Scott Carlson - he will tell you when 
 
 Head Viticulturalist: Chad Douglas (250) 317-3006 (Chad Douglas, Quails Gate as of 2020), Email: Chad@sfewine.com (cdouglas@quailsgate.com)
 
-Assistant Manager for Quail's Gate Estate and Mannhardt vineyards is Judy Wanbon (250)-317-8305 (email: Jwanbon@quailsgate.com) \\
+Assistant Manager for Quails' Gate Estate and Mannhardt vineyards is Judy Wanbon (250)-317-8305 (email: Jwanbon@quailsgate.com) \\
 
 {\bf Arterra}
 
@@ -348,12 +341,31 @@ Scott Carlson 250.485.7920 (Email: scott.carlson@arterracanada.com)
 
 Vineyard Manager is Manjit Deol: 250.485.8215
 
+
+\section{Glossary}
+
+\begin{smitemize}
+\item {\bf vine}: an individual plant of \emph{Vitis vinifera}. 
+\item {\bf permanent part of the vine}: vine parts which are not pruned, and persist from year to year (ex: trunk and cordons).
+\item {\bf cordon}: parts of the vine that extend horizontally from the trunk, parallel to the ground, along a horizontal training wire in the trellis. (See Figure \ref{fig:CordonPruned}) They are a permanent part of the vine, may be many years old, and develop bark. 
+\item {\bf arm}: a vertical permanent protuberance with bark arising from a cordon. Age three or more years. (Labeled in Figures \ref{fig:CordonPruned} \& \ref{fig:TwoSpurs}). Arms are also called {\bf '€œpositions'€} on the grapevine, as they are selected and maintained to have good spacing, light, and airflow through the canopy, etc. 
+\item {\bf cane}: developed shoots grown this year (`one-year-old'€ by the end of the growing season). Over the course of the season, this year's leaves and clusters grow from buds on the cane. There are differences in terms of cane management between cordon pruned vines (Figure \ref{fig:CordonPruned}) and cane pruned vines (Figure \ref{fig:CanePruned}).
+\begin{smitemize}
+\item {\bf For cordon pruned vines:} At the end of the season when the cordon pruned vines are pruned, a section of one cane on each arm from last year is retained (this will become a {\bf spur€}. This cane is cut to two buds on a vine of average vigor, one bud on a weak vine, and three on a strong vine, to match the growing points to the vine's capacity. The two buds kept will become next year's canes. The second cane (which grew from the upper bud kept from last year) is removed during pruning (Figure \ref{fig:TwoSpurs}). 
+\item {\bf For cane pruned vines:} a single full cane is retained at the end of each growing season to serve as bud for the following year (Figure \ref{fig:CaneCrossing}). This cane will be removed at the end of the second growing season so a new cane can take its place. Extra canes may be retained at the head of the trunk to serve as a source of next year's cane. 
+\end{smitemize}
+\item {\bf spur}: two-year-old wood (meaning, what is left of last year's canes). This will be cut in pruning to retain just the lowest buds. (Labeled in Figure \ref{fig:CanePruned}).
+\item {\bf buds}: the compound buds, occurring at nodes, from which this year's growth will happen. This year's shoots will turn into canes, which will eventually bear leaves and clusters. Each of the buds marked `buds for monitoring'€ in Figure \ref{fig:TwoSpurs} are what will go through budburst. These bud should be monitored for EL stages numbers 1-15, which refer to the vegetative part of the plant (leaves or shoots), not the reproductive part (clusters). 
+\item {\bf cluster}: (AKA {\bf bunch} for table grapes when ripe; AKA {\bf inflorescence}, botanically)-- the fruit of the grapevine, consisting of many berries attached to a {\bf rachis} (the skeleton left behind after you eat a bunch of grapes). The cluster consists of many flowers, which bloom and go through {\bf set} (pollination), in the process shedding their {\bf `€œcap'€} covering the flowers. Flowers that have set go on to ripen into fruit, the individual berries on the cluster. Clusters are found on the 2nd and 3rd nodes (fruitful nodes) of a cane that grew this year from one of the two buds originally retained at pruning.
+\end{smitemize}
+
+
 \section{Misc}
-tape colors for QG are orange and blue, avoid flagging with these colors
-Avoid orange and pink for Arterra - they seems to use of have most colors in their vineyards though
+Tape colors for QG are orange and blue, avoid flagging with these colors\\
+Avoid orange and pink for Arterra - they seems to use of have most colors in their vineyards though\\
 Ask vineyards at beginning of the season what color they prefer we use
 
-
+\clearpage
 \section{Vineyard Maps}
 
 \begin{figure} [h!]
