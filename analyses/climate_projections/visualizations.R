@@ -1,3 +1,5 @@
+source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/analyses/climate_projections/functions_externaldrive.R")#in a different directory than the data
+
 library(raster)
 library(tidyverse)
 library(tmap)
@@ -9,7 +11,7 @@ library(rgdal)
 #script is mostly a placeholder
 #############################################
 ####   Maps of BCVin   ####
-#this is also the home for any other visualizations 
+#this is also the home for any other visualizations
 
 #### Groups of Climate Projections ####
 #
@@ -18,23 +20,30 @@ library(rgdal)
 # (3) Extreme heat in growing season: tmax_06_*, tmax_07_*, tmax_08_*, tmax_09_*
 # (4) Extreme lows in dormancy to budburst period: tmin_03 & tmin_04, tmin_12_03
 
-##converting BCvin20m from CDEM to the mask of bcvinshapefile
-test <- raster("C:/Users/adamfong/Desktop/Ecology Lab/Climatebc_v630/bcvin20m/bcvin20m.asc")
-shp <- readOGR("C:/Users/adamfong/Desktop/Ecology Lab/Climatebc_v630/bcvinshapefile/bcvin.shp")
-bcvin75 <- raster("Bcvin/Data/bcvin_raster/bcvin_raster.asc")
-latlong <- "+proj=longlat +datum=WGS84 +no_defs"
-test2 <- projectRaster(test, crs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", res = 0.0002)
+#Notes:
+# * using a translucent pattern / crosshatch to display SD in categories (https://github.com/mtennekes/tmap/issues/49) <- at the very bottom
+# * to categorize well, make sure to do this in a dataframe and make conditionals from there (https://cran.r-project.org/web/packages/spup/vignettes/DEM_v3.html)
 
-mask <- mask(test2, shp)
+crs(tmin_02_2087) <- "+proj=longlat +datum=WGS84 +no_defs"
 
-writeRaster(mask, "bcvin20m_mask.asc")
 
-bcvin50 <- raster("final_climate_proj/bcvin_raster/bcvin50m/bcvin50m.asc")
-bcvin50_2 <- projectRaster(bcvin50, crs = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0", res = 0.000449)
-mask2 <- mask(bcvin50_2, shp)
-writeRaster(mask2, "bcvin50m_mask.asc")
+test <-
+  tm_view(alpha = 1, basemaps = "Esri.WorldTopoMap")+
+  tm_shape(tmin_02_2087)+
+  tm_raster(alpha = .8, title = "February 2087", palette = get_brewer_pal("Blues")) +
+  tm_scale_bar() +
+  tm_minimap() + 
+  tm_layout(title = "Mean Minimum Temperature")
+
+testbm <- tm_basemap("Esri.WorldImagery")
+
+
+
+
 
 ###########################################################
 #Variation
 
+# (1) Histograms of PPT_09, PPT_10
 
+plot_histogram_allmembers()
