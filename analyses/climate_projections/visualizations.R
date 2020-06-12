@@ -1,4 +1,5 @@
-source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/analyses/climate_projections/functions_externaldrive.R")#in a different directory than the data
+#source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/analyses/climate_projections/functions_externaldrive.R")#in a different directory than the data
+source("C:/Ecology Lab/R/bcvin_git/bcvin/analyses/climate_projections/functions_externaldrive.R")
 
 library(raster)
 library(tidyverse)
@@ -24,7 +25,7 @@ library(rgdal)
 # * using a translucent pattern / crosshatch to display SD in categories (https://github.com/mtennekes/tmap/issues/49) <- at the very bottom
 # * to categorize well, make sure to do this in a dataframe and make conditionals from there (https://cran.r-project.org/web/packages/spup/vignettes/DEM_v3.html)
 
-crs(tmin_02_2087) <- "+proj=longlat +datum=WGS84 +no_defs"
+
 
 
 test <-
@@ -39,11 +40,9 @@ testbm <- tm_basemap("Esri.WorldImagery")
 
 
 
-
-
 ###########################################################
 #Variation
 
 # (1) Histograms of PPT_09, PPT_10
 
-plot_histogram_allmembers()
+plot_histogram_allmembers("ppt_09")

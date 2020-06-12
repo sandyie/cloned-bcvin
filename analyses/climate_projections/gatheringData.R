@@ -1,4 +1,5 @@
-source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/analyses/climate_projections/functions_externaldrive.R")#in a different directory than the data
+#source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/analyses/climate_projections/functions_externaldrive.R")#in a different directory than the data
+source("C:/Ecology Lab/R/bcvin_git/bcvin/analyses/climate_projections/functions_externaldrive.R")
 
 combine_variable_periods <- function(warmingScenario_as.string)
 {
@@ -411,7 +412,7 @@ write_all_periods <- function(warmingScenario_as.string){
 #aggregate_warmingScenario_m(1970, 1989, 4, 10, "GDD0")
 #aggregate_warmingScenario_m(1970, 1989, 9, 10, "ppt")
 
-##############################################################################################NEED TO COMPLETE THE ANALYSIS SCRIPT AFTER THIS LINE
+##Final combining members for the necessary files 
 
 
 for(i in 6:9){
@@ -420,6 +421,21 @@ open_members(paste("tmax_0", i, "_mw", sep = ""))
 open_members(paste("tmax_0", i, "_nw", sep = ""))
 combine_all_members(paste("tmax_0", i, "_hw", sep = ""))
 combine_all_members(paste("tmax_0", i, "_mw", sep = ""))
+}
+
+#writing combined tmax
+for(i in 6:9){
+  
+  if(i < 10){  
+    write_combined(paste("tmax_0", i, "_hw", sep = ""))
+    write_combined(paste("tmax_0", i, "_mw", sep = ""))
+  }
+  else {
+    write_combined(paste("tmax_", i, "_hw", sep = ""))
+    write_combined(paste("tmax_", i, "_mw", sep = ""))
+    
+    
+  }
 }
 
 
@@ -534,8 +550,84 @@ for(i in 9:10) {
   
 }
 
+periods_list <- c("tmin_12_03_hw", "tmin_12_03_mw", "GDD5_04_09_mw", "GDD5_04_09_hw", "GDD5_05_10_mw", "GDD5_05_10_hw")
 
+lapply(periods_list, FUN = open_members) 
 
-
-
+lapply(periods_list, combine_all_members)
   
+lapply(periods_list, FUN = write_combined)
+
+####Final product: anomalies
+
+#opening all of the data from external drive
+setwd("E:/climate_projection_data/bcvin_raster/combined")
+filenames_combined <- list.files(pattern = ".asc", full.names = TRUE)
+for(i in 1:length(filenames_combined)){
+  assign(
+    x = str_remove(paste(filenames_combined[[i]]), "./")%>%
+      str_remove(. , ".asc"),
+    raster(filenames_combined[[i]])
+    
+  )
+  
+}
+
+#opening data from historical folder
+setwd("E:/climate_projection_data/bcvin_raster/historical")
+filenames_historical <- list.files(pattern = ".asc", full.names = TRUE)
+for(i in 1:length(filenames_historical)){
+  assign(
+    x = str_remove(paste(filenames_historical[[i]]), "./")%>%
+      str_remove(. , ".asc"),
+    raster(filenames_historical[[i]])
+    
+  )
+  
+}
+
+#myVariable_noWarmingScenario is to be entered as "ppt_09" or "tmax_06"
+make_anomaly <- function(myVariable_noWarmingScenario){
+  assign(
+    x = "mw",
+    value = get(paste(myVariable_noWarmingScenario, "_mw_combined", sep = ""))
+  )
+  assign(
+    x = "hw",
+    value = get(paste(myVariable_noWarmingScenario, "_hw_combined", sep = ""))
+  )
+  assign(
+    x = "hist",
+    value = get(paste(myVariable_noWarmingScenario, "_nw", sep = ""))
+  )
+  assign(
+    x = paste(myVariable_noWarmingScenario, "_mw_anomaly", sep = ""),
+    value = overlay(mw, hist, fun = function(x, y){ x - y }),
+    envir = .GlobalEnv
+  )
+  assign(
+    x = paste(myVariable_noWarmingScenario, "_hw_anomaly", sep = ""),
+    value = overlay(hw, hist, fun = function(x, y){ x - y }),
+    envir = .GlobalEnv
+  )
+}
+
+#manually add period variables
+variable_list <- c("ppt_09", "ppt_10", paste("tmax_0", 6:9, sep = ""), paste("tmin_0", 1:4, sep = ""), "tmin_09", paste("tmin_", 10:12, sep = ""), 
+                   "GDD5_05_10", "GDD5_04_09", "tmin_12_03")
+lapply(variable_list, make_anomaly)
+
+anomaly_list <- ls(pattern = "anomaly")
+
+setwd("E:/climate_projection_data/bcvin_raster/anomaly")
+for(i in 2:length(anomaly_list)){#starts at 2 because the make_anomaly function occurs in that list
+  
+  writeRaster(
+    
+    get(anomaly_list[i]),
+    filename = paste(anomaly_list[i], ".asc", sep = "")
+  )
+  
+}
+
+
