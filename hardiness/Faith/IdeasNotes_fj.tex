@@ -212,6 +212,8 @@ i\\
 o\\
 \\
 
+Maybe I should try dose resonse models? See \cite{Ritz2015}. This should theoretically make sense? 
+
 \section{Model structure}
 
 \begin{equation*}
@@ -316,6 +318,20 @@ Priors:
 \sigma_{\beta Var} \sim truncNormal(0,1)\\
 \rho \sim LKJcorr (2)
 \end{gather*}
+
+\subsection{Dose Response Curve}
+
+\begin{equation*}
+f(x, (b,c,d,e)) = c + \frac{d-c}{1 + e^{b(log(x) - \~e)}}
+\end{equation*}
+
+Where:\\
+	$x$ is the concentration of the dose (amount of winter cold) \\
+	$b$ is the response rate (slope)\\
+	$d$ is the upper asymptote of the response (maximum hardiness)\\
+	$b$ is the lower asymptote of the response (minimum hardiness)\\
+	$e$ is the effective dose ED50 (winter temperature where cold hardiness is half way between min and max)  \\
+	$\~e$ is the log of the effective dose ED50\\
 
 
 \bibliographystyle{/home/faith/Documents/Bibtex/styles/besjournals/besjournals}
