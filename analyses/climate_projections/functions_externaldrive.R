@@ -830,7 +830,7 @@ write_yearly_MAT <- function(warmingScenario_as.string){
 #I won't be creating a custom writeRaster function for these because they will all be one-offs
 #I don't think that SD should be included in this output because it would be artificially high.
 #If SD is desired, calculate it with the difference between member_as.strings to get worthwhile data
-#Incomplete
+#DEBUG: the output variable is just the last month in the period... 
 
 combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, warmingScenario_as.string) { #finished and works for ppt & nw at least
   if(startMonth > endMonth){ #i.e. Monthly Tmin between October and March:
@@ -1015,7 +1015,7 @@ combine_all_members <- function(myDescriptiveVariable){ #tested and works
     envir = .GlobalEnv
   )
   
-  if(str_detect(myDescriptiveVariable, "ppt") == TRUE) { #expressed as a percentage
+  if(str_detect(myDescriptiveVariable, "ppt|GDD") == TRUE) { #expressed as a percentage
     assign(
       x = paste(myDescriptiveVariable, "_combined_cv", sep = ""),
       value = 
@@ -1043,7 +1043,7 @@ write_combined <- function(myDescriptiveVariable_as.string) {
     ),
     filename = paste(myDescriptiveVariable_as.string, "_combined_sd.asc", sep = "")
   )
-  if(str_detect(myDescriptiveVariable_as.string, "ppt") == TRUE ){
+  if(str_detect(myDescriptiveVariable_as.string, "ppt|GDD") == TRUE ){
   writeRaster(
     get(
       paste(myDescriptiveVariable_as.string, "_combined_cv", sep = "")
@@ -1070,11 +1070,11 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
       value = {
         get(paste(myDescriptiveVariable, "_r", i, sep = "")) %>%
           as.data.frame() %>%
-          mutate(. , member = paste("r", i, sep = "")) %>%
+          mutate(. , member = paste("r", i * 10 + 1, sep = "")) %>%
           rename(., value = str2lang(paste(myDescriptiveVariable)), member = member) 
       },
       envir = .GlobalEnv
-      #should only exist in local environment, but I don't know how to do that syntactically yet
+      #should only exist in function environment, but I don't know how to do that syntactically yet
     )
   }
   assign( 
@@ -1085,32 +1085,36 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   
   if(str_detect(myDescriptiveVariable, "ppt") == TRUE){ 
     lab = "Accumulated Precipitation (mm)"
-    plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
+    plotTitle = ""
     nbins = 38
   }
   
   else if(str_detect(myDescriptiveVariable, "tmax") == TRUE){ 
     lab = "Temperature (°C)"
-    plotTitle = "Comparing Mean Maximum Temperature Projections Between CanESM2 Members"
+    plotTitle = ""
     nbins = 14
   }
   else if(str_detect(myDescriptiveVariable, "tmin") == TRUE){
     lab = "Temperature (°C)"
-    plotTitle = "Comparing Mean Minimum Temperature Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 14
   }
   else if(str_detect(myDescriptiveVariable, "mat")){
     lab = "Temperature (°C)"
-    plotTitle = "Comparing Mean Annual Temperature Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 14
     
   }
   else if(str_detect(myDescriptiveVariable, "GDD5") == TRUE){
     lab = "Degree Days > 5"
-    plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 20
   }
   
   else if(str_detect(myDescriptiveVariable, "GDD0") == TRUE){
     lab = "Degree Days < 0"
-    plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 14
   }
   
   if(plotStyle == "facet"){
@@ -1138,7 +1142,7 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   if(plotStyle == "density") {
     aesthetics <- 
       ggplot(df_combined, mapping = aes(x = value, fill = member)) +
-      geom_density(alpha = 0.8) + 
+      geom_density(alpha = 0.6) + 
       xlab(lab) +
       ylab("Density") +
       ggtitle(plotTitle)
