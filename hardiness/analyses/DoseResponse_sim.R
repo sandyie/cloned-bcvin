@@ -19,7 +19,6 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(drc)
-install.packages("drc")
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -148,24 +147,24 @@ x <- simTempsPos
 hardinessPos <- c + ( (d-c) / (1 + exp(b*(log(x)-log(e)))))
 hardiness <- (-1 * hardinessPos)
 
-plot(hardinessPos ~ simTempsPos)#modefied positive  data
-plot(hardiness ~ simTemps)#changed back to negative values
+plot(hardinessPos ~ simTempsPos, pch = 16, col = 2, xlab = "Simulated temperatures plus 30", ylab = "winter hardiness * -1")#modefied positive  data
+plot(hardiness ~ simTemps, pch = 16, col = 3, xlab = "Simulated temperatures", ylab = "winter hardiness")#changed back to negative values
 
 #Try eith some varietiy level differences 
 
 nvariety <- 20
 varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
 
-bvarsigma <- 3
+bvarsigma <- 1
 bvars <- rnorm(nvariety , b, bvarsigma)
 
-dvarsigma <- 0.1
+dvarsigma <- 0
 dvars <- rnorm(nvariety , d, dvarsigma)
 
-cvarsigma <- 2
+cvarsigma <- 0
 cvars <- rnorm(nvariety , c, cvarsigma)
 
-evarsigma <- 8
+evarsigma <- 5
 evars <- rnorm(nvariety , e, evarsigma)
 
 #make a database to hold results
@@ -182,7 +181,7 @@ for (i in 1:nvariety){
 }
 
 #add some variation 
-gsigma <- 3
+gsigma <- 0.5
 doseSimData$eps <- rnorm(nrow(doseSimData), 0, gsigma)
 
 doseSimData$finalLTEPos <- doseSimData$ltePositive + doseSimData$eps 
@@ -204,8 +203,10 @@ plot(doseSimData$negLTE ~ doseSimData$airtempCold,
 	ylab = "LTE50 (degrees C)", 
 	pch = 16, 
 	col = 4,
-	main = "bsigma = 3, dsigma = 0.1, csigma = 2, esigma = 8")
+	main = "bsigma = 1, dsig = 0, csig = 0, esig = 5, gsig= 0.5")
 lines(plottingLTE ~ plotingTempsCold)
+
+
 
 
 
@@ -237,7 +238,8 @@ ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
 	geom_ribbon(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative, ymin=LowerNegative, ymax=UpperNegative), alpha=0.2) +
 	geom_line(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative))+
 	xlab("Air temp (degrees C)") + 
-	ylab("cold hardiness (LTE50)")
+	ylab("cold hardiness (LTE50)") +
+	theme_classic()
 
 #
 #https://discourse.mc-stan.org/t/dose-response-model-with-partial-pooling/13823
