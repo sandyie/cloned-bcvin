@@ -762,7 +762,14 @@ phenologQGAll$df <- NULL # I just needed this to make the rbind work.
 
 head(phenologQGAll)
 str(phenologQGAll)
+
 phenologQGAll$Year <- format(phenologQGAll$phenologyDate, "%Y")
+
+
+flowering2005 <- phenologQGAll[phenologQGAll$Year == "2005" & phenologQGAll$PhenoEvent == "Flowering",]
+plot(flowering2005$phenologyDate)
+
+flowering2005[flowering2005$phenologyDate < "2005-05-01",]#this date looks oddly early, but Faith checked teh original spreadsheet and this is what is says 
 #write out the table
 #-------------------------------
 
