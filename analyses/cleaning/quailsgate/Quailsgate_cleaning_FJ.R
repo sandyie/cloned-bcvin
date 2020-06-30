@@ -18,7 +18,7 @@ library(stringr) # for detecting strings of characters (/n in my case)
 #--------------------------------------------------
 
 #phenology data 2001-2012
-setwd("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/phenologicaldata")
+setwd("/home/faith/Documents/github/bcvin/bcvin/analyses/input/quailsgate/phenologicaldata")
 sheetNames <- list.files()#check what files are present 
 
 #drop 2012 David sheet because i dont know what it is, but it doesnt seem to have phenology data?
@@ -409,10 +409,10 @@ trimws(PhenologyData$BlockID)
 #-------------------------------------------------------
 
 # remove the first 2 rows of th ephenology 2012-16 data because we dont want them  
-pheno1216Data2 <- read.csv("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/qg_PhenoDataReport_2012-2016.csv", skip = 2)
+pheno1216Data2 <- read.csv("/home/faith/Documents/github/bcvin/bcvin/analyses/input/quailsgate/qg_PhenoDataReport_2012-2016.csv", skip = 2)
 
 #this is data taken from maps, and has which blocks have which varieties planted. 
-varietyInfo <- read.csv("/home/faith/Documents/github/bcvin/analyses/input/quailsgate/vineyardmaps/VineyardMapsDataCompiled.csv")
+varietyInfo <- read.csv("/home/faith/Documents/github/bcvin/bcvin/analyses/input/quailsgate/vineyardmaps/VineyardMapsDataCompiled.csv")
 
 #removing a few empty columns
 pheno1216Data2$Note.....................................Acres <- NULL
@@ -760,7 +760,10 @@ phenologQGAll$Vineyard <- gsub(" Vineyard", "", phenologQGAll$Vineyard)
 
 phenologQGAll$df <- NULL # I just needed this to make the rbind work. 
 
+head(phenologQGAll)
+str(phenologQGAll)
+phenologQGAll$Year <- format(phenologQGAll$phenologyDate, "%Y")
 #write out the table
 #-------------------------------
 
-write.csv(phenologQGAll, "/home/faith/Documents/github/bcvin/analyses/cleaning/quailsgate/quailsGatePhenology.csv")
+write.csv(phenologQGAll, "/home/faith/Documents/github/bcvin/bcvin/analyses/cleaning/quailsgate/quailsGatePhenology.csv")
