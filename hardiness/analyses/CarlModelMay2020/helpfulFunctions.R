@@ -104,7 +104,22 @@ aboveThresholdTemp <- function(meanTemperature, threshold){
 
 aboveThresholdTemp_v <- Vectorize(aboveThresholdTemp)
 
+calculate_Sep20 <- function(averageGDD, yearlyGDD){
+  
+  if(yearlyGDD < averageGDD){
+    sept20 <- (yearlyGDD - averageGDD) * -0.005
+  }else if(yearlyGDD > averageGDD){
+    sept20 <- (yearlyGDD - averageGDD) * -0.02
+  }else{
+    sept20 <- (yearlyGDD - average)
+  }
+  
+  return(sept20)
+}
 
+calculate_Sep20_v <- Vectorize(calculate_Sep20)
+
+#                               October 20th      October 20th        October 20th 
 finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfinal, yearRange){#yearRange == "2012to13" "2013to14" etc up to "2018to19"
 
   
@@ -112,25 +127,25 @@ finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTE
   assign(
     x = paste0("predLTE1_", yearRange),
     value = tibble(predLTE1 = c(initialPredLTE1, rep(0, 175))),
-    envir = .GlobalEnv #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
+    envir = environment() #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
   )
   
   assign(
     x = paste0("predLTE2_", yearRange),
     value = tibble(predLTE2 = c(initialPredLTE2, rep(0, 175))),
-    envir = .GlobalEnv 
+    envir = environment()
   ) 
   
   assign(
     x = paste0("predLTEfinal_", yearRange),
     value = tibble(predLTEfinal = c(initialPredLTEfinal, rep(0, 175))),
-    envir = .GlobalEnv 
+    envir = environment()
   ) 
   
   assign(
     x = paste0("climatedf_", yearRange),
     value = get(paste0("climate", yearRange)),
-    envir = .GlobalEnv
+    envir = environment()
   )
   
   temp1 <- get(paste0("predLTE1_", yearRange))
@@ -194,65 +209,203 @@ finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTE
     assign(
       x = paste0("predLTE1_", yearRange),
       value = temp1,
-      envir = .GlobalEnv
+      envir = environment()
       )
     assign(
       x = paste0("predLTE2_", yearRange),
       value = temp2,
-      envir = .GlobalEnv
+      envir = environment()
     )
     assign(
       x = paste0("predLTEfinal_", yearRange),
       value = temp3,
-      envir = .GlobalEnv
+      envir = environment()
     )
     assign(
       x = paste0("climatedf_", yearRange),
       value = temp4,
-      envir = .GlobalEnv
+      envir = environment()
     )
     assign(
       x = paste0("scale_", yearRange),
       value = tempscale,
+      envir = environment()
+    )
+    assign(
+      x = paste0("predLTE_combined_", yearRange),
+      value = tibble(
+        predLTE1 = temp1,
+        predLTE2 = temp2, 
+        predLTEfinal = temp3,
+        climate = temp4,
+        scale = tempscale
+      ),
       envir = .GlobalEnv
     )
 }
 
+#                                    October 20th      October 20th        October 20th 
+finalLTEpredictions_test <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfinal, yearRange){ #this function is identical apart from the naming scheme for the assigned variables. Main use is to have a convenient place to look at the model for the September 20th Values that Carl calculated from his GDD
+  
+  
+  predLTE1 <- tibble(predLTE1 = c(initialPredLTE1, rep(0, 175)))
+  assign(
+    x = paste0("predLTE1_test_", yearRange),
+    value = tibble(predLTE1 = c(initialPredLTE1, rep(0, 175))),
+    envir = environment() #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
+  )
+  
+  assign(
+    x = paste0("predLTE2_test_", yearRange),
+    value = tibble(predLTE2 = c(initialPredLTE2, rep(0, 175))),
+    envir = environment()
+  ) 
+  
+  assign(
+    x = paste0("predLTEfinal_test_", yearRange),
+    value = tibble(predLTEfinal = c(initialPredLTEfinal, rep(0, 175))),
+    envir = environment()
+  ) 
+  
+  assign(
+    x = paste0("climatedf_test_", yearRange),
+    value = get(paste0("climate", yearRange)),
+    envir = environment()
+  )
+  
+  temp1 <- get(paste0("predLTE1_test_", yearRange))
+  temp2 <- get(paste0("predLTE2_test_", yearRange))
+  temp3 <- get(paste0("predLTEfinal_test_", yearRange))
+  temp4 <- get(paste0("climatedf_test_", yearRange))
+  
+  
+  tempscale <- IF1_v(temp4$daynum, temp4$tdiff) + IF2_v(temp4$daynum, temp4$tdiff) %>%
+    as_tibble(tempscale = value) 
+  
+  if(yearRange != "2015to16"){
+    tempscale$value[133] <- 0 #accounts for non leap years
+  }
+  
+  for(index in 1:176){ #expect for the predLTE1 and predLTE2 to vary by +/- 0.1 C because of significant figures disparity. Data in csv is to 1 decimal point while excel sheet has data that is 2 decimal places. Check October 26th 2012 to 13 for a disparity in "scale"
+    #IF3 <- IF3 <- function(daynum, tempscale, today_estLTEperday, yesterday_predLTE1, yesterday_predLTE2)
+    #IF3Dec7th <- function(daynum, today_estLTEperday, yesterday_predLTE1, daybeforeyesterday_predLTE1)
+    #IF4567(daynum, yesterday_predLTE2, estLTE, yesterday_estLTE, estLTEperday, tempdiff, today_predLTE1, yesterday_predLTE1)
+    
+    if(index == 1){
+      next
+    }else if(index == 50){
+      temp1$predLTE1[index] <- IF3Dec8th(index, temp1$predLTE1[index - 1], temp1$predLTE1[index - 2])
+      temp2$predLTE2[index] <- IF4567(index, temp2$predLTE2[index - 1], estimatedLTE$estLTE[index], estimatedLTE$estLTE[index - 1], estimatedLTE$estLTEperday[index], temp4$tdiff[index], temp1$predLTE1[index], temp1$predLTE1[index - 1])
+    }else{
+      temp1$predLTE1[index] <- IF3(index, tempscale$value[index], estimatedLTE$estLTEperday[index], temp1$predLTE1[index - 1], temp2$predLTE2[index - 1])
+      temp2$predLTE2[index] <- IF4567(index, temp2$predLTE2[index - 1], estimatedLTE$estLTE[index], estimatedLTE$estLTE[index - 1], estimatedLTE$estLTEperday[index], temp4$tdiff[index], temp1$predLTE1[index], temp1$predLTE1[index - 1])
+    }
+    
+  }
+  
+  for(index in 1:176){
+    section <- calculate_section(index)
+    
+    if(index == 1){
+      next
+    }else if(section == 1){
+      today_if8 <- IF8(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1])
+      temp3$predLTEfinal[index] <- temp3$predLTEfinal[index - 1] + today_if8
+    }else if(section == 2 | section == 4 | section == 5){
+      today_if8 <- IF8(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1])
+      today_if9 <- IF9(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1], today_if8)
+      today_if10 <- IF10(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1], estimatedLTE$estLTE[index], today_if9)
+      temp3$predLTEfinal[index] <- temp3$predLTEfinal[index - 1] + today_if10
+    }else if(section == 3 | index == 176){
+      today_if8 <- IF8(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1])
+      today_if9 <- IF9(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1], today_if8)
+      temp3$predLTEfinal[index] <- temp3$predLTEfinal[index - 1] + today_if9
+    }else if(section == 6 & index != 176){
+      today_if8 <- IF8(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1])
+      today_if9 <- IF9(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1], today_if8)
+      today_if10 <- IF10(index, temp4$tdiff[index], temp2$predLTE2[index], temp2$predLTE2[index - 1], temp3$predLTEfinal[index - 1], estimatedLTE$estLTE[index], today_if9)
+      today_if11 <- IF11(index, temp4$tdiff[index], temp3$predLTEfinal[index - 1], estimatedLTE$estLTE[index], today_if10)
+      today_if12 <- IF12(index, temp4$tdiff[index], temp3$predLTEfinal[index - 1], estimatedLTE$estLTE[index], today_if11)
+      temp3$predLTEfinal[index] <- temp3$predLTEfinal[index - 1] + today_if12
+    }
+    
+  }
+  
+  assign(
+    x = paste0("predLTE1_test_", yearRange),
+    value = temp1,
+    envir = environment()
+  )
+  assign(
+    x = paste0("predLTE2_test_", yearRange),
+    value = temp2,
+    envir = environment()
+  )
+  assign(
+    x = paste0("predLTEfinal_test_", yearRange),
+    value = temp3,
+    envir = environment()
+  )
+  assign(
+    x = paste0("climatedf_test_", yearRange),
+    value = temp4,
+    envir = environment()
+  )
+  assign(
+    x = paste0("scale_test_", yearRange),
+    value = tempscale,
+    envir = environment()
+  )
+  assign(
+    x = paste0("predLTE_test_combined_", yearRange),
+    value = tibble(
+      predLTE1 = temp1,
+      predLTE2 = temp2,
+      predLTE3 = temp3,
+      climate = temp4,
+      scale = tempscale
+    ),
+    envir = .GlobalEnv
+  )
+}
 
+#                              September 20th   September 20th   September 20th 
 calculate_Oct20th <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfinal, yearRange){#yearRange == "2012to13_GS" "2013to14_GS" etc up to "2018to19_GS"
-
+#Calculating October 20th is only necessary as I stuck to Carl's regime for counting days. 1 being (October 20th) and 176 (April 12th) being the final day. 
+#the structure of this function is a bit redundant. The predLTE names originally were written into the global environment but I realized that this is futile and a bit confusing.
+#they were now moved to be written to the local environment for the function.
+#
   
   predLTE1 <- tibble(predLTE1 = c(initialPredLTE1, rep(0, 30)))
   
   assign(
     x = paste0("predLTE1_", yearRange),
     value = tibble(predLTE1 = c(initialPredLTE1, rep(0, 30))),
-    envir = .GlobalEnv #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
+    envir = environment() #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
   )
   
   assign(
     x = paste0("predLTE2_", yearRange),
     value = tibble(predLTE2 = c(initialPredLTE2, rep(0, 30))),
-    envir = .GlobalEnv 
+    envir = environment()
   ) 
   
   assign(
     x = paste0("predLTEfinal_", yearRange),
     value = tibble(predLTEfinal = c(initialPredLTEfinal, rep(0, 30))),
-    envir = .GlobalEnv 
+    envir = environment()
   ) 
   
   assign(
     x = paste0("climatedf_", yearRange),
     value = get(paste0("climate", yearRange)),
-    envir = .GlobalEnv
+    envir = environment()
   )
   
-  temp1 <- get(paste0("predLTE1_", yearRange))
-  temp2 <- get(paste0("predLTE2_", yearRange))
-  temp3 <- get(paste0("predLTEfinal_", yearRange))
-  temp4 <- get(paste0("climatedf_", yearRange))
-  
+  temp1 <- get(paste0("predLTE1_", yearRange), envir = environment())
+  temp2 <- get(paste0("predLTE2_", yearRange), envir = environment())
+  temp3 <- get(paste0("predLTEfinal_", yearRange), envir = environment())
+  temp4 <- get(paste0("climatedf_", yearRange), envir = environment())
   
   tempscale <- IF1_v(1, temp4$tdiff) + IF2_v(1, temp4$tdiff) %>%
     as_tibble(tempscale = value) 
@@ -271,29 +424,29 @@ calculate_Oct20th <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfi
         }
     
   }
-  assign(
-    x = paste0("predLTE1_", yearRange),
-    value = temp1,
-    envir = .GlobalEnv #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
-  )
+  #assign( #commented out because I think they are unnecessary. Still working on some things that I need to keep my environment for. May need to uncomment if the functions don't work
+  #  x = paste0("predLTE1_", yearRange),
+  #  value = temp1,
+  #  envir = .GlobalEnv #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
+  #)
   
-  assign(
-    x = paste0("predLTE2_", yearRange),
-    value = temp2,
-    envir = .GlobalEnv 
-  ) 
+  #assign(
+  #  x = paste0("predLTE2_", yearRange),
+  #  value = temp2,
+  #  envir = .GlobalEnv 
+  #) 
   
-  assign(
-    x = paste0("predLTEfinal_", yearRange),
-    value = temp3,
-    envir = .GlobalEnv 
-  ) 
+  #assign(
+  #  x = paste0("predLTEfinal_", yearRange),
+  #  value = temp3,
+  #  envir = .GlobalEnv 
+  #) 
   
-  assign(
-    x = paste0("climatedf_", yearRange),
-    value = temp4,
-    envir = .GlobalEnv
-  )
+  #assign(
+  #  x = paste0("climatedf_", yearRange),
+  #  value = temp4,
+  #  envir = .GlobalEnv
+  #)
   
   return(c(temp1$predLTE1[31], temp2$predLTE2[31], temp3$predLTEfinal[31]))
 }

@@ -1,3 +1,7 @@
+#This script references a few other scripts which contain functions + more to prevent the workflow from becoming too messy. 
+#This script is only the replication of Carl's May 2020 model which uses his GDD assumptions from the previous growing season. 
+#If you want to see the model with all the derived values in the script reference: bcvin/hardiness/dashboard/mainDashboard.R
+
 library(tidyverse)
 
 setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/CarlModelMay2020")
@@ -10,8 +14,8 @@ source("IFstatements.R")
 setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/input")
 
 data_files <- list.files(pattern = ".csv")
-unnecessaryFiles <- grep("Dummy|2012-2018_|climhist", data_files)
-data_files1 <- data_files[-unnecessaryFiles]
+necessaryFiles <- grep("budhardiness", data_files)
+data_files1 <- data_files[necessaryFiles]
 data_file_names <- gsub(".csv|bud", '', data_files1)
 
 data <- lapply(data_files1, read_csv, col_names = FALSE)
@@ -131,7 +135,7 @@ estimatedLTE <- bind_cols(LTE, LTEperday)
 #calculating all final & intermediate LTE's
 #can look at intermediate Predicted LTE's using predLTE[1/2]_yearRange
 #look at final predicted LTE's using predLTEfinal_yearRange
-#the values in these functions are drawn directly from the excel sheet from the previous season GDD. I still need to make functions to recreate these numbers 
+#the values in these functions are drawn directly from the excel sheet from the previous season GDD. I have made a function that calculates the September 20th initial hardiness values as well as October 20th
 #expect slight variation in the final predicted LTE. This happens when there are temperature differences that are very near the bounds of each IF statement. There are variations on the scale of .1 because of discrepancies in the precision of data
 finalLTEpredictions(-10.54, -10.59, -10.59, "2012to13")
 finalLTEpredictions(-13.6, -13.6, -13.6, "2013to14")
@@ -141,16 +145,17 @@ finalLTEpredictions(-11.84, -11.99, -11.99, "2016to17")
 finalLTEpredictions(-13.25, -13.25, -13.25, "2017to18")
 finalLTEpredictions(-13.84, -13.84, -13.84, "2018to19")
 
-predLTEfinal_2012to13
-predLTEfinal_2013to14
-predLTEfinal_2014to15
-predLTEfinal_2015to16
-predLTEfinal_2016to17
-predLTEfinal_2017to18
-predLTEfinal_2018to19
+predLTE_combined_2012to13
+predLTE_combined_2013to14
+predLTE_combined_2014to15
+predLTE_combined_2015to16
+predLTE_combined_2016to17
+predLTE_combined_2017to18
+predLTE_combined_2018to19
 
 
-#trying to calculate the initial values 
+######trying to calculate the initial values 
+######NOTE: below this line is the preliminary work for calculating GDD and other values from Carl's model. I'm a little scared to delete this - It should be in a legible format and the right order in mainDashboard.R
 climate2012to18_init <- climate2012to18_GS %>%
   filter((month == 9 & day > 19)| (month == 10 & day < 21))
 
@@ -187,7 +192,7 @@ climate2018_init <- climate2012to18_init_tdiff %>%
 
 #LTE data between Sept 21st and Oct 20th are all arbitrary. I'm not going to take the values from excel so I can at least calculate the initial Oct 20th value.
 # "Sep 21 to Oct 20 - initial hardiness accumulation phase.  Bud hardiness increases steadily. Estimated LTE/day grows from -0.15 to -0.50 (this is guesswork as there is no hardiness data available)."
-
+#can use the output of these functions as the initial values for the finalLTEpredictions if you want. 
 
 estLTEperday <- c(-0.13, -0.15, -0.18, -0.20, -0.23, -0.25, -0.28, -0.30, -0.33, -0.35, -0.38, -0.40, -0.43, -0.45, -0.48, -0.50, -0.50, -0.50, -0.50, -0.50, -0.50, -0.50, -0.50, -0.50, -0.50, -0.50, -0.49, -0.48, -0.46, -0.45, -0.44)
 estimatedLTE1 <- c(-1.35, -1.48, -1.63, -1.80, -2.00, -2.23, -2.48, -2.75, -3.05, -3.38, -3.73, -4.10, -4.50, -4.93, -5.38, -5.85, -6.35, -6.85, -7.35, -7.85, -8.35, -8.85, -9.35, -9.85, -10.35, -10.85, -11.35, -11.84, -12.32, -12.78, -13.23) %>%
@@ -195,18 +200,57 @@ estimatedLTE1 <- c(-1.35, -1.48, -1.63, -1.80, -2.00, -2.23, -2.48, -2.75, -3.05
   select(estLTE = value) %>%
   mutate(estLTEperday)
 
-#slightly off could use a little tweak here or there
-calculate_Oct20th(sept20[2], sept20[2], sept20[2], "2013_init")
-calculate_Oct20th(sept20[3], sept20[3], sept20[3], "2014_init")
-calculate_Oct20th(sept20[4], sept20[4], sept20[4], "2015_init")
-calculate_Oct20th(sept20[5], sept20[5], sept20[5], "2016_init")
-calculate_Oct20th(sept20[6], sept20[6], sept20[6], "2017_init")
-calculate_Oct20th(sept20[7], sept20[7], sept20[7], "2018_init")
-
-
-aboveT_2013to14 <- aboveThresholdTemp_v(climate2013to14_GS[["meanTemp"]], 10)
-cumsum(aboveT_2013to14) #should be GDD but I need to find out what the "Growing Season" is and also what the threshold temperature is 
-
 sept20 <- c(.29, -.5, 0, -2.6, .14, -.52, .29, .21) #these are calculated by using GDD and average GDD. Figure this out next 
 
+#off by up to +/- .04 from the values listed in excel. This accurately predicts the October 20th values with the exact Sept 20th values from Excel
+givenSep20th <- data.frame( "sep20" = c(
+calculate_Oct20th(sept20[2], sept20[2], sept20[2], "2013_init")[3],
+calculate_Oct20th(sept20[3], sept20[3], sept20[3], "2014_init")[3],
+calculate_Oct20th(sept20[4], sept20[4], sept20[4], "2015_init")[3],
+calculate_Oct20th(sept20[5], sept20[5], sept20[5], "2016_init")[3],
+calculate_Oct20th(sept20[6], sept20[6], sept20[6], "2017_init")[3],
+calculate_Oct20th(sept20[7], sept20[7], sept20[7], "2018_init")[3]
+), year = c(2013:2018))
 
+climate2013_GS <- climate2012to18_GS %>% 
+  filter(year == 2013)
+climate2014_GS <- climate2012to18_GS %>%
+  filter(year == 2014)
+climate2015_GS <- climate2012to18_GS %>%
+  filter(year == 2015)
+climate2016_GS <- climate2012to18_GS %>%
+  filter(year == 2016)
+climate2017_GS <- climate2012to18_GS %>%
+  filter(year == 2017)
+climate2018_GS <- climate2012to18_GS %>%
+  filter(year == 2018)
+
+aboveT_2013 <- aboveThresholdTemp_v(climate2013_GS[["meanTemp"]], 10)
+aboveT_2014 <- aboveThresholdTemp_v(climate2014_GS[["meanTemp"]], 10)
+aboveT_2015 <- aboveThresholdTemp_v(climate2015_GS[["meanTemp"]], 10)
+aboveT_2016 <- aboveThresholdTemp_v(climate2016_GS[["meanTemp"]], 10)
+aboveT_2017 <- aboveThresholdTemp_v(climate2017_GS[["meanTemp"]], 10)
+aboveT_2018 <- aboveThresholdTemp_v(climate2018_GS[["meanTemp"]], 10)
+
+GDDsums <- data.frame("GDD" = c(
+  sum(aboveT_2013), #should be GDD but I need to find out what the "Growing Season" is and also what the threshold temperature is 
+  sum(aboveT_2014),
+  sum(aboveT_2015), 
+  sum(aboveT_2016), 
+  sum(aboveT_2017),
+  sum(aboveT_2018)), "year" = c(2013:2018))
+
+averageGDD <- mean(GDDsums$GDD)
+
+Sep20_yearly <- data.frame("sep20" = calculate_Sep20_v(averageGDD, GDDsums$GDD),
+      "year" = c(2013:2018))
+
+Sep20s_df <- data.frame( #shows the difference between the given October 20th and the one I calculated. The GDD from excel has no documentation of the source or calculation
+  "MySep20" = c(calculate_Oct20th(Sep20_yearly$sep20[1], Sep20_yearly$sep20[1], Sep20_yearly$sep20[1], "2013_init")[3],
+calculate_Oct20th(Sep20_yearly$sep20[2], Sep20_yearly$sep20[2], Sep20_yearly$sep20[2], "2013_init")[3],
+calculate_Oct20th(Sep20_yearly$sep20[3], Sep20_yearly$sep20[3], Sep20_yearly$sep20[3], "2013_init")[3],
+calculate_Oct20th(Sep20_yearly$sep20[4], Sep20_yearly$sep20[4], Sep20_yearly$sep20[4], "2013_init")[3],
+calculate_Oct20th(Sep20_yearly$sep20[5], Sep20_yearly$sep20[5], Sep20_yearly$sep20[5], "2013_init")[3],
+calculate_Oct20th(Sep20_yearly$sep20[6], Sep20_yearly$sep20[6], Sep20_yearly$sep20[6], "2013_init")[3]),
+"GivenSep20" = givenSep20th$sep20, "year" = givenSep20th$year
+)
