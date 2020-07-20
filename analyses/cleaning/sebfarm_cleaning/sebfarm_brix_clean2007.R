@@ -1,8 +1,8 @@
 ########################## 2007_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
-rm(list=ls())
-options(stringsAsFactors = FALSE)
+#rm(list=ls())
+#options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/input/sebastianfarms/brix/")
 library(tidyverse) 
@@ -16,31 +16,34 @@ head(SebFarms_Brix)
 company <- "SebastianFarms"
 vineyard <- ""
 notes <- ""
-SebF <- cbind(SebFarms_Brix, company, vineyard, notes)
+SebF2007 <- cbind(SebFarms_Brix, company, vineyard, notes)
+
+#Remove column "sampler"
+SebF2007$sampler <- NULL
 
 #Rename block column 
-colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
+colnames(SebF2007)[colnames(SebF2007) == 'growblk'] <- 'block'
 
 #Reformating dates - Seperating date into three columns, Y/M/D
-sample.date <- SebF$sample.date
+sample.date <- SebF2007$sample.date
 sample.date2 <- ymd(sample.date) #lubridate
-SebF <- cbind(SebF, sample.date2)
+SebF2007 <- cbind(SebF2007, sample.date2)
 
-SebF <- separate(SebF, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
-SebF <- SebF[, -1]
+SebF2007 <- separate(SebF2007, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
+SebF2007$sample.date <- NULL
 
 #Creating Events and Value Column
-SebF <- pivot_longer(SebF, #tidyr
+SebF2007 <- pivot_longer(SebF2007, #tidyr
                      cols = c(brix, ta, ph),
                      names_to = "event",
                      values_to = "value")
 
 #Reordering column names : 
-#"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
-SebF <- select(SebF, vineyard, everything())
-SebF <- select(SebF, company, everything())
-SebF.clean <- select(SebF, -notes, notes)
+#"company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"
+SebF2007 <- select(SebF2007, vineyard, everything())
+SebF2007 <- select(SebF2007, company, everything())
+SebF2007 <- select(SebF2007, -notes, notes)
 
 #Export Final Output
-setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/")
-write.csv(SebF.clean, "sebfarm_brix_clean2007.csv", row.names = F)
+#setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
+#write.csv(SebF2007, "sebfarm_brix_clean2007.csv", row.names = F)
