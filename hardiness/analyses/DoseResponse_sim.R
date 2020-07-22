@@ -6,6 +6,19 @@ rm(list = ls())
 #script started by Faith Jones on June 26th, 2020
 #First focus on vust varieties rather than site and variety 
 
+
+library(rstan)
+library(truncnorm)
+library(reshape2)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(drc)
+
+library(foreach)
+library(doParallel)
+parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
+
 set.seed(16)
 
 
@@ -14,11 +27,10 @@ if(length(grep("Lizzie", getwd())>0)) {
 } else
 setwd("/home/faith/Documents/github/bcvin/bcvin/hardiness/analyses/")
 
-library(reshape2)
-library(ggplot2)
-library(tidyr)
-library(dplyr)
-library(drc)
+#Utilities writen by Michael Betancourt
+util <- new.env()
+source('stan_utility.R', local=util)
+
 
 #climate data
 clim <- read.delim("input/envcanada_penticton.csv", skip=25, sep=",", header=TRUE)
@@ -125,7 +137,7 @@ plot(bhclim$lte ~bhclim $meanC)
 #-------------------------------------------------
 
 #inputs
-nrep <- 20 # number of reps of each variety 
+nrep <- 200 # number of reps of each variety 
 meanTemp <- 4
 sigmaTemp <- 8
 simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
@@ -138,8 +150,8 @@ simTempsPos <- simTemps + 30
 #Set model parameters - I have no idea what they should be so I will run a similar model in R (below)
 
 b <- 11 #this is the rate paramater, like a slope in a linear regession 
-d <- 24 # maximum hardiness (inverted from -25)
-c <- 10 # minimum hardiness (inverted from -3)
+d <- 24 # maximum hardiness (inverted from -24)
+c <- 10 # minimum hardiness (inverted from -10)
 e <- 37 # Effective dose ED50. x value where y value is halfway bewteen max(d) and min (c)
 
 x <- simTempsPos
@@ -155,8 +167,8 @@ plot(hardiness ~ simTemps, pch = 16, col = 3, xlab = "Simulated temperatures", y
 nvariety <- 20
 varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
 
-bvarsigma <- 1
-bvars <- rnorm(nvariety , b, bvarsigma)
+bvarsigma <- 5
+bvars <- rtruncnorm(n = nvariety , mean = b, sd = bvarsigma)
 
 dvarsigma <- 0
 dvars <- rnorm(nvariety , d, dvarsigma)
@@ -164,7 +176,7 @@ dvars <- rnorm(nvariety , d, dvarsigma)
 cvarsigma <- 0
 cvars <- rnorm(nvariety , c, cvarsigma)
 
-evarsigma <- 5
+evarsigma <- 0
 evars <- rnorm(nvariety , e, evarsigma)
 
 #make a database to hold results
@@ -243,3 +255,249 @@ ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
 
 #
 #https://discourse.mc-stan.org/t/dose-response-model-with-partial-pooling/13823
+
+#Try worksflow from stan course
+
+
+############################################################
+# 1. Conceptual Analysis
+############################################################
+
+#what are we measuring? Describe system. 
+
+#Winter hardiness - minimum LTE50 - as a response to air temperature
+# both hardiness (y) and air temp (x) can be negative, and are real numbers 
+# The relationship between y xan x will not be negative
+# I expect a non-linera respons,e in that hardiness will have an upper and lower asumptote. 
+# The lower asymptote (mimimum hardiness) will not be above 0. It might be -3 (the hardiness 
+# of green tissue) Or I could use 0.
+# My measurements of cold hardiness do not cover asumytoete around minimum hardiness because 
+# they dont gather hardiness data during teh summer when hardiness will be at its lowest - so 
+# maybe I just chose a lower asymptote instead of uing minimum value from data? 
+
+############################################################
+# 2. Define Observational Space
+############################################################
+
+#what mathematical form do our observations take?  
+#how many observations?
+# for example, what is N, x and y? 
+# what distribution should I use for y against likelyhood/x? 
+# I assume a gaussian observational model because there is nothing special 
+#about how the data is formed. 
+	#For teh likelyhood I am going use use a dose response curve model, although 
+	#this will mean changing the data so it is all positive 
+
+############################################################
+# 3. Construct Summary Statistics
+############################################################
+
+# Here we use our domain knowledge to decide what would be unreasonable values for the 
+# different summary statistcs
+
+# histogram of each parameter 
+# Plot x againt real and predicted y values
+# histogram of predicted y values
+
+
+
+#######################################################################################
+#
+# Post-Model, Pre-Data
+#
+#######################################################################################
+
+
+############################################################
+# 4. Model Development
+############################################################
+
+#Chose an observation model. This is the y ~ model(likelyhood_x) bit. Chose one that 
+#make sense based on the data type (integer? real? negative values? count? ordered data?)
+
+# Chose priors based on the bit before when we were using our domian knowledge to 
+# decide what values are ok vs really off. Stan has a function to solve algebra that 
+# can be used to find prior values that give the range wanted for the prior. 
+
+#below parematers are teh values before changing to positives! Remember to add 100 x to model values, and tiomes y values with -1!
+#Parameters:
+	# d = the higher asymptote. Should be between -10 and -50 (10 and 50). Mean 30, sd 10. 
+	# c = the lower asymptote. should be between 0 and -5. 0 and 5. Mean 0, half normal, sd of 2.  
+	# b = teh response intensity. A scaler. SHoudl be positive, but not sure of values. From playing with values om going to say 10 plus/minus sd 5  
+	# e = x where y is half way between c and d. Should be centred around -15, plus/minus 10
+	# sigma_g = observation error from the gaussian process model. Not sure, but probably plus/minus 10 degrees?
+
+#Run a model with priors and simulate y values from it, so try and chose sensible priors
+
+#Data
+x <- I(plotingTemps)
+N <- length(plotingTemps)
+
+stanData_priot_drs <- list(N = N, x = x)
+
+
+#Plot each prior
+d_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 30, sd = 12)
+c_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 3, sd = 3)
+e_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 34, sd = 10)
+sigma_g_Prior <- rtruncnorm(n = 1000,a=0, mean = 0, sd = 2)
+b_Prior <- rnorm(n = 1000, mean = 10, sd = 10)
+
+loge_Prior <- log(e_Prior)
+
+hist(d_Prior)
+hist(c_Prior)
+hist(e_Prior)#-60 is pretty unlikley, but not I think impossibel enouph. Maybe i coudl tighten this prior
+hist(loge_Prior)
+hist(b_Prior)
+hist(sigma_g_Prior)
+
+mu_y_Prior <- x * 0
+
+#Run the model just once to see if I am in the right ball park 
+for(i in 1:N){
+
+	mu_y_Prior[i] <- c_Prior + ((d_Prior - c_Prior)/(1+exp(b_Prior * (log(x[i]) - loge_Prior))))
+}
+
+hist(mu_y_Prior*-1)
+plot( (x-30),(mu_y_Prior*-1))
+
+#Check model to run prior check in stan using generated quantities 
+priorModel <- writeLines(readLines("stan/doseResponse_priorCheck.stan"))
+
+#thsi model uses the positive transfomed data!
+drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, warmup =  0, 
+	iter = 1000, chains = 1, cores = 1, algorithm="Fixed_param")
+
+priorCheck <- rstan::extract(drc_prior)
+
+hist(priorCheck$mu_y)
+hist(priorCheck$y_sim) # very few values above 0. That is good. 
+hist(priorCheck$ehat)
+hist(priorCheck$e)
+
+str(priorCheck$y_sim)
+meanSimY <- colMeans(priorCheck$y_sim) 
+quantsSimY <- apply( priorCheck$y_sim , 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremes <- quantsSimY[c(2, 5),]
+quaters <- quantsSimY[c(3, 4),]
+
+plottingDataPrior <- data.frame(t(quantsSimY) * -1)
+plottingDataPrior$MeanY <- meanSimY * -1
+plottingDataPrior$x <- plotingTempsCold
+
+
+priorTempsPlot <- ggplot(data = plottingDataPrior, aes(x = x, y = MeanY ))
+priorTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()
+
+hist(plottingDataPrior$MeanY)
+hist(plottingDataPrior$X95.)
+hist(plottingDataPrior$X5.)
+
+
+#Fit simulated data using my model (code from Betancourt course)
+#---------------------------------------
+simu_mu <- rstan::extract(drc_prior)$mu_y
+simu_ys <- rstan::extract(drc_prior)$y_sim
+str(drc_prior)
+
+
+
+tryCatch({
+  registerDoParallel(makeCluster(detectCores()))
+
+  simu_list <- t(data.matrix(data.frame(simu_mu, simu_ys)))
+
+  # Compile the posterior fit model
+  fit_model <- stan_model(file='stan/doseResponseSimple2.stan')
+
+  ensemble_output <- foreach(simu=simu_list,[1:20]
+                             .combine='cbind') %dopar% {
+    simu_lambda <- simu[1]
+    simu_y <- simu[2:(N + 1)];
+
+    # Fit the simulated observation
+    input_data <- list("N" = N, "y" = simu_y)
+
+    capture.output(library(rstan))
+    capture.output(fit <- sampling(fit_model, data=input_data, seed=4938483))
+
+    # Compute diagnostics
+    util <- new.env()
+    source('stan_utility.R', local=util)
+
+    warning_code <- util$check_all_diagnostics(fit, quiet=TRUE)
+
+    # Compute rank of prior draw with respect to thinned posterior draws
+    sbc_rank <- sum(simu_lambda < extract(fit)$lambda[seq(1, 4000 - 8, 8)])
+
+    # Compute posterior sensitivities
+    s <- summary(fit, probs = c(), pars='lambda')$summary
+    post_mean_lambda <- s[,1]
+    post_sd_lambda <- s[,3]
+
+    prior_sd_lambda <- 3.617414
+
+    z_score <- (post_mean_lambda - simu_lambda) / post_sd_lambda
+    contraction <- 1 - (post_sd_lambda / prior_sd_lambda)**2
+
+    c(warning_code, sbc_rank, z_score, contraction)
+  }
+}, finally={ stopImplicitCluster() })
+
+
+
+
+
+
+#Try a Stan model without hierarchical variation 
+#-------------------------------------------------------------
+
+
+x <- I(plotingTemps)
+y <- plottingLTE 
+N <- length(plotingTemps)
+
+stan_data_drs <- list(N = N, x = x, y = y)
+
+
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+
+#try the most similar model I can manage to teh one on https://discourse.mc-stan.org/t/dose-response-model-with-partial-pooling/13823
+
+
+writeLines(readLines("stan/doseResponseSimple2.stan"))
+
+#thsi used the positive transfomed data!
+drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 5000, 
+	iter = 7000, chains = 4, cores = 4, thin = 1)
+
+
+
+
+
+
+
+#thsi used the positive transfomed data!
+drc_simple2 <- stan(file = "stan/doseResponseSimple.stan", data = stan_data_drs, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+pairs(drc_simple)
+
+#not working well
+#teh model is having problems finding c and d, and is attributing then a lot of weight to grand sigma 
+
+
+#Try alowing maximum hardiness to vary ---------------
+#------------------------------------------
+
+#Simuate more data 
+
+
