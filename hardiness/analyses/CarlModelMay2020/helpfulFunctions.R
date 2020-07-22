@@ -157,7 +157,7 @@ finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTE
   tempscale <- IF1_v(temp4$daynum, temp4$tdiff) + IF2_v(temp4$daynum, temp4$tdiff) %>%
     as_tibble(tempscale = value) 
   
-  if(yearRange != "2015to16"){
+  if(yearRange != "2015to16" | yearRange != "2019to20" | yearRange != "2023to2024" | yearRange != "2027to2028" | yearRange != "2031to2032"){
     tempscale$value[133] <- 0 #accounts for non leap years
   }
   
@@ -231,17 +231,47 @@ finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTE
       value = tempscale,
       envir = environment()
     )
-    assign(
-      x = paste0("predLTE_combined_", yearRange),
-      value = tibble(
-        predLTE1 = temp1,
-        predLTE2 = temp2, 
-        predLTEfinal = temp3,
-        climate = temp4,
-        scale = tempscale
-      ),
-      envir = .GlobalEnv
+    
+#    if(yearRange == "2015to16" | yearRange == "2019to20" | yearRange == "2023to24" | yearRange == "2027to28" | yearRange == "2031to2032"){ #leap years
+        dates <- seq(as.Date(paste0(str_extract(yearRange, "20[0-9][0-9]"), "/10/20")), as.Date(paste0("20", gsub("20[0-9][0-9]to", "", yearRange), "/4/12")), "days")
+#    }else{
+#        dates <- c(as.character(seq(as.Date(paste0(str_extract(testRange, "20[0-9][0-9]"), "/10/20")), as.Date(paste0("20", gsub("20[0-9][0-9]to", "", testRange), "/2/28")), "days")),
+#                   paste0("20", gsub("20[0-9][0-9]to", "", testRange), "/02/29"),
+#                   as.character(seq(as.Date(paste0("20", gsub("20[0-9][0-9]to", "", testRange), "/3/1")), as.Date(paste0("20", gsub("20[0-9][0-9]to", "", testRange), "/4/12")), "days"))
+#        )
+#    }
+  if(yearRange == "2015to16" | yearRange == "2019to20" | yearRange == "2023to24" | yearRange == "2027to28" | yearRange == "2031to2032"){ #leap years
+    temp5 <- tibble(
+      "predLTE1" = temp1$predLTE1,
+      "predLTE2" = temp2$predLTE2,
+      "predLTE3" = temp3$predLTEfinal,
+      "daynum" = temp4$daynum,
+      "twoDayAvg" = temp4$twoDayAvg,
+      "tdiff" = temp4$tdiff,
+      "scale" = tempscale$value,
+      "date" = dates
     )
+  }else{
+    temp5 <- tibble(
+      "predLTE1" = temp1$predLTE1,
+      "predLTE2" = temp2$predLTE2,
+      "predLTE3" = temp3$predLTEfinal,
+      "daynum" = temp4$daynum,
+      "twoDayAvg" = temp4$twoDayAvg,
+      "tdiff" = temp4$tdiff,
+      "scale" = tempscale$value
+    ) %>%
+      filter(daynum != 133) %>%
+      mutate(date = dates)
+  }
+    
+      assign(
+      x = paste0("predLTE_combined_", yearRange),
+      value = temp5,
+      envir = .GlobalEnv
+      )
+    
+      
 }
 
 #                                    October 20th      October 20th        October 20th 
@@ -359,11 +389,13 @@ finalLTEpredictions_test <- function(initialPredLTE1, initialPredLTE2, initialPr
   assign(
     x = paste0("predLTE_test_combined_", yearRange),
     value = tibble(
-      predLTE1 = temp1,
-      predLTE2 = temp2,
-      predLTE3 = temp3,
-      climate = temp4,
-      scale = tempscale
+      "predLTE1" = temp1$predLTE1,
+      "predLTE2" = temp2$predLTE2,
+      "predLTE3" = temp3$predLTEfinal,
+      "daynum" = temp4$daynum,
+      "twoDayAvg" = temp4$twoDayAvg,
+      "tdiff" = temp4$tdiff,
+      "scale" = tempscale
     ),
     envir = .GlobalEnv
   )
@@ -451,4 +483,30 @@ calculate_Oct20th <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfi
   return(c(temp1$predLTE1[31], temp2$predLTE2[31], temp3$predLTEfinal[31]))
 }
 
+copyActualLTE <- function(yearRange, year1, year2){#have to change what you've copied each time you do this
+  dateRange <- seq(as.Date(paste0(2015, "-10-20")), as.Date(paste0(2016, "-4-12")), by = "days")
+  
+  clipboard <- readClipboard() #make sure to copy from October 20th to April 12th on each measured LTE column and copy 
+  grepHits <- grep("[0-9]+", clipboard)
+  measuredDates <- dateRange[grepHits]
+  
 
+    for(i in 1:length(measuredDates)){
+      if(str_detect(measuredDates[i], "2015")){
+      measuredDates[i] <- gsub("2015", year1, measuredDates[i])
+      }else{
+        measuredDates[i] <- gsub("2016", year2, measuredDates[i])
+      }
+    }
+  
+  measuredLTE <- readClipboard()[grepHits]
+  
+  df <- data.frame(date = measuredDates, LTE = parse_number(measuredLTE))
+  
+  assign(
+    x = paste0("measuredLTE_", yearRange),
+    value = df,
+    envir = .GlobalEnv
+  )
+  
+}
