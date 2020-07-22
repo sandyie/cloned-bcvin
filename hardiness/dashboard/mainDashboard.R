@@ -3,15 +3,15 @@
 
 library(tidyverse)
 
-setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/CarlModelMay2020")
+setwd("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/analyses/CarlModelMay2020")
 source("helpfulFunctions.R")
 source("magicNumbers.R")
 source("IFstatements.R")
-source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/dashboard/moreFunctions.R")
+source("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/dashboard/moreFunctions.R")
 
 
 ###Loading and preparing data for the model. 
-setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/input")
+setwd("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/analyses/input")
 
 climate1981to2010 <- read_csv("climhist_19812010.csv", col_names = FALSE)
 
@@ -30,17 +30,24 @@ CurrentMonth <- str_extract(Sys.Date(), "-[0-9]+-") %>% #if you want to change t
 CurrentYear <- str_extract(Sys.Date(), "[0-9][0-9][0-9][0-9]") %>%
   as.numeric()
 
-year1 <- 2012
+year1 <- 2013
 year2 <- 2019
 
-for(year in year1:year2){
+url_start <- "https://climate.weather.gc.ca/climate_data/daily_data_e.html?hlyRange=2012-01-01|2020-07-15&dlyRange=2012-05-10|2020-07-15&mlyRange=|&StationID=50269&Prov=BC&urlExtension=_e.html&searchType=stnName&optLimit=yearRange&StartYear=1840&EndYear=2020&selRowPerPage=50&Line=1&searchMethod=contains&Month="
+url_end <- "&Day=15&timeframe=2&Year="
+
+#this loop takes a little to long run. May need some tweaking with how the data is stored once implemented into the app
+for(year in year1:CurrentYear){ #retrieves data from 2013 up to yesterday 
+  if(year != CurrentYear){
   scrape_mean_penticton_temp(12, year)
-  combine_monthly_temps(12, CurrentYear - 1)
+  }else{
+  scrape_mean_penticton_temp(CurrentMonth, year)
+    }
+  combine_monthly_temps(12, year - 1)
 }
-scrape_mean_penticton_temp(CurrentMonth, CurrentYear) #this retrieves new data up to yesterday
-combine_monthly_temps(CurrentMonth, CurrentYear)
 
 combine_years_temps(2013, CurrentYear, CurrentMonth)
+
 dates <- as.data.frame(seq(as.Date("2013-01-01"), by = 1, len = nrow(meanTempsToDate)))
 colnames(dates)[1] <- "date"
 meanTempsToDate_1 <- meanTempsToDate %>%
@@ -89,7 +96,7 @@ for(i in 1:nrow(meanTempsToDate_dormancy)){
   }
 }
 
-meanTempsToDate_dormancy_1 <- bind_rows(meanTempsToDate_dormancy, feb29th1) 
+meanTempsToDate_dormancy_1 <- bind_rows(meanTempsToDate_dormancy, feb29th) 
 ###end loading data
 
 
@@ -268,4 +275,11 @@ predLTE_combined_2016to17
 predLTE_combined_2017to18
 predLTE_combined_2018to19
 
+#readClipboard()[readClipboard() != ""] much better than copy paste
+
+actualValues2013to14 <- data.frame(
+ date = c("2013-10-14", "2013-10-25", "2013-11-8", "2013-11-22", "2013-12-6", "2013-12-20", "2014-1-3", "2014-1-17", "2014-1-31", "2014-2-14", "2014-2-28", "2014-3-14", "2014-3-27"), 
+ LTE = c(-13.5, -13.9, -19.42, -22.87, -24.06, -24.09, -23.06, -23.00, -23.46, -22.60, -22.76, -17.62, -14.89 )
+)
+actualValues2014to15 <- readClipboard()[readClipboard() != ""]
 
