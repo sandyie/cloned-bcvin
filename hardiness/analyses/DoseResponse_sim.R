@@ -29,7 +29,7 @@ setwd("/home/faith/Documents/github/bcvin/bcvin/hardiness/analyses/")
 
 #Utilities writen by Michael Betancourt
 util <- new.env()
-source('stan_utility.R', local=util)
+source('fromCourseMB/stan_utility.R', local=util)
 
 
 #climate data
@@ -137,7 +137,7 @@ plot(bhclim$lte ~bhclim $meanC)
 #-------------------------------------------------
 
 #inputs
-nrep <- 200 # number of reps of each variety 
+nrep <- 500 # number of reps of each variety 
 meanTemp <- 4
 sigmaTemp <- 8
 simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
@@ -151,107 +151,27 @@ simTempsPos <- simTemps + 30
 
 b <- 11 #this is the rate paramater, like a slope in a linear regession 
 d <- 24 # maximum hardiness (inverted from -24)
-c <- 10 # minimum hardiness (inverted from -10)
+c <- 3 # minimum hardiness (inverted from -10)
 e <- 37 # Effective dose ED50. x value where y value is halfway bewteen max(d) and min (c)
+sigma_g <- 2
 
 x <- simTempsPos
 
 hardinessPos <- c + ( (d-c) / (1 + exp(b*(log(x)-log(e)))))
+eps <- rnorm(n = length(hardinessPos), mean = 0, sd = sigma_g)
+simLTEPos <- hardinessPos + eps
+
 hardiness <- (-1 * hardinessPos)
+simLTE <- simLTEPos * -1
 
-plot(hardinessPos ~ simTempsPos, pch = 16, col = 2, xlab = "Simulated temperatures plus 30", ylab = "winter hardiness * -1")#modefied positive  data
-plot(hardiness ~ simTemps, pch = 16, col = 3, xlab = "Simulated temperatures", ylab = "winter hardiness")#changed back to negative values
-
-#Try eith some varietiy level differences 
-
-nvariety <- 20
-varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
-
-bvarsigma <- 5
-bvars <- rtruncnorm(n = nvariety , mean = b, sd = bvarsigma)
-
-dvarsigma <- 0
-dvars <- rnorm(nvariety , d, dvarsigma)
-
-cvarsigma <- 0
-cvars <- rnorm(nvariety , c, cvarsigma)
-
-evarsigma <- 0
-evars <- rnorm(nvariety , e, evarsigma)
-
-#make a database to hold results
-varieties <- rep(varNames, each = nrep)
-airtemp <- rep(simTempsPos, times = nvariety)
-
-doseSimData <- data.frame(cbind(varieties, airtemp))
-
-doseSimData$ltePositive <- NA
-
-#loop through each variety
-for (i in 1:nvariety){
-	doseSimData$ltePositive[doseSimData$varieties == as.factor(i)] <- cvars[i] + ( (dvars[i]-cvars[i]) / (1 + exp(bvars[i]*(log(x)-log(evars[i])))))
-}
-
-#add some variation 
-gsigma <- 0.5
-doseSimData$eps <- rnorm(nrow(doseSimData), 0, gsigma)
-
-doseSimData$finalLTEPos <- doseSimData$ltePositive + doseSimData$eps 
-
-#add columns where data is not transformed to eb positive
-doseSimData$negLTE <- doseSimData$finalLTEPos*-1
-doseSimData$airtempCold <- doseSimData$airtemp - 30
-
-
-#make some data to plot the line mean model
-plotingTemps <- rnorm(100, meanTemp,sigmaTemp) + 30
-plotingTemps <- sort(plotingTemps)
-plotingTempsCold <- plotingTemps - 30
-
-plottingLTE <- (c + ( (d-c) / (1 + exp(b*(log(plotingTemps)-log(e)))))) * -1
-
-plot(doseSimData$negLTE ~ doseSimData$airtempCold, 
-	xlab = "air temp (degrees)", 
-	ylab = "LTE50 (degrees C)", 
-	pch = 16, 
-	col = 4,
-	main = "bsigma = 1, dsig = 0, csig = 0, esig = 5, gsig= 0.5")
-lines(plottingLTE ~ plotingTempsCold)
+plot(simLTEPos ~ simTempsPos, pch = 16, col = 2, xlab = "Simulated temperatures plus 30", ylab = "winter hardiness * -1")#modefied positive  data
+plot(simLTE ~ simTemps, pch = 16, col = 3, xlab = "Simulated temperatures", ylab = "winter hardiness")#changed back to negative values
 
 
 
 
 
-#Get sensible parameters by running a real dose response curve model on my data
-#--------------------------------------------------------------------------
-bhclim$ltePositive <- bhclim$lte * -1 # I want positive values?
-bhclim$meanC20 <- bhclim$meanC + 30 # make suer all temperatures are positive 
 
-drmHardiness <- drm(ltePositive  ~ meanC20, data = bhclim, fct = LL.4())
-summary(drmHardiness)
-plot(drmHardiness)
-
-predictedHardiness <- data.frame(predict(drmHardiness, newdata=expand.grid(simTempsPos), interval="confidence"))
-names(predictedHardiness)
-
-#Plot model results
-ggplot(bhclim, aes(x = meanC20, y = ltePositive)) +geom_point() +
-	geom_ribbon(data=predictedHardiness, aes(x=simTempsPos, y=Prediction, ymin=Lower, ymax=Upper), alpha=0.2) +
-	geom_line(data=predictedHardiness, aes(x=simTempsPos, y=Prediction))+
-	xlab("Air temp plus 30 degrees") + 
-	ylab("inverted hardiness (-LTE50)")
-
-predictedHardiness$PredictedNegative <- -1*predictedHardiness$Prediction
-predictedHardiness$LowerNegative <- -1*predictedHardiness$Lower
-predictedHardiness$UpperNegative <- -1*predictedHardiness$Upper
-
-#Plot model results with hardiness and air temp back how they were originally 
-ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
-	geom_ribbon(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative, ymin=LowerNegative, ymax=UpperNegative), alpha=0.2) +
-	geom_line(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative))+
-	xlab("Air temp (degrees C)") + 
-	ylab("cold hardiness (LTE50)") +
-	theme_classic()
 
 #
 #https://discourse.mc-stan.org/t/dose-response-model-with-partial-pooling/13823
@@ -324,9 +244,17 @@ ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
 	# d = the higher asymptote. Should be between -10 and -50 (10 and 50). Mean 30, sd 10. 
 	# c = the lower asymptote. should be between 0 and -5. 0 and 5. Mean 0, half normal, sd of 2.  
 	# b = teh response intensity. A scaler. SHoudl be positive, but not sure of values. From playing with values om going to say 10 plus/minus sd 5  
-	# e = x where y is half way between c and d. Should be centred around -15, plus/minus 10
+	# e = x where y is half way between c and d. Should be centred around mean of x, plus/minus 10. But goes in as log e, so need to consider that
 	# sigma_g = observation error from the gaussian process model. Not sure, but probably plus/minus 10 degrees?
 
+#Maybe I shoudl have a lognormal prior for c because I know that a minimum hardiness of exactly 0 is unlikely.
+# physiologically, green tissue is somewhat hardy to cold air temperatures
+logc_Prior<- rlnorm(1000, meanlog = 3, sdlog = 1)
+hist(log(logc_Prior)	)
+gammaCPrior <- rgamma(1000, shape = 3, rate = 1)
+hist(gammaCPrior)
+gammabPrior <- rgamma(1000, shape = 7, rate = 0.75)
+hist(gammabPrior)
 #Run a model with priors and simulate y values from it, so try and chose sensible priors
 
 #Data
@@ -335,23 +263,26 @@ N <- length(plotingTemps)
 
 stanData_priot_drs <- list(N = N, x = x)
 
+mean(x)
 
 #Plot each prior
 d_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 30, sd = 12)
 c_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 3, sd = 3)
-e_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 34, sd = 10)
+ehat_Prior <- rtruncnorm(n = 1000 ,a=0, mean = log(34), sd = 0.2)#this has to be a really small number for expinentials to match x values
 sigma_g_Prior <- rtruncnorm(n = 1000,a=0, mean = 0, sd = 2)
 b_Prior <- rnorm(n = 1000, mean = 10, sd = 10)
 
 loge_Prior <- log(e_Prior)
 
+
 hist(d_Prior)
 hist(c_Prior)
-hist(e_Prior)#-60 is pretty unlikley, but not I think impossibel enouph. Maybe i coudl tighten this prior
+hist(ehat_Prior)#-60 is pretty unlikley, but not I think impossibel enouph. Maybe i coudl tighten this prior
 hist(loge_Prior)
 hist(b_Prior)
 hist(sigma_g_Prior)
-
+hist(exp(ehat_Prior))
+hist(log(x))
 mu_y_Prior <- x * 0
 
 #Run the model just once to see if I am in the right ball park 
@@ -366,9 +297,11 @@ plot( (x-30),(mu_y_Prior*-1))
 #Check model to run prior check in stan using generated quantities 
 priorModel <- writeLines(readLines("stan/doseResponse_priorCheck.stan"))
 
+R <- 1000
 #thsi model uses the positive transfomed data!
-drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, warmup =  0, 
-	iter = 1000, chains = 1, cores = 1, algorithm="Fixed_param")
+drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, 
+	iter=R, warmup=0, chains=1, refresh=R,
+    seed=4838282, algorithm="Fixed_param")
 
 priorCheck <- rstan::extract(drc_prior)
 
@@ -400,68 +333,13 @@ hist(plottingDataPrior$X95.)
 hist(plottingDataPrior$X5.)
 
 
-#Fit simulated data using my model (code from Betancourt course)
+#Fit simulated data to my model using priors I checked above
 #---------------------------------------
-simu_mu <- rstan::extract(drc_prior)$mu_y
-simu_ys <- rstan::extract(drc_prior)$y_sim
-str(drc_prior)
 
 
-
-tryCatch({
-  registerDoParallel(makeCluster(detectCores()))
-
-  simu_list <- t(data.matrix(data.frame(simu_mu, simu_ys)))
-
-  # Compile the posterior fit model
-  fit_model <- stan_model(file='stan/doseResponseSimple2.stan')
-
-  ensemble_output <- foreach(simu=simu_list,[1:20]
-                             .combine='cbind') %dopar% {
-    simu_lambda <- simu[1]
-    simu_y <- simu[2:(N + 1)];
-
-    # Fit the simulated observation
-    input_data <- list("N" = N, "y" = simu_y)
-
-    capture.output(library(rstan))
-    capture.output(fit <- sampling(fit_model, data=input_data, seed=4938483))
-
-    # Compute diagnostics
-    util <- new.env()
-    source('stan_utility.R', local=util)
-
-    warning_code <- util$check_all_diagnostics(fit, quiet=TRUE)
-
-    # Compute rank of prior draw with respect to thinned posterior draws
-    sbc_rank <- sum(simu_lambda < extract(fit)$lambda[seq(1, 4000 - 8, 8)])
-
-    # Compute posterior sensitivities
-    s <- summary(fit, probs = c(), pars='lambda')$summary
-    post_mean_lambda <- s[,1]
-    post_sd_lambda <- s[,3]
-
-    prior_sd_lambda <- 3.617414
-
-    z_score <- (post_mean_lambda - simu_lambda) / post_sd_lambda
-    contraction <- 1 - (post_sd_lambda / prior_sd_lambda)**2
-
-    c(warning_code, sbc_rank, z_score, contraction)
-  }
-}, finally={ stopImplicitCluster() })
-
-
-
-
-
-
-#Try a Stan model without hierarchical variation 
-#-------------------------------------------------------------
-
-
-x <- I(plotingTemps)
-y <- plottingLTE 
-N <- length(plotingTemps)
+x <- I(simTempsPos)
+y <- simLTEPos # this data is simulated without variety variation  
+N <- length(simTempsPos)
 
 stan_data_drs <- list(N = N, x = x, y = y)
 
@@ -476,28 +354,249 @@ stan_data_drs <- list(N = N, x = x, y = y)
 writeLines(readLines("stan/doseResponseSimple2.stan"))
 
 #thsi used the positive transfomed data!
-drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 5000, 
+drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 4000, 
 	iter = 7000, chains = 4, cores = 4, thin = 1)
 
+drcPost <- rstan::extract(drc_simple)
+
+#how do the posteriors look?
+#pairs(drc_simple)
+
+#How does teh predicted data look?
+str(drcPost)
+mu_post <- drcPost$mu_y * -1
+hist(mu_post)
+plot(colMeans(mu_post) ~ simTemps)
+
+y_sim <- drcPost$y_sim * -1
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- simTemps
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = simTemps, y = simLTE))
 
 
 
 
+plot(colMeans(y_sim) ~ simTemps)
 
+
+#How do the predicted values compare to real parameter values? (plot hist with real parameter value)
+
+e_post <- exp(drcPost$ehat)
+hist(e_post)
+abline(v=e,col="red", lty = 2, lwd = 2)
+
+b_post <- drcPost$b
+hist(b_post)
+abline(v=b,col="red", lty = 2, lwd = 2)
+
+c_post <- drcPost$c
+hist(c_post)
+abline(v=c,col="red", lty = 2, lwd = 2)
+
+d_post <- drcPost$d
+hist(d_post)
+abline(v=d ,col="red", lty = 2, lwd = 2)
+
+sigma_post <- drcPost$sigma_g
+hist(sigma_post)
+abline(v=sigma_g,col="red", lty = 2, lwd = 2)
+
+#how does predicted data compare to real data (plot z scores) 
+
+# ------  get the z score for each value 
+
+meanMuPostY <- apply(y_sim, 2, mean)
+sdMuPostY <- apply(y_sim, 2, sd)
+
+zScoreY <-  (simLTE - meanMuPostY) / sdMuPostY
+
+plot(zScoreY ~ simLTE)
+plot(meanMuPostY ~ simLTE)
+
+
+#Try with real data
+#---------------------------------
+#remove na rows
+bhclimClean2 <- bhclim[!is.na(bhclim$lte),]
+
+realy <- bhclimClean2$lte * -1
+realx <- I(bhclimClean2 $meanC + 30)
+N <- length(realx)
+
+stan_data_drs_real <- list(N = N, x = realx, y = realy)
 
 #thsi used the positive transfomed data!
-drc_simple2 <- stan(file = "stan/doseResponseSimple.stan", data = stan_data_drs, warmup = 1000, 
-	iter = 2000, chains = 4, cores = 4, thin = 1)
-
-pairs(drc_simple)
-
-#not working well
-#teh model is having problems finding c and d, and is attributing then a lot of weight to grand sigma 
+drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs_real, warmup = 6000, 
+	iter = 8000, chains = 4, cores = 4, thin = 1)
 
 
-#Try alowing maximum hardiness to vary ---------------
-#------------------------------------------
-
-#Simuate more data 
 
 
+drcPost <- rstan::extract(drc_simple)
+
+#how do the posteriors look?
+#pairs(drc_simple)
+
+#How does teh predicted data look?
+str(drcPost)
+mu_post <- drcPost$mu_y * -1
+hist(mu_post)
+plot(colMeans(mu_post) ~ simTemps)
+
+y_sim <- drcPost$y_sim * -1
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- bhclimClean2 $meanC 
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = bhclimClean2 $meanC , y = bhclimClean2$lte ))
+
+
+
+plot(colMeans(y_sim) ~ simTemps)
+
+
+#How do the predicted values compare to real parameter values? (plot hist with real parameter value)
+
+e_post <- exp(drcPost$ehat)
+hist(e_post)
+abline(v=e,col="red", lty = 2, lwd = 2)
+
+b_post <- drcPost$b
+hist(b_post)
+abline(v=b,col="red", lty = 2, lwd = 2)
+
+c_post <- drcPost$c
+hist(c_post)
+abline(v=c,col="red", lty = 2, lwd = 2)
+
+d_post <- drcPost$d
+hist(d_post)
+abline(v=d ,col="red", lty = 2, lwd = 2)
+
+sigma_post <- drcPost$sigma_g
+hist(sigma_post)
+abline(v=sigma_g,col="red", lty = 2, lwd = 2)
+
+
+
+
+
+#--------------------------------------------------------
+#Try eith some varietiy level differences 
+#---------------------------------------------------
+
+nvariety <- 20
+varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
+
+bvarsigma <- 5
+bvars <- rtruncnorm(n = nvariety , mean = b, sd = bvarsigma)
+
+dvarsigma <- 0
+dvars <- rnorm(nvariety , d, dvarsigma)
+
+cvarsigma <- 0
+cvars <- rnorm(nvariety , c, cvarsigma)
+
+evarsigma <- 0
+evars <- rnorm(nvariety , e, evarsigma)
+
+#make a database to hold results
+varieties <- rep(varNames, each = nrep)
+airtemp <- rep(simTempsPos, times = nvariety)
+
+doseSimData <- data.frame(cbind(varieties, airtemp))
+
+doseSimData$ltePositive <- NA
+
+#loop through each variety
+for (i in 1:nvariety){
+	doseSimData$ltePositive[doseSimData$varieties == as.factor(i)] <- cvars[i] + ( (dvars[i]-cvars[i]) / (1 + exp(bvars[i]*(log(x)-log(evars[i])))))
+}
+
+#add some variation 
+doseSimData$eps <- rnorm(n = nrow(doseSimData), mean = 0, sd = sigma_g)
+
+doseSimData$finalLTEPos <- doseSimData$ltePositive + doseSimData$eps 
+
+#add columns where data is not transformed to eb positive
+doseSimData$negLTE <- doseSimData$finalLTEPos*-1
+doseSimData$airtempCold <- doseSimData$airtemp - 30
+
+
+#make some data to plot the line mean model
+plotingTemps <- rnorm(100, meanTemp,sigmaTemp) + 30
+plotingTemps <- sort(plotingTemps)
+plotingTempsCold <- plotingTemps - 30
+
+plottingLTE <- (c + ( (d-c) / (1 + exp(b*(log(plotingTemps)-log(e)))))) * -1
+
+plot(doseSimData$negLTE ~ doseSimData$airtempCold, 
+	xlab = "air temp (degrees)", 
+	ylab = "LTE50 (degrees C)", 
+	pch = 16, 
+	col = 4,
+	main = "bsigma = 1, dsig = 0, csig = 0, esig = 5, gsig= 0.5")
+lines(plottingLTE ~ plotingTempsCold)
+
+
+
+
+
+#Get sensible parameters by running a real dose response curve model on my data
+#--------------------------------------------------------------------------
+bhclim$ltePositive <- bhclim$lte * -1 # I want positive values?
+bhclim$meanC20 <- bhclim$meanC + 30 # make suer all temperatures are positive 
+
+drmHardiness <- drm(ltePositive  ~ meanC20, data = bhclim, fct = LL.4())
+summary(drmHardiness)
+plot(drmHardiness)
+
+predictedHardiness <- data.frame(predict(drmHardiness, newdata=expand.grid(simTempsPos), interval="confidence"))
+names(predictedHardiness)
+
+#Plot model results
+ggplot(bhclim, aes(x = meanC20, y = ltePositive)) +geom_point() +
+	geom_ribbon(data=predictedHardiness, aes(x=simTempsPos, y=Prediction, ymin=Lower, ymax=Upper), alpha=0.2) +
+	geom_line(data=predictedHardiness, aes(x=simTempsPos, y=Prediction))+
+	xlab("Air temp plus 30 degrees") + 
+	ylab("inverted hardiness (-LTE50)")
+
+predictedHardiness$PredictedNegative <- -1*predictedHardiness$Prediction
+predictedHardiness$LowerNegative <- -1*predictedHardiness$Lower
+predictedHardiness$UpperNegative <- -1*predictedHardiness$Upper
+
+#Plot model results with hardiness and air temp back how they were originally 
+ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
+	geom_ribbon(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative, ymin=LowerNegative, ymax=UpperNegative), alpha=0.2) +
+	geom_line(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative))+
+	xlab("Air temp (degrees C)") + 
+	ylab("cold hardiness (LTE50)") +
+	theme_classic()

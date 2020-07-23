@@ -11,26 +11,26 @@ data {
 }
 
 generated quantities {
+  
   // Simulate model configuration from prior model (get mu_y)
   vector[N] mu_y;                      // Simulated mean data from likelyhood 
   vector[N] y_sim;                           //Simulated Data
-  real b;                     // slope
+  real<lower = 0> b;                     // slope
   real<lower=0> c;                     // lower asymptote
   real<lower=0> d;                     // upper asymptote. Cant go below 
-  real<lower=0> e;                           //  x where y is half way between c and d, but logged in equation
+  real<lower=0> ehat;                           //  x where y is half way between c and d, but logged in equation
   real<lower=0> sigma_g; 
-  real<lower=0> ehat;
+  real<lower=0> e;
 
   // Priors on parameters
   // NOTE THE FABS IS ESSENTIAL FOR LOWER BOUND = 0, otherwise there will be lost of negative numbers 
-  c = fabs(normal_rng(3, 1));                    // centred around no hardiness, could be as high as -20
-  d = fabs(normal_rng(30, 5));               // centred around maximum hardiness, 10 sd 
-  e = fabs(normal_rng(34, 10));   // centred around roughly mean temperature (plus 100), sd 10
-  b = normal_rng(10, 10);                 // centred around o, not really sure of appropriate prior tbh  
+  c = fabs(gamma_rng(3, 1));                    // centred around no hardiness, could be as high as -20
+  d = fabs(normal_rng(25, 10));               // centred around maximum hardiness, 10 sd 
+  ehat = fabs(normal_rng(log(30), 0.1));   // centred around roughly mean temperature (plus 30, sd 0.2exp(0.2)
+  b = gamma_rng(7, 0.75);                 // centred around o, not really sure of appropriate prior tbh  
   sigma_g = fabs(normal_rng(0, 5));           // I have little concept of how much variation there shoudl be, thsi is a stab in the dark
 
-  ehat = log(e);
-  
+  e = exp(ehat);
   
   //liklyhood function 
   for (i in 1:N) {
