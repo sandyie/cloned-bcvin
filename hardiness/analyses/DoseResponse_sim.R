@@ -441,7 +441,7 @@ N <- length(realx)
 stan_data_drs_real <- list(N = N, x = realx, y = realy)
 
 #thsi used the positive transfomed data!
-drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs_real, warmup = 6000, 
+drc_simple_real <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs_real, warmup = 6000, 
 	iter = 8000, chains = 4, cores = 4, thin = 1)
 
 
@@ -481,6 +481,17 @@ postTempsPlot +
 
 
 plot(colMeans(y_sim) ~ simTemps)
+
+# ------  get the z score for each value 
+
+meanMuPostY <- apply(y_sim, 2, mean)
+sdMuPostY <- apply(y_sim, 2, sd)
+
+zScoreY <-  (bhclimClean2$lte  - meanMuPostY) / sdMuPostY
+
+plot(zScoreY ~ bhclimClean2$lte )
+plot(meanMuPostY ~ bhclimClean2$lte )
+
 
 
 #How do the predicted values compare to real parameter values? (plot hist with real parameter value)
