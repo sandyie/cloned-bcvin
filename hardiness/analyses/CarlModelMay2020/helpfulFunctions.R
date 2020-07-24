@@ -483,6 +483,7 @@ calculate_Oct20th <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfi
   return(c(temp1$predLTE1[31], temp2$predLTE2[31], temp3$predLTEfinal[31]))
 }
 
+#very useful if you don't want to manually enter ever single date / value combo from excel into R. Just make sure you select the "Actual Mean LTE" column in excel from the date range of 10-20 to 4-12. Also make sure to change the date range and the year1 and year2 parameters. This is most useful if used in the R terminal
 copyActualLTE <- function(yearRange, year1, year2){#have to change what you've copied each time you do this
   dateRange <- seq(as.Date(paste0(2015, "-10-20")), as.Date(paste0(2016, "-4-12")), by = "days")
   

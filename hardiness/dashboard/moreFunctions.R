@@ -41,6 +41,10 @@ scrape_mean_penticton_temp <- function(curr_month, input_year){
 }
 
 combine_monthly_temps <- function(endMonth, year){
+  if(year == CurrentYear){
+   endMonth <- CurrentMonth 
+  }
+  
   names <- c()
   for(index in 1:endMonth){
     assign(
@@ -49,7 +53,6 @@ combine_monthly_temps <- function(endMonth, year){
       envir = environment()
     )
   }
-  
   placeholder <- unlist(lapply(LETTERS[1:endMonth], get, envir = environment()))
   assign(
     x = paste0("meanTemps_upto_", endMonth, "_", year),
@@ -58,10 +61,10 @@ combine_monthly_temps <- function(endMonth, year){
   )
 }
 
-combine_years_temps <- function(startYear, currentYear, currentMonth){
+combine_years_temps <- function(startYear, endYear, currentMonth){
   index <- 1
-  for(i in startYear:currentYear){
-    if(i == currentYear){
+  for(i in startYear:endYear){
+    if(i == CurrentYear){
       assign(
         x = paste(LETTERS[index]),
         value = as.data.frame(get(paste0("meanTemps_upto_", currentMonth, "_", i), envir = .GlobalEnv)) 
@@ -85,7 +88,7 @@ combine_years_temps <- function(startYear, currentYear, currentMonth){
     index <- index + 1
     
   }
-  years <- startYear:currentYear
+  years <- startYear:endYear
   numYears <- length(years)
   
   placeholder <- as.data.frame(sapply(letters[1:numYears], get, envir = environment())) 
@@ -100,7 +103,7 @@ combine_years_temps <- function(startYear, currentYear, currentMonth){
   
   assign(
     x = paste0("meanTempsToDate"),
-    value = temp2,
+    value = temp1,
     envir = .GlobalEnv
   )
 }
@@ -110,3 +113,8 @@ combine_years_temps <- function(startYear, currentYear, currentMonth){
 add_date <- function(day, year){
   as.Date(day, paste0(year,"-01-01"))
 }
+
+#need to have a function where the current year that is read from the system is entered and it pretty much calls everything present in mainDashboard.R
+#this would be called daily from the linux server and would have up to date climate data from enviro canada
+  
+
