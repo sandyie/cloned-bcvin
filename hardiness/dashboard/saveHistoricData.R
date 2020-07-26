@@ -56,7 +56,7 @@ for(year in year1:CurrentYear){ #retrieves data from 2013 up to yesterday
   combine_monthly_temps(12, year)
 }
 
-combine_years_temps(2013, CurrentYear-1, CurrentMonth)
+combine_years_temps(2013, CurrentYear, CurrentMonth)
 
 dates <- as.data.frame(seq(as.Date("2013-01-01"), by = 1, len = nrow(meanTempsToDate)))
 colnames(dates)[1] <- "date"
@@ -195,20 +195,21 @@ estimatedLTE1 <- c(-1.35, -1.48, -1.63, -1.80, -2.00, -2.23, -2.48, -2.75, -3.05
 
 sept20 <- c(.29, -.5, 0, -2.6, .14, -.52, .29, .21) #pulled directly from Carl's model 
 
-GDDsums <- data.frame(GDD = c(rep(0,length(2013:(CurrentYear)))), year = 2013:(CurrentYear))
+GDDsums <- data.frame(GDD = c(rep(0,length(2013:(CurrentYear -1)))), year = 2013:(CurrentYear -1 ))
 index <- 1
 
-for(i in 2013:CurrentYear){
+###################WHY ZERO LENGTH INPUT
+
+for(i in 2013:(CurrentYear-1)){
   GDDsums$GDD[index] <- sum(unlist(aboveThresholdTemp_v(meanTempsToDate_1 %>% filter(year == i) %>% select(twoDayAvg) %>% .[[1]], 10)))
-  
-GDDsums$year[index] <- i
+
 index <- index + 1
 }
 
 averageGDD <- mean(GDDsums$GDD) 
 
 Sep20_yearly <- data.frame("sep20" = calculate_Sep20_v(averageGDD, GDDsums$GDD),
-                           "year" = c(2013:CurrentYear))
+                           "year" = 2013:(CurrentYear - 1))
 
 Oct20s_df <- data.frame(MyOct20 = c(rep(0, length(2013:(CurrentYear - 1)))), year = 2013:(CurrentYear-1))
 index2 <- 1
@@ -222,21 +223,21 @@ for(i in 2013:(CurrentYear - 1)){
 
 #####these only need to be ran once to get the and then store it into a CSV
 #####stored in hardiness/dashboard/historicLTEdata
-#finalLTEpredictions(Oct20s_df$MyOct20[1], Oct20s_df$MyOct20[1], Oct20s_df$MyOct20[1], "2013to14") 
-#finalLTEpredictions(Oct20s_df$MyOct20[2], Oct20s_df$MyOct20[2], Oct20s_df$MyOct20[2], "2014to15")
-#finalLTEpredictions(Oct20s_df$MyOct20[3], Oct20s_df$MyOct20[3], Oct20s_df$MyOct20[3], "2015to16")
-#finalLTEpredictions(Oct20s_df$MyOct20[4], Oct20s_df$MyOct20[4], Oct20s_df$MyOct20[4], "2016to17")
-#finalLTEpredictions(Oct20s_df$MyOct20[5], Oct20s_df$MyOct20[5], Oct20s_df$MyOct20[5], "2017to18")
-#finalLTEpredictions(Oct20s_df$MyOct20[6], Oct20s_df$MyOct20[6], Oct20s_df$MyOct20[6], "2018to19")
-#finalLTEpredictions(Oct20s_df$MyOct20[7], Oct20s_df$MyOct20[7], Oct20s_df$MyOct20[7], "2019to20") #this function may need to be edited to account for a non exact dataframe length of 176
+finalLTEpredictions(Oct20s_df$MyOct20[1], Oct20s_df$MyOct20[1], Oct20s_df$MyOct20[1], "2013to14") 
+finalLTEpredictions(Oct20s_df$MyOct20[2], Oct20s_df$MyOct20[2], Oct20s_df$MyOct20[2], "2014to15")
+finalLTEpredictions(Oct20s_df$MyOct20[3], Oct20s_df$MyOct20[3], Oct20s_df$MyOct20[3], "2015to16")
+finalLTEpredictions(Oct20s_df$MyOct20[4], Oct20s_df$MyOct20[4], Oct20s_df$MyOct20[4], "2016to17")
+finalLTEpredictions(Oct20s_df$MyOct20[5], Oct20s_df$MyOct20[5], Oct20s_df$MyOct20[5], "2017to18")
+finalLTEpredictions(Oct20s_df$MyOct20[6], Oct20s_df$MyOct20[6], Oct20s_df$MyOct20[6], "2018to19")
+finalLTEpredictions(Oct20s_df$MyOct20[7], Oct20s_df$MyOct20[7], Oct20s_df$MyOct20[7], "2019to20") 
 
-#write.csv(predLTE_combined_2013to14, "predLTE_combined_2013to14.csv")
-#write.csv(predLTE_combined_2014to15, "predLTE_combined_2014to15.csv") 
-#write.csv(predLTE_combined_2015to16, "predLTE_combined_2015to16.csv") 
-#write.csv(predLTE_combined_2016to17, "predLTE_combined_2016to17.csv") 
-#write.csv(predLTE_combined_2017to18, "predLTE_combined_2017to18.csv") 
-#write.csv(predLTE_combined_2018to19, "predLTE_combined_2018to19.csv") 
-#write.csv(predLTE_combined_2019to20, "predLTE_combined_2019to20.csv")
+write.csv(predLTE_combined_2013to14, "predLTE_combined_2013to14.csv")
+write.csv(predLTE_combined_2014to15, "predLTE_combined_2014to15.csv") 
+write.csv(predLTE_combined_2015to16, "predLTE_combined_2015to16.csv") 
+write.csv(predLTE_combined_2016to17, "predLTE_combined_2016to17.csv") 
+write.csv(predLTE_combined_2017to18, "predLTE_combined_2017to18.csv") 
+write.csv(predLTE_combined_2018to19, "predLTE_combined_2018to19.csv") 
+write.csv(predLTE_combined_2019to20, "predLTE_combined_2019to20.csv")
 
 #####
 
@@ -260,3 +261,4 @@ measuredLTE_2018to19 <- tibble(date = as.Date(c("2018-11-06", "2018-11-20", "201
                                    LTE = c(-17.52, -23.3, -23.78, -23.85, -24.69, -24.02, -24.79, -25.18, -25.33, -24.65, -16.97, -10.72))
 measuredLTE_2019to20 <- tibble(date = as.Date(c("2019-10-24", "2019-11-07", "2019-11-21", "2019-12-05", "2019-12-19", "2020-01-07", "2020-01-17", "2020-01-30", "2020-02-13", "2020-02-27", "2020-03-12", "2020-03-26"), format = "%Y-%m-%d"),
                                    LTE = c(-17.4, -21.19, -22.2, -24.4, -24.12, -23.34, -24.31, -22.8, -22.45, -21.31, -18.16, -15.83))
+

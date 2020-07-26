@@ -123,22 +123,22 @@ calculate_Sep20_v <- Vectorize(calculate_Sep20)
 finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTEfinal, yearRange){#yearRange == "2012to13" "2013to14" etc up to "2018to19"
 
   
-  predLTE1 <- tibble(predLTE1 = c(initialPredLTE1, rep(0, 175)))
+  predLTE1 <- tibble(predLTE1 = c(initialPredLTE1, rep(NA, 175)))
   assign(
     x = paste0("predLTE1_", yearRange),
-    value = tibble(predLTE1 = c(initialPredLTE1, rep(0, 175))),
+    value = tibble(predLTE1 = c(initialPredLTE1, rep(NA, 175))),
     envir = environment() #global environment for ease of checking. I guess it doesn't necessarily need to be outside of the current scope. Just nice to reference
   )
   
   assign(
     x = paste0("predLTE2_", yearRange),
-    value = tibble(predLTE2 = c(initialPredLTE2, rep(0, 175))),
+    value = tibble(predLTE2 = c(initialPredLTE2, rep(NA, 175))),
     envir = environment()
   ) 
   
   assign(
     x = paste0("predLTEfinal_", yearRange),
-    value = tibble(predLTEfinal = c(initialPredLTEfinal, rep(0, 175))),
+    value = tibble(predLTEfinal = c(initialPredLTEfinal, rep(NA, 175))),
     envir = environment()
   ) 
   
@@ -233,7 +233,11 @@ finalLTEpredictions <- function(initialPredLTE1, initialPredLTE2, initialPredLTE
     )
     
 #    if(yearRange == "2015to16" | yearRange == "2019to20" | yearRange == "2023to24" | yearRange == "2027to28" | yearRange == "2031to2032"){ #leap years
+    if(yearRange != "Current"){
         dates <- seq(as.Date(paste0(str_extract(yearRange, "20[0-9][0-9]"), "/10/20")), as.Date(paste0("20", gsub("20[0-9][0-9]to", "", yearRange), "/4/12")), "days")
+    }else{
+        dates <- seq(as.Date(paste0(str_extract(yearRange, "20[0-9][0-9]"), "/10/20")), as.Date(paste0("20", gsub("20[0-9][0-9]to", "", yearRange), "/4/12")), "days")
+      }
 #    }else{
 #        dates <- c(as.character(seq(as.Date(paste0(str_extract(testRange, "20[0-9][0-9]"), "/10/20")), as.Date(paste0("20", gsub("20[0-9][0-9]to", "", testRange), "/2/28")), "days")),
 #                   paste0("20", gsub("20[0-9][0-9]to", "", testRange), "/02/29"),
