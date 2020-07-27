@@ -322,7 +322,10 @@ Priors:
 \subsection{Dose Response Curve}
 
 \begin{equation*}
-f(x, (b,c,d,e)) = c + \frac{d-c}{1 + e^{b(log(x) - \~e)}}
+\mu=f(x,(b,c,d,e))=c+\frac{d-c}{1+e^{b(log(x)-\tilde{e})}}
+\end{equation*}
+\begin{equation*}
+\tilde{y}_{i}\sim normal(\mu_{i},\sigma)
 \end{equation*}
 
 Where:\\
@@ -331,7 +334,15 @@ Where:\\
 	$d$ is the upper asymptote of the response (maximum hardiness)\\
 	$b$ is the lower asymptote of the response (minimum hardiness)\\
 	$e$ is the effective dose ED50 (winter temperature where cold hardiness is half way between min and max)  \\
-	$\~e$ is the log of the effective dose ED50\\
+	$\tilde{e}$ is the log of the effective dose ED50\\
+
+Priors (hardiness has been multipled with -1 to be positive, and 30 has been added to air temp)
+	$b \sim gamma(7,0.75)$\\
+	$d \sim Normal(25, 10)$ \\
+	$c \sim gamma(3,1)$\\
+	$\tilde{e} \sim normal(log(30), 0.1)$ \\
+	$\sigma \sim normal(0,5)$
+
 
 
 \bibliographystyle{/home/faith/Documents/Bibtex/styles/besjournals/besjournals}
