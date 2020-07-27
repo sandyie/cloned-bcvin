@@ -170,6 +170,38 @@ plot(simLTE ~ simTemps, pch = 16, col = 3, xlab = "Simulated temperatures", ylab
 
 
 
+#Get sensible parameters by running a real dose response curve model on my data
+#--------------------------------------------------------------------------
+bhclim$ltePositive <- bhclim$lte * -1 # I want positive values?
+bhclim$meanC20 <- bhclim$meanC + 30 # make suer all temperatures are positive 
+
+drmHardiness <- drm(ltePositive  ~ meanC20, data = bhclim, fct = LL.4())
+summary(drmHardiness)
+plot(drmHardiness)
+
+predictedHardiness <- data.frame(predict(drmHardiness, newdata=expand.grid(simTempsPos), interval="confidence"))
+names(predictedHardiness)
+
+#Plot model results
+ggplot(bhclim, aes(x = meanC20, y = ltePositive)) +geom_point() +
+	geom_ribbon(data=predictedHardiness, aes(x=simTempsPos, y=Prediction, ymin=Lower, ymax=Upper), alpha=0.2) +
+	geom_line(data=predictedHardiness, aes(x=simTempsPos, y=Prediction))+
+	xlab("Air temp plus 30 degrees") + 
+	ylab("inverted hardiness (-LTE50)")
+
+predictedHardiness$PredictedNegative <- -1*predictedHardiness$Prediction
+predictedHardiness$LowerNegative <- -1*predictedHardiness$Lower
+predictedHardiness$UpperNegative <- -1*predictedHardiness$Upper
+
+#Plot model results with hardiness and air temp back how they were originally 
+ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
+	geom_ribbon(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative, ymin=LowerNegative, ymax=UpperNegative), alpha=0.2) +
+	geom_line(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative))+
+	xlab("Air temp (degrees C)") + 
+	ylab("cold hardiness (LTE50)") +
+	theme_classic()
+
+
 
 
 
@@ -520,17 +552,24 @@ abline(v=sigma_g,col="red", lty = 2, lwd = 2)
 
 
 
+
+
+
+
 #--------------------------------------------------------
-#Try eith some varietiy level differences 
+#Try eith some varietiy level differences on Maximum hardiness
 #---------------------------------------------------
 
+# here I am focusing on maximum hardiness first because this value is recorded to vary between varieties
+
+#simulate data
 nvariety <- 20
 varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
 
-bvarsigma <- 5
+bvarsigma <- 0
 bvars <- rtruncnorm(n = nvariety , mean = b, sd = bvarsigma)
 
-dvarsigma <- 0
+dvarsigma <- 5
 dvars <- rnorm(nvariety , d, dvarsigma)
 
 cvarsigma <- 0
@@ -578,36 +617,41 @@ plot(doseSimData$negLTE ~ doseSimData$airtempCold,
 lines(plottingLTE ~ plotingTempsCold)
 
 
+str(doseSimData)
+
+#Prior checks
+#---------------------------
+
+
+doseSimData$varieties
+R <- 1000
+
+x <- I(doseSimData$airtemp )
+N <- length(x)
+
+variety <- doseSimData$varieties
+n_vars <- length(variety)
+
+
+stanData_priot_drs_hd <- list(N = N, x = x, variety = variety, n_vars = n_vars)
+
+drc_prior_hd <- stan(file = "stan/doseResponse_priorCheck_vars.stan", data = stanData_priot_drs_hd, 
+	iter=R, warmup=0, chains=1, refresh=R,
+    seed=4838282, algorithm="Fixed_param")
+
+#Run with simulated data 
+#------------------------------------------------
+
+x <- I(doseSimData$airtemp )
+N <- length(x)
+y <- doseSimData$ltePositive
+
+variety <- doseSimData$varieties
+n_vars <- length(variety)
+
+stanData_drs_hd <- list(N = N, x = x, y = y, variety = variety, n_vars = n_vars)
 
 
 
-#Get sensible parameters by running a real dose response curve model on my data
-#--------------------------------------------------------------------------
-bhclim$ltePositive <- bhclim$lte * -1 # I want positive values?
-bhclim$meanC20 <- bhclim$meanC + 30 # make suer all temperatures are positive 
 
-drmHardiness <- drm(ltePositive  ~ meanC20, data = bhclim, fct = LL.4())
-summary(drmHardiness)
-plot(drmHardiness)
 
-predictedHardiness <- data.frame(predict(drmHardiness, newdata=expand.grid(simTempsPos), interval="confidence"))
-names(predictedHardiness)
-
-#Plot model results
-ggplot(bhclim, aes(x = meanC20, y = ltePositive)) +geom_point() +
-	geom_ribbon(data=predictedHardiness, aes(x=simTempsPos, y=Prediction, ymin=Lower, ymax=Upper), alpha=0.2) +
-	geom_line(data=predictedHardiness, aes(x=simTempsPos, y=Prediction))+
-	xlab("Air temp plus 30 degrees") + 
-	ylab("inverted hardiness (-LTE50)")
-
-predictedHardiness$PredictedNegative <- -1*predictedHardiness$Prediction
-predictedHardiness$LowerNegative <- -1*predictedHardiness$Lower
-predictedHardiness$UpperNegative <- -1*predictedHardiness$Upper
-
-#Plot model results with hardiness and air temp back how they were originally 
-ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
-	geom_ribbon(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative, ymin=LowerNegative, ymax=UpperNegative), alpha=0.2) +
-	geom_line(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative))+
-	xlab("Air temp (degrees C)") + 
-	ylab("cold hardiness (LTE50)") +
-	theme_classic()
