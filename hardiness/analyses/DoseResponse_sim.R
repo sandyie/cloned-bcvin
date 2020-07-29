@@ -14,6 +14,8 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(drc)
+library(shinystan)
+
 
 library(foreach)
 library(doParallel)
@@ -331,9 +333,9 @@ priorModel <- writeLines(readLines("stan/doseResponse_priorCheck.stan"))
 
 R <- 1000
 #thsi model uses the positive transfomed data!
-drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, 
-	iter=R, warmup=0, chains=1, refresh=R,
-    seed=4838282, algorithm="Fixed_param")
+#drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, 
+#	iter=R, warmup=0, chains=1, refresh=R,
+#    seed=4838282, algorithm="Fixed_param")
 
 priorCheck <- rstan::extract(drc_prior)
 
@@ -386,8 +388,8 @@ stan_data_drs <- list(N = N, x = x, y = y)
 writeLines(readLines("stan/doseResponseSimple2.stan"))
 
 #thsi used the positive transfomed data!
-drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 4000, 
-	iter = 7000, chains = 4, cores = 4, thin = 1)
+#drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 4000, 
+#	iter = 7000, chains = 4, cores = 4, thin = 1)
 
 drcPost <- rstan::extract(drc_simple)
 
@@ -555,10 +557,30 @@ abline(v=sigma_g,col="red", lty = 2, lwd = 2)
 
 
 
-
 #--------------------------------------------------------
 #Try eith some varietiy level differences on Maximum hardiness
 #---------------------------------------------------
+
+
+#inputs
+nrep <- 50 # number of reps of each variety 
+meanTemp <- 4
+sigmaTemp <- 8
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+
+
+#make temperatures positive because teh x value cant be negative. I do this by adding 20 to the data
+# I will also model teh hardiness resonse as inverted sp plants get a higher number as they get more cold hardy rather than a more negative number
+simTempsPos <- simTemps + 30
+
+#Set model parameters - I have no idea what they should be so I will run a similar model in R (below)
+
+b <- 11 #this is the rate paramater, like a slope in a linear regession 
+d <- 24 # maximum hardiness (inverted from -24)
+c <- 3 # minimum hardiness (inverted from -10)
+e <- 37 # Effective dose ED50. x value where y value is halfway bewteen max(d) and min (c)
+sigma_g <- 2
+
 
 # here I am focusing on maximum hardiness first because this value is recorded to vary between varieties
 
@@ -571,6 +593,7 @@ bvars <- rtruncnorm(n = nvariety , mean = b, sd = bvarsigma)
 
 dvarsigma <- 5
 dvars <- rnorm(nvariety , d, dvarsigma)
+dvarsi <- rep(dvars, each = nrep)
 
 cvarsigma <- 0
 cvars <- rnorm(nvariety , c, cvarsigma)
@@ -587,8 +610,8 @@ doseSimData <- data.frame(cbind(varieties, airtemp))
 doseSimData$ltePositive <- NA
 
 #loop through each variety
-for (i in 1:nvariety){
-	doseSimData$ltePositive[doseSimData$varieties == as.factor(i)] <- cvars[i] + ( (dvars[i]-cvars[i]) / (1 + exp(bvars[i]*(log(x)-log(evars[i])))))
+for (i in 1:length(doseSimData$ltePositive)){
+	doseSimData$ltePositive[i] <- c + ( (dvarsi[i]-c) / (1 + exp(b*(log(airtemp[i])-log(e)))))
 }
 
 #add some variation 
@@ -597,9 +620,10 @@ doseSimData$eps <- rnorm(n = nrow(doseSimData), mean = 0, sd = sigma_g)
 doseSimData$finalLTEPos <- doseSimData$ltePositive + doseSimData$eps 
 
 #add columns where data is not transformed to eb positive
-doseSimData$negLTE <- doseSimData$finalLTEPos*-1
+doseSimData$negLTE <- doseSimData$finalLTEPos *-1
 doseSimData$airtempCold <- doseSimData$airtemp - 30
 
+hist(dvarsi)
 
 #make some data to plot the line mean model
 plotingTemps <- rnorm(100, meanTemp,sigmaTemp) + 30
@@ -608,12 +632,15 @@ plotingTempsCold <- plotingTemps - 30
 
 plottingLTE <- (c + ( (d-c) / (1 + exp(b*(log(plotingTemps)-log(e)))))) * -1
 
+head(doseSimData)
+
+
 plot(doseSimData$negLTE ~ doseSimData$airtempCold, 
 	xlab = "air temp (degrees)", 
 	ylab = "LTE50 (degrees C)", 
 	pch = 16, 
 	col = 4,
-	main = "bsigma = 1, dsig = 0, csig = 0, esig = 5, gsig= 0.5")
+	main = "bsigma = 1, dsig = 5, csig = 0, esig = 0, gsig= 5")
 lines(plottingLTE ~ plotingTempsCold)
 
 
@@ -622,6 +649,8 @@ str(doseSimData)
 #Prior checks
 #---------------------------
 
+gammadVarPrior <- rgamma(1000, shape = 2.5, rate = 1.75)
+hist(gammadVarPrior)
 
 doseSimData$varieties
 R <- 1000
@@ -639,19 +668,130 @@ drc_prior_hd <- stan(file = "stan/doseResponse_priorCheck_vars.stan", data = sta
 	iter=R, warmup=0, chains=1, refresh=R,
     seed=4838282, algorithm="Fixed_param")
 
+
+
+priorCheckhd <- rstan::extract(drc_prior_hd)
+
+hist(priorCheckhd$mu_y)
+hist(priorCheckhd$y_sim) # very few values above 0. That is good. 
+hist(priorCheckhd$ehat)
+hist(priorCheckhd$e)
+hist(priorCheckhd$d_var_sigma)
+
+meanSimYhd <- colMeans(priorCheckhd$y_sim) 
+quantsSimYhd <- apply( priorCheckhd$y_sim , 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremeshd <- quantsSimYhd[c(2, 5),]
+quatershd <- quantsSimYdh[c(3, 4),]
+
+plottingDataPriorhd <- data.frame(t(quantsSimYhd) * -1)
+plottingDataPriorhd$MeanY <- meanSimYhd * -1
+plottingDataPriorhd$x <- plotingTempsColdhd
+
+
+priorTempsPlothd <- ggplot(data = plottingDataPriorhd, aes(x = x, y = MeanY ))
+priorTempsPlothd + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()
+
+hist(plottingDataPriorhd$MeanY)
+hist(plottingDataPriorhd$X95.)
+hist(plottingDataPriorhd$X5.)
+
+
+
+
 #Run with simulated data 
 #------------------------------------------------
 
+head(doseSimData)
 x <- I(doseSimData$airtemp )
 N <- length(x)
-y <- doseSimData$ltePositive
+y <- doseSimData$finalLTEPos 
 
 variety <- doseSimData$varieties
 n_vars <- length(variety)
 
 stanData_drs_hd <- list(N = N, x = x, y = y, variety = variety, n_vars = n_vars)
 
+#thsi used the positive transfomed data!
+drc_hd <- stan(file = "stan/doseResponsedVar.stan", data = stanData_drs_hd, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+str(drc_hd)
+#pairs(drc_hd, pars = c("c", "d", "b", "ehat", "d_var_sigma", "sigma_g", "mu_y")) - gettinga  plotting error 
+#plot(drc_hd)
+drc_hd_fit <-  rstan::extract(drc_hd)
+str(drc_hd_fit)
+
+plot(drc_hd_fit$b)
+hist(drc_hd_fit$b)
+abline(v=b ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$c )
+hist(drc_hd_fit$c )
+abline(v=c,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$ehat)
+hist(exp(drc_hd_fit$ehat))
+abline(v=e ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$d )
+hist(drc_hd_fit$d )
+abline(v=d ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$d_var_sigma)
+hist(drc_hd_fit$d_var_sigma )
+abline(v=dvarsigma ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$mu_y)
+hist(drc_hd_fit$mu_y )
+
+plot(drc_hd_fit$b ~ drc_hd_fit$c)
+plot(drc_hd_fit$b ~ drc_hd_fit$ehat )
+plot(drc_hd_fit$b ~ drc_hd_fit$d )
+plot(drc_hd_fit$b ~ drc_hd_fit$sigma_g)
+plot(drc_hd_fit$b ~ drc_hd_fit$d_var_sigma)
+
+plot(drc_hd_fit$ehat ~ drc_hd_fit$c )
+plot(drc_hd_fit$ehat ~ drc_hd_fit$d )
+plot(drc_hd_fit$ehat ~ drc_hd_fit$sigma_g)
+plot(drc_hd_fit$ehat ~ drc_hd_fit$d_var_sigma)
+
+plot(drc_hd_fit$d ~ drc_hd_fit$b )
+plot(drc_hd_fit$d  ~ drc_hd_fit$sigma_g)
+plot(drc_hd_fit$d ~ drc_hd_fit$d_var_sigma)
+
+pairs(drc_hd_fit)
 
 
+str(drc_hd_fit)
+pairs(drc_hd, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "lp__")) 
+
+str(drc_hd)
+
+#explore post retrodictive values
+meanYs <- colMeans(drc_hd_fit$y_sim) * -1
+quantsYs <- apply( drc_hd_fit$y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesYs <- data.frame(t(quantsYs[c(2, 5),]* -1)) # chaneg back to negative values 
+quatersPYs <- quantsYs[c(3, 4),]* -1 
+
+plottingDataPost2 <- data.frame(t(quatersPYs))
+plottingDataPost2$MeanY <- meanYs 
+plottingDataPost2$x <- doseSimData$airtempCold 
+
+plottingDataPost2$X5. <- extremesYs$X5.
+plottingDataPost2$X95. <- extremesYs$X95.
 
 
+postTempsPlot2 <- ggplot(data = plottingDataPost2, aes(x = x, y = MeanY ))
+postTempsPlot2 + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = doseSimData$airtempCold  , y = doseSimData$negLTE))
+
+
+plot(meanYs ~ doseSimData$negLTE)

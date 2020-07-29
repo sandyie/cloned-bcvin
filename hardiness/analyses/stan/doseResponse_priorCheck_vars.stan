@@ -41,7 +41,7 @@ generated quantities {
   e = exp(ehat);
   
   //level 2
-  d_var_sigma = fabs(normal_rng(0, 5));
+  d_var_sigma = fabs(gamma_rng(2.5, 1.75));
   for (n in 1:n_vars){
     var_d[n] = fabs(normal_rng(0, d_var_sigma)); //prior for the effect of variety on slope 
   }
