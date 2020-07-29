@@ -1,0 +1,30 @@
+\documentclass[12pt]{letter}
+
+% based on template from http://uk.tug.org/wp-installed-content/uploads/2008/12/mail-merge-template1.tex
+
+\usepackage[avery5160label, nocapaddress]{envlab}
+\usepackage{datatool}
+\makelabels
+
+\DTLloaddb{plantID}{brixlabelsheet.csv}
+
+%\address{vineyard \\ block \\ row \\ plantID} %this was in instructions but would not compile
+
+\begin{document}
+
+\DTLforeach{plantID}{
+	\title =vineyard,
+	\firstname =block,
+	\lastname =row.number,
+	\addressI =plantID% %need the comment sign at the end so latex doesn't think there's a space
+	} {
+	\begin{letter} {
+	\title \\
+	Block \firstname, row \# \lastname \\
+	PlantID \# \addressI \\
+	}
+\end{letter}
+}
+
+
+\end{document}
