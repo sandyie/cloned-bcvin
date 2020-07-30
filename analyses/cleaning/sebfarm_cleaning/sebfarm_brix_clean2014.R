@@ -45,7 +45,21 @@ SebF2014 <- select(SebF2014, vineyard, everything())
 SebF2014 <- select(SebF2014, company, everything())
 SebF2014 <- select(SebF2014, -notes, notes)
 
-#Export Final Output
-#setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
-#write.csv(SebF2014, "sebfarm_brix_clean2014.csv", row.names = F)
+#Deriving the vineyard from the code entered in block, and isolating the block
+SebF2014$block <- gsub("^\\*", "", SebF2014$block) #removing asterix
+SebF2014$vineyard <- paste(SebF2014$vineyard, SebF2014$block, sep = "") #pasting block value to vineyard
+SebF2014$block <- gsub("[0-9]+", "", SebF2014$block) #removing vineyard digits to isolate block
 
+#isolating vineyard numbers
+for(i in 1:nrow(SebF2014)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2014[i, "block"]))){
+    SebF2014$vineyard[i] <- gsub("[a-zA-Z]", "", SebF2014$vineyard[i])
+  } 
+}
+
+#isolating block IDs
+for(i in 1:nrow(SebF2014)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2014[i, "block"]))){
+    SebF2014$block[i] <- gsub("^.{0,2}", "", SebF2014$block[i])
+  } 
+}

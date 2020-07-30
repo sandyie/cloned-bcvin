@@ -9,7 +9,7 @@ library(tidyverse)
 library(lubridate)
 
 #Reading in csv files
-SebFarms_Brix <- read.csv("2018_SebFarms_Brix.csv", header=TRUE, na.strings=c(""," ","NA"))
+SebFarms_Brix <- read.csv("2018_SebFarms_Brix.csv", header=TRUE)
 head(SebFarms_Brix)
 
 #Add columns: notes
@@ -48,8 +48,3 @@ SebF2018 <- pivot_longer(SebF2018, #tidyr
 #Reordering column names : #unique columns (time, code ID, product, calculated/potassium?) ask EW
 #"company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"
 SebF2018 <- select(SebF2018, -notes, notes)
-
-#Export Final Output
-#setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
-#write.csv(SebF2018, "sebfarm_brix_clean2018.csv", row.names = F)
-

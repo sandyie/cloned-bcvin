@@ -1,8 +1,8 @@
 ########################## 2004_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
-#rm(list=ls())
-#options(stringsAsFactors = FALSE)
+rm(list=ls())
+options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/input/sebastianfarms/brix/")
 library(tidyverse) 
@@ -45,6 +45,21 @@ SebF2004 <- select(SebF2004, vineyard, everything())
 SebF2004 <- select(SebF2004, company, everything())
 SebF2004 <- select(SebF2004, -notes, notes)
 
-#Export Final Output
-#setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
-#write.csv(SebF2004, "sebfarm_brix_clean2004.csv", row.names = F)
+#Deriving the vineyard from the code entered in block, and isolating the block
+SebF2004$block <- gsub("^\\*", "", SebF2004$block) #removing asterix
+SebF2004$vineyard <- paste(SebF2004$vineyard, SebF2004$block, sep = "") #pasting block value to vineyard
+SebF2004$block <- gsub("[0-9]+", "", SebF2004$block) #removing vineyard digits to isolate block
+
+  #isolating vineyard numbers
+    for(i in 1:nrow(SebF2004)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2004[i, "block"]))){
+        SebF2004$vineyard[i] <- gsub("[a-zA-Z]", "", SebF2004$vineyard[i])
+      } 
+    }
+
+  #isolating block IDs
+    for(i in 1:nrow(SebF2004)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2004[i, "block"]))){
+        SebF2004$block[i] <- gsub("^.{0,2}", "", SebF2004$block[i])
+      } 
+    }
