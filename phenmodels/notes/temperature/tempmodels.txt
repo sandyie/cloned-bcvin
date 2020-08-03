@@ -1,0 +1,19 @@
+21 July 2020
+
+Chat with Ailene
+	- First pass was sine curve, she though that sounded good (more rigid, more mathematically derived). 
+	- Advantage of doing spline is that it's more flexible...different shape in different years (but if it's all temperate years it would similar most years
+	- Mean trend would needed to be added
+	- She rarely writes the equation for the spline herself -- choosing where knots are, getting the accounting for matrices correct (she can send a link or google 'brms stan splines') ... splines can be hard with multi-level 
+	- GAMs OFTEN use splines (lots of tree ring people use these) check out MGCV (this is what BRMS uses for splines), they are pretty similar to splines (they fit non-linear relationships, often through splines, sometimes through other means)
+	- What about an autoregressive model? She says you have to decide to the time period, the lags etc. Splines require fewer decisions.... What if you have a shorter or longer spring? Too many decisions. 
+	- She found the most useful readings were from a small ecology field book (she will check)
+
+
+
+More notes to self
+- Need to look up fourier?
+- Check out survival package (Ailene will send her old talk)
+
+
+- hazard f(x)s ... I need to work on.
