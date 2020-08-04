@@ -150,9 +150,9 @@ simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
 
 #Set model parameters - I have no idea what they should be so I will run a similar model in R (below)
 
-beta <- -10 #this is the rate paramater, like a slope in a linear regession 
-y0 <-  -15 # This is hardiness  when x = 0
-eta <- 0 # This is teh middle point of teh x dataset. inflection point?
+beta <- 10 #this is the rate paramater, like a slope in a linear regession 
+y0 <-  15 # This is hardiness  when x = 0. intercept. 
+eta <- 0 # This is teh middle point of teh x dataset. inflection point? Must be close to 0 or estimates are way off. Because of expenential?
 
 sigma_g <- 2
 
@@ -163,11 +163,12 @@ plot(xCentre ~ simTemps)
 x <- xCentre
 #x <- simTemps
 
-hardiness <-  (y0*(1 + exp(beta*eta))/ (1 + exp(beta*(eta-x))))*-1
+hardiness <-  (y0*(1 + exp(beta*eta))/ (1 + exp(beta*(eta-x))))
 eps <- rnorm(n = length(hardiness), mean = 0, sd = sigma_g)
-simLTE <- hardiness + eps
+simLTEPos <- hardiness + eps
+simLTE <- simLTEPos * -1
 
-plot(simLTE ~ x , pch = 16, col = 2, xlab = "Simulated temperatures", ylab = "winter hardiness * -1")#modefied positive  data
+plot(simLTE ~ x , pch = 16, col = 2, xlab = "Simulated temperatures", ylab = "winter hardiness")#modefied positive  data
 
 #What do I knwo abut my data and priors? Domain knowledge for building the model
 #--------------------------------------------------------------------------------------
@@ -186,7 +187,213 @@ plot(simLTE ~ x , pch = 16, col = 2, xlab = "Simulated temperatures", ylab = "wi
 # eta - the x value in the middle of the sigmoidal curve. This is the infexion point, and must be constrained between min and max x.
 
 #y0 - The intercept on the x axis. This is y when x is at its midpoint. I dont think this needs a prior because it can be taken 
-#  directly from the data?
+#  directly from the data? Or if I do need a prior, then it shoudl constrain to the y values 
+
+#Try some prior distributions
+#----------------------------
+
+betaPrior <-  rtruncnorm(n = 1000,a=0, mean = 0, sd = 10)
+hist(betaPrior)
+
+etaPrior <- rnorm(n = 1000, mean = 0, sd = 0.35) # more than 0.35 makes the model go funny. This is mean plus/minus 10 degrees. 
+etaTprior <- etaPrior*sd(simTemps) + mean(simTemps)
+hist(simTemps)
+hist(etaPrior)
+hist(etaTprior)
+
+y0Prior <- rnorm(n = 1000, mean = 10, sd = 5)
+hist(y0Prior)
+
+#Stan prior model 
+#------------------------------------
+
+# when doing teh prior checks I decided that it is better to feed in y data as positive, and then constrain 
+#beta to also be positive. 
+
+#Data
+x <- I(xCentre)
+N <- length(xCentre)
+
+stanData_prior_drs2 <- list(N = N, x = x)
+
+drc_prior2 <- stan(file = "stan/doseResponse2_priorCheck.stan", data = stanData_prior_drs2, 
+	iter=1000, warmup=0, chains=1, refresh=1000,
+   seed=4838282, algorithm="Fixed_param")
+
+
+priorCheck <- rstan::extract(drc_prior2)
+
+hist(priorCheck$mu_y)
+hist(priorCheck$y_sim) # very few values above 0. That is good. 
+hist(priorCheck$beta)
+hist(priorCheck$y0)
+
+str(priorCheck$y_sim)
+meanSimY <- colMeans(priorCheck$y_sim) 
+quantsSimY <- apply( priorCheck$y_sim , 2 , quantile , probs = c(0.05, 0.25, 0.5, 0.75, 0.95) , na.rm = TRUE )
+
+extremes <- quantsSimY[c(1, 5),]
+hist(extremes)
+quaters <- quantsSimY[c(2, 4),]
+hist(quaters)
+
+half <- quantsSimY[3,]
+
+plottingDataPrior <- data.frame(t(quantsSimY))
+plottingDataPrior$MeanY <- meanSimY 
+plottingDataPrior$x <- xCentre
+plottingDataPrior$half <- half
+
+
+priorTempsPlot <- ggplot(data = plottingDataPrior, aes(x = x, y = half ))
+priorTempsPlot + geom_line() +
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	theme_classic()
+
+hist(plottingDataPrior$MeanY)
+hist(plottingDataPrior$X95.)
+hist(plottingDataPrior$X5.)
+
+
+#Try with simulated data
+#----------------------------
+
+
+#Fit simulated data to my model using priors I checked above
+#---------------------------------------
+
+
+x <- I(xCentre)
+y <- simLTEPos # this data is simulated without variety variation  
+N <- length(xCentre)
+
+stan_data_drs <- list(N = N, x = x, y = y)
+
+
+
+#data passed to STan needs to be a list of named objects. names here need to match names in model code
+#i make a LIST of the different varables, NOT data frame
+
+#try the most similar model I can manage to teh one on https://discourse.mc-stan.org/t/dose-response-model-with-partial-pooling/13823
+
+
+#thsi used the positive transfomed data!
+drc_simple <- stan(file = "stan/doseResponsedPar2.stan", data = stan_data_drs, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+drcPost <- rstan::extract(drc_simple)
+
+#how do the posteriors look?
+pairs(drc_simple, pars = c("beta", "eta","y0","sigma_g", "lp__")) 
+
+#How does teh predicted data look?
+str(drcPost)
+mu_post <- drcPost$mu_y * -1
+hist(mu_post)
+
+y_sim <- drcPost$y_sim * -1
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- xCentre
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = xCentre, y = simLTE))
+
+
+hist(drcPost$mu_y)
+hist(drcPost$y_sim) # very few values above 0. That is good. 
+hist(drcPost$beta)
+hist(drcPost$y0)
+
+
+#How do the predicted values compare to real parameter values? (plot hist with real parameter value)
+
+eta_post <- drcPost$eta
+hist(eta_post)
+abline(v=eta,col="red", lty = 2, lwd = 2)
+
+beta <- drcPost$beta
+hist(beta_post)
+abline(v=beta,col="red", lty = 2, lwd = 2)
+
+y0_post <- drcPost$y0
+hist(y0_post)
+abline(v=y0,col="red", lty = 2, lwd = 2)
+
+sigma_post <- drcPost$sigma_g
+hist(sigma_post)
+abline(v=sigma_g,col="red", lty = 2, lwd = 2)
+
+
+#Try with real data
+#---------------------------------
+#remove na rows
+bhclimClean2 <- bhclim[!is.na(bhclim$lte),]
+xCentreReal <- (bhclimClean2 $meanC  - mean(bhclimClean2 $meanC ))/sd(bhclimClean2 $meanC )
+
+realy <- bhclimClean2$lte * -1
+realx <- I(xCentreReal)
+N <- length(realx)
+
+stan_data_drs_real <- list(N = N, x = realx, y = realy)
+
+#thsi used the positive transfomed data!
+drc_simple_real <- stan(file = "stan/doseResponsedPar2.stan", data = stan_data_drs_real, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+
+
+
+drcPost <- rstan::extract(drc_simple_real)
+#how do the posteriors look?
+pairs(drc_simple_real, pars = c("beta", "eta","y0","sigma_g", "lp__")) 
+
+
+#how do the posteriors look?
+#pairs(drc_simple)
+
+#How does teh predicted data look?
+str(drc_simple_real)
+mu_post <- drc_simple_real$mu_y * -1
+hist(mu_post)
+plot(colMeans(mu_post) ~ bhclimClean2 $meanC)
+
+y_sim <- drc_simple_real$y_sim * -1
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- bhclimClean2 $meanC 
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = bhclimClean2 $meanC , y = bhclimClean2$lte ))
+
+
+
+plot(colMeans(y_sim) ~ bhclimClean2 $meanC )
 
 
 
@@ -199,3 +406,14 @@ plot(simLTE ~ x , pch = 16, col = 2, xlab = "Simulated temperatures", ylab = "wi
 
 
 
+
+
+
+
+
+
+
+#Trying multi level model 
+#-----------------------------------
+
+#alow the slope only to vary (eta and y0 are basicly colinear, so I cant change one without the other?)
