@@ -14,7 +14,7 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(drc)
-library(shinystan)
+library(bayesplot)
 
 
 library(foreach)
@@ -795,3 +795,7 @@ postTempsPlot2 +
 
 
 plot(meanYs ~ doseSimData$negLTE)
+
+color_scheme_set("darkgray")
+posterior_cp <- as.array(drc_hd)
+#mcmc_parcoord(posterior_cp) thsi crashes 
