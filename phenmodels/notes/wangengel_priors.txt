@@ -1,0 +1,41 @@
+Started 3 August 2020
+But most notes form earlier 
+
+
+Email from Iñaki on 15 June 2020
+
+Hi Lizzie, 
+
+I propose to test
+Tmin: 0-10 C  --> I propose to open the prior to 10°C because this threshold is usually used in the litterature
+Tmax: 30-45 C --> I propose it because 30 is already a high "mean" temperature
+Ok for Topt and F*
+
+The system is able to manage when two parameters have priors that can be overlapped? 
+All the best
+
+
+Iñaki
+
+-----Message d'origine-----
+De : Elizabeth M Wolkovich <wolkovic@mail.ubc.ca> 
+Envoyé : samedi 13 juin 2020 21:06
+À : Inaki Garcia-De-Cortazar-Atauri <inaki.garciadecortazar@inrae.fr>
+Objet : Priors
+
+Hi Iñaki,
+
+Wait -- I also meant to cc you on an email to Mike with my suggested priors:
+
+Tmin: 0-8 C (often fixed in models to 0)
+
+Tmax: 35-45 C (most often fixed in models to 40)
+
+Topt: 20-32 C (but most often 25-30 C)
+
+Total Wang & Engel units for events vary but I have seen 10-100 as the usual range.
+
+Let me know if you think any are very wrong, or have any thoughts.
+
+All the best,
+Lizzie
