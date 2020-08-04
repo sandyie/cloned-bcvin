@@ -37,13 +37,14 @@ I think the sine curve is not so bad. If we want to improve we could consider a 
 
 \subsection{Christy Rollinson email (July 2020)}
 
-With the temperature modeling are you predicting past or future?  I have a couple approaches I’ve used for gap filling and spaitio-temporally downscaling daily and subfamily meteorology data with uncertainty, but they’re probably overkill.  I’ve been using splines in GAMs a lot for this because of the nice tradeoff between being fairly computationally quick, ability to capture ``surprises''  and a variety of shapes among sites with the same function, and ability to robustly estimate uncertainty.\\
+With the temperature modeling are you predicting past or future?  I have a couple approaches I've used for gap filling and spaitio-temporally downscaling daily and subfamily meteorology data with uncertainty, but they're probably overkill.  I've been using splines in GAMs a lot for this because of the nice tradeoff between being fairly computationally quick, ability to capture ``surprises''  and a variety of shapes among sites with the same function, and ability to robustly estimate uncertainty.\\
 
 \subsection{Ben Cook email (July 2020)}
 
-As for your query, I guess it depends on exactly what you want to to do. By "model the temperature data", do you mean you want to generate a new synthetic time series (say, daily data for one year) sampled from the existing data? One approach to do this would be to, using the multiple years of data you have, generate an average daily climatology, and. then convert each year to ANOMALIES. Once could then resample from the anomalies (e.g., using an autoregressive approach) and then superimpose these new synthetic anomalies back on to the climatology. You would probably want to fit a different autoregressive model to each season (DJF, MAM, JJA, SON). \\
+As for your query, I guess it depends on exactly what you want to to do. By ``model the temperature data'', do you mean you want to generate a new synthetic time series (say, daily data for one year) sampled from the existing data? One approach to do this would be to, using the multiple years of data you have, generate an average daily climatology, and. then convert each year to ANOMALIES. Once could then resample from the anomalies (e.g., using an autoregressive approach) and then superimpose these new synthetic anomalies back on to the climatology. You would probably want to fit a different autoregressive model to each season (DJF, MAM, JJA, SON). \\
 
 \subsection{From Ailene (July 2020)}
+Lizzie chatted with Ailene in late July. Ailene was very pro-splines and just sent some links.\\
 
 Splines are the heart of the brms non-linear modeling (see \href{https://mran.microsoft.com/snapshot/2017-05-14/web/packages/brms/vignettes/brms_multilevel.pdf}{here}).\\
 
@@ -70,7 +71,7 @@ There is also this one from Rebaudo et al. (focused on insects).\\
 Usually we tested last years (with Amber and other colleagues): GDD, Sigmoid, Richardson, Wang, Normal (also called Chuine), triangle. 
 There are other interesting as Logan (1, 2, 3), Anderson, Sine. But I did not tested them for plants and they are very similar to other models. \\
 
-Lizzie notes: the two files are in the refs folder, but I am not sure they include temperature models.
+Lizzie notes: the two files are in the phenmodels/temperatre refs folder, but I am not sure they include temperature models.
 
 \end{document}
 
