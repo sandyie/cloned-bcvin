@@ -2,7 +2,7 @@
 rm(list = ls())
 options(stringsAsFactors = FALSE)
 
-setwd("~/Documents/git/bcvin/analyses/cleaning")
+setwd("~/Documents/git/bcvin/analyses/input")
 quail17 <- read.csv("~/Documents/git/bcvin/analyses/input/qg_phenology2017_19COPY.csv")
 
 library(lubridate)
