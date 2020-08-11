@@ -15,3 +15,22 @@ The two and three letter codes were matched using the location code explained in
 If multiple codes or variety names matched, this was recorded in the notes column.
 
 For the unknown codes, we recorded which years they are found in the datasheets in the year column.
+
+
+From Victor Faraco (vfaraco@sebastianfarms.ca) on 10 August 2020
+
+Hi Lizzie,
+
+CB = Chenin Blanc
+EH = Ehrenfelser
+MO = Muscat Ottonel
+MG = Moscato Giallo
+BA = Barbera
+SA = Sangiovese
+GF = Gamay Feaux
+GN = Gamay Noir
+
+As for the rest I am not sure what varietals they are, could be typos.  If you provide the vineyard ID associated to the codes I might be able to decipher.
+
+Cheers,
+Victor 
