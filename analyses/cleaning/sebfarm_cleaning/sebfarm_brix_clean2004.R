@@ -16,32 +16,50 @@ head(SebFarms_Brix)
 company <- "SebastianFarms"
 vineyard <- ""
 notes <- ""
-SebF <- cbind(SebFarms_Brix, company, vineyard, notes)
+SebF2004 <- cbind(SebFarms_Brix, company, vineyard, notes)
+
+#Remove column 'Sampler'
+SebF2004$sampler <- NULL
 
 #Rename block and berry wt. columns
-colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
-colnames(SebF)[colnames(SebF) == 'avg..berry.wt.'] <- 'avg.berry.wt'
+colnames(SebF2004)[colnames(SebF2004) == 'growblk'] <- 'block'
+colnames(SebF2004)[colnames(SebF2004) == 'avg..berry.wt.'] <- 'avg.berry.wt'
 
 #Reformating dates - Seperating date into three columns, Y/M/D
-sample.date <- SebF$sample.date
+sample.date <- SebF2004$sample.date
 sample.date2 <- ymd(sample.date) #lubridate
-SebF <- cbind(SebF, sample.date2)
+SebF2004 <- cbind(SebF2004, sample.date2)
 
-SebF <- separate(SebF, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
-SebF <- SebF[, -1]
+SebF2004 <- separate(SebF2004, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
+SebF2004$sample.date <- NULL
 
 #Creating Events and Value Column
-SebF <- pivot_longer(SebF, #tidyr
+SebF2004 <- pivot_longer(SebF2004, #tidyr
                       cols = c(brix, ta, ph, avg.berry.wt),
                       names_to = "event",
                       values_to = "value")
 
 #Reordering column names : 
- #"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
-SebF <- select(SebF, vineyard, everything())
-SebF <- select(SebF, company, everything())
-SebF.clean <- select(SebF, -notes, notes)
+ #"company", "vineyard", block", "variety", "year", "month", "day", "event", "value", "notes"
+SebF2004 <- select(SebF2004, vineyard, everything())
+SebF2004 <- select(SebF2004, company, everything())
+SebF2004 <- select(SebF2004, -notes, notes)
 
-#Export Final Output
-setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
-write.csv(SebF.clean, "sebfarm_brix_clean2004.csv", row.names = F)
+#Deriving the vineyard from the code entered in block, and isolating the block
+SebF2004$block <- gsub("^\\*", "", SebF2004$block) #removing asterix
+SebF2004$vineyard <- paste(SebF2004$vineyard, SebF2004$block, sep = "") #pasting block value to vineyard
+SebF2004$block <- gsub("[0-9]+", "", SebF2004$block) #removing vineyard digits to isolate block
+
+  #isolating vineyard numbers
+    for(i in 1:nrow(SebF2004)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2004[i, "block"]))){
+        SebF2004$vineyard[i] <- gsub("[a-zA-Z]", "", SebF2004$vineyard[i])
+      } 
+    }
+
+  #isolating block IDs
+    for(i in 1:nrow(SebF2004)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2004[i, "block"]))){
+        SebF2004$block[i] <- gsub("^.{0,2}", "", SebF2004$block[i])
+      } 
+    }

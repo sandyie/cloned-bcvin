@@ -1,0 +1,20 @@
+﻿Variety,2letterCode,3letterCode,notes
+Merlot,ME,MER,
+Pinot noir,PN,PNN,
+Cabernet franc,CF,CAF,
+Cabernet sauv,CA,CAS,
+Sauv blanc,SB,SBL,
+Chardonnay,CH,CHD,
+Shiraz,SZ,SHZ,
+Pinot blanc,PB,PBL,
+Syrah,SY,SYR,match sz on first look - look at more data
+Pinot gris,PG,PGR,
+Petit verdot,PV,PVD,
+Viognier,VI,VIO,
+Riesling,RS,RSL,
+Semillon,SM,SEM,
+Vidal,VD,VID,
+Gewurztraminer,GW,GZT,not in phen data
+Muscat ottonel,MU,MSC,
+Muscat ottonel,MU,MUS,MSC also matched MU
+Semillon,SM,SEM,

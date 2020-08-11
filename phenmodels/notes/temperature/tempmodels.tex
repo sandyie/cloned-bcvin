@@ -1,0 +1,84 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{hyperref}
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\begin{document}
+
+\title{Thoughts on an improved temperature model}
+\author{Lizzie, so far}
+\date{\today}
+\maketitle
+\tableofcontents
+
+\section{What Lizzie suggests we do}
+
+I think the sine curve is not so bad. If we want to improve we could consider a spline (or something similar) {\bf to capture weather fronts,} which is our main issue (to me, at least, from looking at the residuals). I would also like to {\bf add a baseline long-term trend} since most locations are getting warmer with climate change. Even if we don't see it here I'd be interested in having it in the model soon-ish as we would want it in most models. 
+
+\section{Overview of options considered}
+
+\begin{enumerate}
+\item Fourier: I love Fourier, but I am not sure what we'll get from this beyond the sine curve for climate data here.  
+\item Autoregressive: Maybe, but I worry these will require a lot of decisions we're not sure of---the lag may vary over time, the timing of seasons varies ... they feel not flexible enough to capture weather fronts. 
+\item Sine curve: Seems pretty good as a first pass, but looks to miss weather fronts. 
+\item Splines: this is just a catch-all term for smoothing f(x)s. They seem to usually chop up the time-series to create some bends. I have seen a lot of climate folks use thin-plate splines, but I am still trying to figure out why. 
+\item GAMs: This is just a generalized additive model where the linear predictor uses some smoothing f(x)s. 
+\item ... 
+\end{enumerate}
+
+\section{Emails and other notes}
+
+\subsection{Christy Rollinson email (July 2020)}
+
+With the temperature modeling are you predicting past or future?  I have a couple approaches I've used for gap filling and spaitio-temporally downscaling daily and subfamily meteorology data with uncertainty, but they're probably overkill.  I've been using splines in GAMs a lot for this because of the nice tradeoff between being fairly computationally quick, ability to capture ``surprises''  and a variety of shapes among sites with the same function, and ability to robustly estimate uncertainty.\\
+
+\subsection{Ben Cook email (July 2020)}
+
+As for your query, I guess it depends on exactly what you want to to do. By ``model the temperature data'', do you mean you want to generate a new synthetic time series (say, daily data for one year) sampled from the existing data? One approach to do this would be to, using the multiple years of data you have, generate an average daily climatology, and. then convert each year to ANOMALIES. Once could then resample from the anomalies (e.g., using an autoregressive approach) and then superimpose these new synthetic anomalies back on to the climatology. You would probably want to fit a different autoregressive model to each season (DJF, MAM, JJA, SON). \\
+
+\subsection{From Ailene (July 2020)}
+Lizzie chatted with Ailene in late July. Ailene was very pro-splines and just sent some links.\\
+
+Splines are the heart of the brms non-linear modeling (see \href{https://mran.microsoft.com/snapshot/2017-05-14/web/packages/brms/vignettes/brms_multilevel.pdf}{here}).\\
+
+\href{https://fromthebottomoftheheap.net/2018/04/21/fitting-gams-with-brms/}{Link about GAMs} (in brms).\\
+
+\href{https://github.com/milkha/Splines_in_Stan/blob/master/splines_in_stan.pdf}{Splines in Stan.}\\
+
+\subsection{Random references from Lizzie}
+
+\href{https://www.fs.fed.us/rm/pubs/rmrs_gtr165.pdf}{A Spline Model of Climate for the
+Western United States} for monthly data, from 2006\\
+
+\href{https://rmets.onlinelibrary.wiley.com/doi/pdf/10.1002/joc.4068}{For daily rainfall} but seems to have a good review. \\
+
+\href{https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2013JD020803}{Another article with a semi-useful intro}.\\
+
+\href{https://www.nature.com/articles/sdata2018299}{A 2019 thin-plate spline paper}
+
+\subsection{From I\~naki email (July 2020)}
+
+The only paper I can propose to read is the chapter we wrote with Isabelle about phenology models (see attached file). There is an important review of different models used to simulate phenology stages  but it was quite focused on dormancy (endo and eco) phases. 
+There is also this one from Rebaudo et al. (focused on insects).\\
+
+Usually we tested last years (with Amber and other colleagues): GDD, Sigmoid, Richardson, Wang, Normal (also called Chuine), triangle. 
+There are other interesting as Logan (1, 2, 3), Anderson, Sine. But I did not tested them for plants and they are very similar to other models. \\
+
+Lizzie notes: the two files are in the phenmodels/temperatre refs folder, but I am not sure they include temperature models.
+
+\end{document}
+
+https://gracilis.carleton.ca/davidson/publications/2010/Newlands_Environ_2010.pdf
+
+\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
+\renewcommand{\refname}{\CHead{}}
+
+\emph{References}
+\bibliography{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/LizzieMainMinimal}

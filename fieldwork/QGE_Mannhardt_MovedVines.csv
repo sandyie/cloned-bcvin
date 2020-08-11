@@ -1,0 +1,22 @@
+﻿Vines that were moved by April because original plants did not bear clusters ,,,,,,,,,
+,,,,,,,,,
+plantID,vineyard ,block,row number ,plant position,row end to count from,training pruning,cordon marked,date flagged ,notes
+735,Quail's Gate ,3-3,19,15,south,cane,north cane,2-Jul-20,no south cordon 
+736,Quail's Gate ,3-3,19,20,south,cane,south cane,2-Jul-20,
+741,Quail's Gate ,3-3,20,17,south,cane/cordon,north cane,2-Jul-20,
+742,Quail's Gate ,3-3,20,20,south,cane/cordon,north cane ,2-Jul-20,
+743,Quail's Gate ,3-3,20,22,south,cane,north cane,2-Jul-20,
+744,Quail's Gate ,3-3,20,31,south,cane,north cane ,2-Jul-20,no south cordon
+747,Quail's Gate ,3-3,19,58,north,cane,north cane ,2-Jul-20,
+748,Quail's Gate ,3-3,19,59,north,cane,south cane ,2-Jul-20,no north cane
+749,Quail's Gate ,3-3,19,67,north,cane,north cane ,2-Jul-20,no south cane 
+750,Quail's Gate ,3-3,19,77,north,cane,south cane,2-Jul-20,no north cane 
+753,Quail's Gate ,3-3,20,18,north,cane/cordon,south cane ,2-Jul-20,
+754,Quail's Gate ,3-3,20,19,north,cane,north cane ,2-Jul-20,
+756,Quail's Gate ,3-3,20,35,north,cane ,south cane ,2-Jul-20,
+617,Quail's Gate ,2-1,14,13,north,cordon,south cordon ,2-Jul-20,
+641,Quail's Gate ,2-1,30,45,south,cordon,north cordon,2-Jul-20,all vines in between 642 and 641 have been dug up 
+821,Mannhardt,8-6,3,16,north,cordon,south cordon,2-Jul-20,
+823,Mannhardt,8-6,3,17,north,cane,north cane,2-Jul-20,
+839,Mannhardt,8-8,6,18,south,cordon,north cordon,2-Jul-20,
+841,Mannhardt,8-8,6,15,south,cane/cordon,north cane,2-Jul-20,

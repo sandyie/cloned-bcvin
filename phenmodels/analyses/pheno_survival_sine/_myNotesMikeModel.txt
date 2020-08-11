@@ -1,0 +1,42 @@
+Started 11 July 2020
+
+++++++++++++++++++++++++++
+Running the model...
+
+7:31
+chains running at 1% by 7:37
+some hit 2% at 7:39, 3% at 7:43
+chain 1 at 37% by 7:50 (chain 4 still at 12%)
+chain 1 at 49% by 7:52 (chain 4 still at 18%)
+chain 4 at 28% by 7:53
+chain 1 at 71% by 7:54
+chain 1 done before 7:58
+most done by 8:04
+
+Model diagnostic: integrated_we_pred Rhat etc. is NaN  but shinystan says all is well!
+
+
+++++++++++++++++++++++++++
+Looking at the model code (12 July 2020)
+
+Is gamma_tune.stan that magical thing that Mike does to help guess at priors semi-analytically?
+
+fit_temp.stan ... How does temperature model handle years?
+
+fit_pheno_survival_sine.stan questions!
+	- why is log hazard in inverse days?
+	- where does the 1.3862943 come from?
+	- why a gamma? What is it doing? (see below)?
+
+
+
+++++++++++++++++++++++++++
+Other notes
+
+Mike wrote: 7 July 2020
+
+"One thing that I’ve learned so far is that the WE model is pretty non identified.
+By changing the WE threshold (which sort of becomes gamma in my model)
+and T_min, T_opt, and T_max in the right way you can explain the same 
+transition time multiple ways.  The question is how much we can actually 
+constrain those parameters scientifically to well-pose the model!"

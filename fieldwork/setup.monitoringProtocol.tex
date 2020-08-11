@@ -6,6 +6,17 @@ singlelinecheck=false % <-- important
 ]{caption}
 \usepackage{hyperref}%helps with the email address 
 \usepackage{graphicx} %including pictures 
+\usepackage{array}% http://ctan.org/pkg/array. Used to have images in table nicely 
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+\usepackage{float}
+\usepackage{xcolor}% change text colour 
+
+\usepackage{atbegshi}% http://ctan.org/pkg/atbegshi
 
 \def\labelitemi{--}
 \parindent=0pt
@@ -67,9 +78,11 @@ Using the maps and rootstock information provided, we chose the blocks with the 
 
 Tip for when selecting buds each year: If you are not flagging all the buds at once, flag the final bud/spur as this one will always be monitored. Doing this saves time because otherwise you may have to move the flag to another spur. We would recommend flagging with flagging tape all the buds at once to save time.\\
 
-The location of each plant we monitor, as well as which side of the plant we chose to monitor, (see Choosing Buds below) is recorded in the \verb|plantsinfo.csv| file on the repo.
+The location of each plant we monitor, as well as which side of the plant we chose to monitor, (see Choosing Buds below) is recorded in the \verb|plantsinfo.csv| file on the repo. \\
 
-\section{Choosing Buds}
+During the first season, some of the flagged vines were not producing enough clusters for bloom monitoring. Flags were transferred from these vines to other nearby vine by April Mahovlic and their location was recorded.
+
+\subsection{Choosing Buds}
 
 
 \begin{figure}
@@ -105,25 +118,25 @@ The location of each plant we monitor, as well as which side of the plant we cho
 If plant was either cordon pruned (Figure \ref{fig:CordonPruned}) or cane pruned (Figure \ref{fig:CanePruned}, we flipped a coin to determine which side was flagged (heads = south or east, tails = north or west). If one side of the plant did not have enough buds, we chose the other side. When the cordons were clearly different ages, we chose to sample the larger/stronger cordon because it will be more representative of the plant. If a plant had a cane and a cordon (Figure \ref{fig:CordonCane}), we flagged the cordon unless it did not have at least three spurs, then the cane was flagged. Occasionally, a cane would be trained back to the trunk in a loop or had come loose from the wire. In these cases, we flagged the other cane. If the cane started on one side but was trained to cross over and end on the other side, we used the direction of the end of the cane. (Figure \ref{fig:CaneCrossing})
 
 
-\subsection{Cordon Buds}
+\subsubsection{Cordon Buds}
 
 We flagged the spur (or arm if it was present) on the furthest from the trunk, a middle spur, and the first spur on the cordon with a base less than 5cm below the wire (Figure \ref{fig:CordonPruned}). Spurs 5 cm or more below the wire were considered basal. If there was an even number of spurs, a coin flip determined which middle spur was chosen. \\
 
 If there was more than one spur on an arm (Figure \ref{fig:TwoSpurs}) then we focused on the higher spur. We monitored the lowest bud on this spur. 
 
-\subsection{Cane Buds}
+\subsubsection{Cane Buds}
 
 We flagged the bud furthest from the trunk, the middle bud, and the first but that was farther than 15 cm from the trunk (Figure \ref{fig:CanePruned}). If there was an even number of middle buds, a coin flip determined which bud was chosen. \\
 
 If there were two buds in the same place in a position that was flagged, we chose to monitor the bud that was more upright. If both buds were equally upright facing, we monitored the one in a southerly or easterly direction. 
 
-\section{Numbering Buds}
+\subsection{Numbering Buds}
 For the first set of data collection, Mira and Faith numbered the buds on each cordon or cane from 1 to 3 in ascending order from either the south or the east. This caused confusion in the field so we decided to change the numbering protocol. {\bf For data entry: the numbering for all east and south cordons/canes should be reversed, the numbering for north and west cordons/canes is fine (buds are numbered 1 to 3 from trunk)} \\
 
 {\bf For the Dark Horse monitoring protocol and future years, use the following protocol}:
 Number buds 1 to 3 with bud 1 being the bud closest to the trunk (see Figures \ref{fig:CordonPruned} \& \ref{fig:CanePruned}). 
 
-\section{Choosing Clusters}
+\subsection{Choosing Clusters}
 From each bud selected for monitoring during budburst, a cane will arise bearing one or more clusters of grapes. For the remaining pheno stages (bloom, veraison, Brix), we want to select a specific cluster for monitoring rather than a cane. Select the basal cluster (the lower one, originating closest to the ground) on the chosen cane (which will arise from the lowest bud position on the flagged arm, see Choosing Buds section) (Figure \ref{fig:TwoBunches}). This will generally be the strongest cluster; especially in warm climates, there may be a big developmental difference between upper and lower clusters on the same shoot (Figure \ref{fig:Bunches}). \\
 
 This cluster will first be visible during the first pass for bloom. Note the lowest cluster on the first pass and make sure the same cluster will be monitored throughout the rest of the season. If you feel it will be difficult to keep track of the monitored cluster you can loosely ({\bf loosely!}) flag it. Do not flag tightly before this as it can prevent the growing tissue from maturing regularly. If a flagged cluster dies, disappears or somehow becomes no longer suitable for monitoring: Reflag nearest cluster and note in datasheet. In no case should you select, flag, or sample from a cluster that is more than 3-4 nodes along the cane (such a 'second crop' cluster will not be representative). \\
@@ -158,7 +171,7 @@ Our goal is to have standardized observations of phenological stages for analysi
 	\begin{smitemize}
 	\item Budburst (approx. mid-April - mid-May): Until EL stage 12, record the EL stage of buds on three spurs. Once EL stage is at 12 you can stop recording until flowering starts (note that you may need to record higher than stage 12 at times in order to record whatever stage you see after 11, even if it is 13 or such if you have not yet recorded stage 12, more on this in Monitoring Instructions).
 	\item Bloom (approx. June 1-30)
-	\item Veraison (approx. July 15-Aug 15)
+	\item Veraison (approx. Aug 1-30)
 	\item Ripening (Brix - approx Aug 15-Sept 30)
 	\end{smitemize}
 \item We estimate that observing pheno stages for each vine (budburst, bloom, and veraison) will take approximately 90s per vine. 
@@ -194,7 +207,7 @@ For each vine:
 \item Bud numbers are not written on the flags but are numbered 1 to 3 with Bud 1 being the bud closest to the trunk.
 \item {\bf For pre-bloom (we record EL stages)}, record the appropriate E-L stage of the shoot that was flagged, or the shoot closest to the flagging that matches our selection criteria laid out in the section above. 
 	\begin{smitemize}
-	\item Record its EL stage (number from ``1'': still dormant, to ``17'': twelve leaves separated (see Figure \ref{fig:ELScale}) until EL stage 12. 
+	\item Record its EL stage number from ``1'': still dormant, to ``17'': twelve leaves separated (see Figure \ref{fig:ELScale}) until EL stage 12. 
 	\item Once EL stage is at 12 you can stop recording until flowering starts (note that you may need to record higher than stage 12 at times in order to record whatever stage you see after 11, even if it is 13 or such if you have not yet recorded stage 12).
 	\item You should count even small leaves at the very base of the shoot. 
 	\item However, do not count lateral shoots, which start as one leaf and grow into a separate shoot, as these will be removed later. Lateral shoots can be distinguished by the fact that they have more than one leaf (see Figure 2 above, where an emerging lateral shoot is visible in the axis of a leaf). 
@@ -206,7 +219,7 @@ For each vine:
 	\begin{smitemize}
           \item We record the percent of all buds on the cluster in flower (from 0-100\%),  in units of  5\% (i.e., no need to estimate 3\% or 34\%, just report 5\% and 35\% ... aim to be accurate within 10\% but most important is consistency and taking photos). Figure \ref{fig:percentCover} gives a visual guide for percent cover up to 50\%.
 	\item Grapevine flowers are botanically “perfect” (they include both male parts (anther and stamen) and female parts (pistil and stigma). Early in development, all of these flower parts are covered by the closed flower petals. During bloom, the flower petals separate from the base of the flower and form a “cap” on top of the flower structure. These caps eventually dry out, going from green to yellow or brown as shown with labeled flower anatomy in Fig \ref{fig:labeledFlowers}.
-	\item We record bloom as anytime after all parts of the flower are exposed. % Lizzie, check this please
+	\item We record bloom as anytime after all flowering parts (pistils and anthers) are exposed and the base of the cap is detached. This usually coincides with capfall. However, the flower is considered ``bloomed" regardless of whether or not the cap actually falls. \href{https://ives-technicalreviews.eu/article/view/2586}{Source for flowering definition.}
 	\item Take photos of a full series of your percentages (5\%, 25\%, 50\%, 75\%, 95\%).
 	\item Note in data sheet when a certain variety is ``done'' (past desired phenological stage) and skip it on all further visits during sampling of that phenological stage. Put another way, once a cluster has reached 100\% bloom you can make a note in your datasheet and skip recording it on future dates when you are monitoring bloom. You can also skip clusters that have been at 95\% for more than two visits.
 	\end{smitemize}
@@ -246,15 +259,192 @@ Note that in counting leaves to determine EL stage, you should count even small 
 	
 \end{enumerate}
 
-\section{Understanding Veraison}
+\subsection{Understanding Veraison}
 Veraison is a physiological change in the grape where sugar accumulation begins, and the berries begin to enlarge, soften, accumulate sugars and lose acids, and change color (this is quite noticeable in red varieties, and more subtle but still visible in white varieties). At veraison, water transport from the xylem into the berries ends, and the phloem takes over this role.\\ 
 
 Some French colleagues have noted to us that a couple red varieties sometimes become soft before they turn color--and the softness seems to coincide with Brix change. This is about 1-2 out of 50 varieties so it's rare, but try to note softness on red grapes too and if you find any that have changed before color please make a note in the notes field of the datasheet.
 
+According to  to Scott from McIntyre, the earliest variety for them in 2019 was the Sauvignon Blanc in Block C with 50\% veraison on August 9. The berries were tracking behind in 2020.
+
+\section{Brix Sampling}
+\subsection{Understanding Ripening (Brix)}
+
+Following the beginning of the ripening process at the onset of veraison (start of rapid accumulation of sugar in the berries, detectable as color and softness change), the grape undergoes many changes in the process of ripening, the most obvious of which is the accumulation of sugars and the loss of acids. Sugar accumulation tends to happen at a linear rate, though the slope (rate) of accumulation differs between varieties, and can be influenced by temperature and other vineyard conditions. Traditionally, ripeness was determined by achievement of a certain level of sugar, which is measured in units of degrees Brix (a percentage by weight of sugar, historically 24$^{\circ}$ Brix was considered commercial ripeness on average, though it varies from variety to variety and by wine style). Recent trends have been to harvest later, at a higher degree of ripeness, resulting in higher alcohol wines since the higher sugar levels ferment into more alcohol. \\
+
+Because there can be so much variability in the date of commercial harvest, depending on factors including site, variety, winemaker preference, it is important to measure a quantitative indicator of maturity, rather than to use harvest date or the accumulation of degree-days as phenological markers. Therefore, we will measure Brix at 3-4 dates in the vineyards, with the aim of bracketing the ripening schedule and getting enough data points to plot the ripening trajectory about of different varieties (aiming for a minimum of 18$^{\circ}$ Brix, the level of harvest for sparkling wine styles, to  26$^{\circ}$ Brix or more, the levels commonly found for red wines in California. However, our sampling is based on dates, rather than on desired Brix levels per se). These dates will commence approximately 6 weeks after the onset of veraison, and repeat at approximately 10-day intervals, but dependent on weather. 
+
+\subsection{Brix Field Methods}
+
+The instrument used to measure sugar in grape juice is a refractometer, which measures how much the light passing through the juice is bent. This angle depends on the degree of soluble solids in the juice---in grapes, nearly all soluble solids (over 90\%) are sugars, thus this is a good measure of sugars. \\
+
+Our goal is to collect a representative sample from throughout the cluster, without taking too many berries to alter the source/sink relations of the cluster, and leaving enough berries to be sampled in subsequent times. We will sample five berries from each of the three flagged clusters on each vine (15 berries per vine). 
+
+\subsubsection{Field Materials}
+\begin{smitemize}
+\item Small quart-sized freezer plastic Ziploc (or similar) bags for holding samples of 15 berries per vine, remember freezer-style bags are best!
+\item preprinted labels identifying vines from which the samples were taken, stuck on Ziplocs (e.g., the ones we used in 2014 were 1 inch x 2 5/8 inches -- Avery 5160). {\bf Be sure to UPDATE the labels each year} as we tend to lose and gain plants each year.
+\item The above two items (small ziplocs + labels) eventually lead to: {\bf labeled ziplocs} (organized by row inside the last bag for the row*)
+\item Sharpie
+\item coolers with ice/icepacks and bubblewrap on the ice (so berries don’t touch ice directly). 
+\item checklist to make notes on issues you can also make notes directly on Avery labels on the relevant bag, make sure it gets transferred to the electronic notes the next day  when processing samples in the lab (see fieldnotes tab in the spreadsheet for Brix data entry). 
+\item clipboard and pen/pencil for checklist
+\item camera to photo-document any issues (and note on checklist)
+\item latex gloves to keep sticky mess down if you like
+\item copy of the most up-to-date protocol
+\item flagging tape for reflagging clusters if needed
+\item hat, closed toed shoes, sunscreen etc.!
+
+* To organize bags: Put all small ziplocs for one row into the last bag for that row). Drop the bags at the start of each row.
+
+\end{smitemize}
+
+\subsubsection{Field Protocol}
+\begin{enumerate}
+\item Sugar levels can vary throughout the day, and increase with temperature. Therefore, {\bf we collect berries when they are cool, first thing in the morning! Ideally, sampling will be completed before noon.}
+
+\item You should arrive in the field with the bags all ordered somehow. % Used to be ... by row.  I suggest setting out the bags for each row in sets of 5-10 rows at a time (I set out 8 at a time). Place the bag of bags at the head of each row cross-checking the row number as you place the bag of bags down (and check again as you start that row); then work through each row. This way if all the bags are gone you know you're all set; be careful that you keep track of any bags you put down as you work through a row (more below). ??? see comment % Maybe organize by block and group. Not sure about leaving them at the end of the rows - doesn't seem logical for the Okanagan vineyards. Is there another organization we could do? % EMW: To discuss!
+
+% \item For your first 5 and last 5 vines, take an extra sample of 15 berries from the ALTERNATE cordon (not flagged clusters, there are ‘REP’ bags for these, they are not always exactly the first and last five as I maximized variety diversity). We will test these in the lab immediately following field sampling and record the values to compare with those read in the lab the next day, after berries have been refrigerated. The first five samples are used to compare grapes collected when cool to grapes after refrigeration; the last five samples help test the effect of heat (as the day warms up). %For 2017 we actually have TWO REPS per plant so you can do one set of the REPS at the start and the other set as the last grapes you do (that is, after all other grapes are done). %% Would this be at each vineyard? % EMW: To discuss!
+
+\item At each vine, collect five berries from each of the three flagged clusters. Clusters generally develop from top to bottom so collect berries from the approximate positions indicated in Figure \ref{fig:conecluster}. Try to close or avert your eyes and sample by feel to avoid being visually drawn to the most developed grapes. Healthy grapes should feel firm and juicy to the touch. A very squishy or disintegrating grape is diseased and should be avoided. Do your best to pull or twist the grape from the rachis while keeping it relatively intact (it will store better until measurement)---but sometimes, on tightly packed clusters, it’s impossible to extract 15 whole berries without breaking them. 
+
+Unless of course your berry cluster is not the classic ‘conical’ shape (see ‘short conical’ and ‘long conical’ from berry cluster Figure \ref{fig:clustershapes} below). If you have a conical cluster with strong shoulders or cylindrical winged, take an extra berry from the top and one less from the middle, for cylindrical take your five berries spaced relatively evenly from top to bottom and so on so you’re getting a good spacing of berries, representative of the total cluster shape. In extreme cases where you’re not sure what to do you can take 5 berries from the middle.
+
+\begin{figure} [h]
+  \includegraphics[scale = .75]{conecluster.png}
+  \caption{Sampling locations on cluster }
+  \label{fig:conecluster}
+\end{figure}
+
+\begin{figure} [h]
+  \includegraphics[scale = .75]{clustershapes}
+  \caption{Berry cluster shapes. Figure stolen from ‘Wine Grapevine Structure’ online.}
+  \label{fig:clustershapes}
+\end{figure}
+
+\item Problem clusters: sometimes a flagged cluster will be missing, rotten, undeveloped, shriveled, or otherwise messed up. Such clusters are likely to have anomalous Brix readings. If there is a normal, healthy-looking cluster nearby, remove the flag from the bad cluster, flag and sample the healthy cluster. (However, note that you should only take berries from a “count” cluster, that is, one that arises from one of the first four nodes of the cane. Some varieties of grapevines develop a “second crop” of clusters that are borne from much higher in the cane, and are generally much smaller and much less ripe than the main clusters. These are not representative of the normal developmental and ripening trajectory, so should not be sampled.)  If all clusters on a vine are similarly problematic, but there are enough healthy-appearing grapes to sample 5 grapes from a cluster, sample and flag that cluster. Remember that our unit of analysis is the vine (not cluster), so we are better off getting a healthy, representative sample from a vine if it is possible. If all available grapes are seriously deformed or rotten, note this and do not sample. See table \ref{tab:disease}.
+
+You should have a clipboard to keep a note of any issues you run into. In later sampling dates you should also note any plants where berries appear {\bf past-maturation and beginning to shrivel} (however, as long as the grapes appear to have developed properly and are only shriveling due to being on the vine too long you should still sample the plant -- once you cannot get juice from the berries then do not sample). Take photos as necessary to document issues or how you are noting shrivel.
+
+A rule of thumb in guiding whether to sample is to make a scale of 1-4 for berry shrivel and for rot, in each case score them as follows: \\
+4: $>$75\% of berries on plant are in this state \\
+3: 50-75\% of berries on plant are in this state \\
+2: 25-50\% of berries on plant are in this state \\
+1: $<$25\% of berries on plant are in this state \\
+Add your two scores (one for rot and one for shrivel) -- if the total is 4 or higher, don't sample. {\bf Write down the score for each (shrivel, rot)! (Update data entry sheet to have a column for shrivel, and a column for rot.)}
+
+\item Place the 15 berries from one vine in the labelled ziploc. While working one row you can either (1) put each bag next to each plant or (2) create one or two centralized stacks of bags (in the shade as much as possible); either way collect all bags when you finish a row/block and put them directly in the cooler. Try to have a layer of something (cardboard, some bunched up plastic shopping bags, bubble wrap etc.) so grapes don’t touch ice directly. 
+
+\item When all berries have been collected, store in the refrigerator overnight or directly package and ship to Vancouver % take to the lab and -- for most berries (but see step 8) -- refrigerate overnight (up to a few days max) before beginning the lab protocol to measure Brix, or else start reading directly if you have time. 
+
+%Remember to read the Brix levels immediately on arrival in the lab on the first and last 5 samples collected from the alternate cordon (the REP samples), for comparison with the results from the main (flagged) cordon, which will be read with all the others during the main lab work day. %%%%% Should this go to lab? How should we adapt this to labwork at UBC? % EMW: Hmm, maybe it's finally time to check our samples from Davis on this ... 
+
+\item Transcribe all info from your field checklist into the 'field\_notes' tab of the brix\_dataentry google doc. Also transcribe your time in and out of the field. 
+
+\end{enumerate}
+
+{\bf When to stop measuring Brix?}
+So, you skip sampling when all the main crop of berries are destroyed by birds, are all diseased or shriveled or are oddly undeveloped. But when else do you stop measuring Brix? Two options:
+\begin{enumerate}
+\item The Brix measurement on the previous sampling date was 30 degrees or higher.
+\item The Brix measurement on two consecutive sampling dates was less than 0.1 Brix different for that exact plant (but ask Lizzie to take a look at any you want to skip for this reason).
+\end{enumerate}
+
+\begin{table}[H]
+\caption{A description of different diseases potentially afflicting winegrapes. This table comes from the Davis protocol. Photos: Lizzie Wolkovich, August 8, 2014.} % title of Table
+%\centering % used for centering table. I dont want my tabel centred 
+\begin{tabular}{ p{3cm}| l | p{4.5cm}| p{4.5cm}}  % left jusitfy columns ( l) or Wrap text after 4cm (p{4cm})
+\hline\hline %inserts double horizontal lines
+Problem & Photo example & Symptoms & Solution (always note issues in field data sheet!)\\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+Berry Rot 
+	& % the and symbol seperates suff in each column 
+	\raisebox{-\totalheight}{\includegraphics[scale=0.11]{BerryRot.jpg}} % scale sets the image size to be nice and small in this case. Raisebox makes the image in line with text.
+	& Strong smell of fermentation; may see fungus; clusters looks ripe but berries basically dissolve into your hands upon touching (and now you’re happy to have gloves!)
+	& Pick a different cluster to pull berries from! If all clusters on a vine are like this, do not sample (note on datasheet and take picture if possible)\\
+\hline 
+Extreme berry shrivel: almost no berries left
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.11]{BerryShrivel2.jpg}} 
+	& All clusters are missing berries or are very shriveled
+	& Skip collecting berries from plant if all clusters look like this\\
+\hline
+Berry shrivel: a few berries left
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.08]{BerryShrivel.jpg}} 
+	& If certain clusters are fine, pick another clusters! If not, select five representative ‘good’ berries (do not pick any undeveloped berries)
+	& Select five representative good berries if possible\\	
+\hline
+Chicken and hen
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.08]{Chicken.jpg}} 
+	& Some of the cluster develops normally, some of the berries do not develop at all (shot berries) and some may appear to be missing 
+	& If certain clusters are fine, pick another clusters! If not, select five representative ‘good’ berries (do not pick any undeveloped berries)\\
+\hline
+Not all berries done developing (but look like someday they will develop)
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.08]{Underdeveloped.jpg}} 
+	& A few berries are undeveloped/green and rest are developed
+	& Select a representative mix of berries; that is take 1 undeveloped berry if 20\% are undeveloped\\
+\hline
+Raisining
+	& \textcolor{red}{\textbf{Need to add pic!}}
+	& Berries are drying out as a result of over-ripening
+	& Collect samples of raisined grapes, unless they are rock-hard and will be impossible to extract juice for measuring Brix. \textbf{For 2015 field season, consider a cutoff point after which resampling is not necessary (e.g., 30° Brix).} \\
+\hline
+\end{tabular}
+\label{tab:disease} % is used to refer this table in the text
+\end{table}
+
+{\bf Shipping grapes to UBC}
+
+Package grapes in styrofoam freezer box and place in a cardboard box for shipping. \\ %With ice pack? % EMW: Yes!
+
+Use the following accounts for shipping: \\
+Purolator Acct \# - 1154218 \\
+FedEx Acct \# - 143080285 \\
+
+Address the package to: \\
+Elizabeth Wolkovich \\
+Forest and Conservation Sciences \\
+University of British Columbia \\
+3041 - 2424 Main Mall \\
+Vancouver, BC V6T 1Z4 \\
+
+\subsection{Brix Lab Methods}
+Berries will be shipped back to Vancouver so labwork can be done in the Wolkovich Lab, Forest Sciences Center
+
+\subsubsection{Labwork Materials}
+\begin{smitemize}
+\item refractometer (ATAGO Pal-1) 
+\item Distilled water in a squeeze bottle for rinsing refractometer between samples % We do need distilled, we will have to BUY it or borrow it or such because we don't have it in the building. 
+\item Kimwipes for wiping off refractometer between samples
+\item Pipettes for applying grape juice to refractometer 
+\item Beaker or such to put water in to plastic pipettes in between uses 
+\item Data sheet for recording Brix (electronic, %see brix_dataentry on google drive in ‘Brix’ folder in RMI data)
+\item Deionized (aka Distilled) water (for zeroing refractometer)
+
+\end{smitemize}
+
+\subsubsection{Lab Protocol}
+\begin{enumerate}
+\item Put the berries in the fridge (not freezer). Label them with your name, the date that you put them in, and the date that you will be done.
+\item Set up and calibrate refractometer with DI water as a blank. Make sure temperature compensation is on. 
+\item Take a ziploc containing 15 berries from the cooler. Manually crush the berries so that the juice is released from all berries and well-mixed inside the bag. 
+\item Use a pipette to add juice on the prism, covering the prism. % No specific amount 
+\item Put your pipette in its beaker and squeeze in and out some water to give it a quick clean (get a new pipette every 20 or so samples, or more often if it gets dirty). 
+\item Read and record Brix on data sheet (or direct entry into tablet).   
+\item Use Kimwipe to remove juice sample from prism. 
+\item Squirt prism with distilled water and wipe off with another Kimwipe. 
+\item Repeat. 
+\item At the end of the day, please take the trash out that has the berry bags in it; this helps prevent fruit flies.
+\end{enumerate}
+
+It’s helpful to crush roughly 20 bags of berries at a time to speed up the entire process while working alone. As long as you're working at a reasonable rate they can stay on the bench while you record sugar. If you want crush more bags in advance, put them in the cooler and take out 10-20 to sample at a time (basically aim to not have any grape bags out of a cooler for more than 15-20 minutes before you sample them).\\
+
+Time estimates: Lizzie working alone up to max speed did 40 samples an hour (Davis estimates: for 2014 probably best to estimate 9-10 person hours. Sadie working alone took about 12-13 total hours start to finish for measuring brix and 5 hours collecting berries.)
+
 \section{Contacting vineyards}
 Please ask Mira and/or Faith to introduce you before reaching out to these folks! If you have any issues, let us know.\\
 
-Quails' Gate asked that we contact them two days prior to working in the vineyard for permission. Arterra prefers to give permission the day before we want to work in the vineyard because they have flexible management and may make management decisions quickly. We have been texting for permission once you have been introduced. It might be good to call the first time you contact the managers. \\
+Quails' Gate (Chad) asked that we contact them two days prior to working in the vineyard for permission but Judy told April Mahovlic that texting the day before is fine. Arterra prefers to give permission the day before we want to work in the vineyard because they have flexible management and may make management decisions quickly. We have been texting for permission once you have been introduced. It might be good to call the first time you contact the managers. \\
 
 %Sebastian Farms
 %Rob Achurch (250) 490-6162
@@ -380,6 +570,9 @@ Leafhopper: We actively monitor for nymphs, adults, and eggs, and only treat the
 Botrytis: We only treat blocks with high botrytis pressure in the past, or blocks showing symptoms of botrytis. In the past we have used Switch, Elevate, Scala, Fracture, and Serifel. Sprays are usually applied in June or July, but we will occasionally use Fracture or Serifel to treat blocks closer to harvest (September) if needed. \\
 
 Mealybug: We don’t usually treat for mealybug since the population levels don’t normally become large enough to pose a problem in our vineyards, but last year was a bad year for mealybug. We closely monitored mealybug population sizes and used Movento in July to treat blocks with substantially large populations."
+
+{\bf Quails' Gate}
+They spray all the vineyards over 3 consecutive days if possible.
 
 
 \section{Glossary}

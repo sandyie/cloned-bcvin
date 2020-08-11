@@ -1,8 +1,8 @@
 ########################## 2010_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
-rm(list=ls())
-options(stringsAsFactors = FALSE)
+#rm(list=ls())
+#options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/input/sebastianfarms/brix/")
 library(tidyverse) 
@@ -16,31 +16,49 @@ head(SebFarms_Brix)
 company <- "SebastianFarms"
 vineyard <- ""
 notes <- ""
-SebF <- cbind(SebFarms_Brix, company, vineyard, notes)
+SebF2010 <- cbind(SebFarms_Brix, company, vineyard, notes)
+
+#Remove col "sampler"
+SebF2010$sampler <- NULL
 
 #Rename block column 
-colnames(SebF)[colnames(SebF) == 'growblk'] <- 'block'
+colnames(SebF2010)[colnames(SebF2010) == 'growblk'] <- 'block'
 
 #Reformating dates - Seperating date into three columns, Y/M/D
-sample.date <- SebF$sample.date
+sample.date <- SebF2010$sample.date
 sample.date2 <- ymd(sample.date) #lubridate
-SebF <- cbind(SebF, sample.date2)
+SebF2010 <- cbind(SebF2010, sample.date2)
 
-SebF <- separate(SebF, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
-SebF <- SebF[, -1]
+SebF2010 <- separate(SebF2010, sample.date2, into = c("year", "month", "day"), sep = "-") #tidyr
+SebF2010$sample.date <- NULL
 
 #Creating Events and Value Column
-SebF <- pivot_longer(SebF, #tidyr
+SebF2010 <- pivot_longer(SebF2010, #tidyr
                      cols = c(brix, ta, ph),
                      names_to = "event",
                      values_to = "value")
 
 #Reordering column names : 
-#"company", "vineyard", "sampler", block", "variety", "year", "month", "day", "event", "value", "notes"
-SebF <- select(SebF, vineyard, everything())
-SebF <- select(SebF, company, everything())
-SebF.clean <- select(SebF, -notes, notes)
+#"company", "vineyard", block", "variety", "year", "month", "day", "event", "value", "notes"
+SebF2010 <- select(SebF2010, vineyard, everything())
+SebF2010 <- select(SebF2010, company, everything())
+SebF2010 <- select(SebF2010, -notes, notes)
 
-#Export Final Output
-setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")
-write.csv(SebF.clean, "sebfarm_brix_clean2010.csv", row.names = F)
+#Deriving the vineyard from the code entered in block, and isolating the block
+SebF2010$block <- gsub("^\\*", "", SebF2010$block) #removing asterix
+SebF2010$vineyard <- paste(SebF2010$vineyard, SebF2010$block, sep = "") #pasting block value to vineyard
+SebF2010$block <- gsub("[0-9]+", "", SebF2010$block) #removing vineyard digits to isolate block
+
+#isolating vineyard numbers
+for(i in 1:nrow(SebF2010)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2010[i, "block"]))){
+    SebF2010$vineyard[i] <- gsub("[a-zA-Z]", "", SebF2010$vineyard[i])
+  } 
+}
+
+#isolating block IDs
+for(i in 1:nrow(SebF2010)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2010[i, "block"]))){
+    SebF2010$block[i] <- gsub("^.{0,2}", "", SebF2010$block[i])
+  } 
+}

@@ -5,12 +5,12 @@ library(tidyverse)
 #This file is for sourcing in other scripts. There are only functions and no code that will create any variables without being called
 ##function that reads the output folders of ClimateBC and assigns them logical variable names 
 ##Less notes as well
-##NOTE: you will most likely need to change the drive letter for your specific computer
+##NOTD: you will most likely need to change the drive letter for your specific computer
 open_MAT <- function(startYear, endYear, member_as.string){
   for (i in startYear:endYear) {
     assign(paste("mat_", i, sep = ""), 
            raster(
-             paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+             paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                    member_as.string,
                    "_", 
                    i, 
@@ -33,7 +33,7 @@ open_Tmax_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
       if(j < 10){
         assign(paste("tmax_0", j, "_", i, sep = ""), 
                raster(
-                 paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+                 paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                        member_as.string,
                        "_",
                        i,
@@ -50,7 +50,7 @@ open_Tmax_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
       else{
         assign(paste("tmax_", j, "_", i, sep = ""), 
                raster(
-                 paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+                 paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                        member_as.string,
                        "_",
                        i,
@@ -75,7 +75,7 @@ open_Tmin_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
         assign(
           paste("tmin_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -94,7 +94,7 @@ open_Tmin_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
         assign(
           paste("tmin_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -123,7 +123,7 @@ open_PPT_m <- function(startYear, endYear, startMonth, endMonth, member_as.strin
         assign(
           paste("ppt_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -142,7 +142,7 @@ open_PPT_m <- function(startYear, endYear, startMonth, endMonth, member_as.strin
         assign(
           paste("ppt_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -171,7 +171,7 @@ open_GDD5_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
         assign(
           paste("GDD5_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -190,7 +190,7 @@ open_GDD5_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
         assign(
           paste("GDD5_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -220,7 +220,7 @@ open_GDD0_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
         assign(
           paste("GDD0_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -239,7 +239,7 @@ open_GDD0_m <- function(startYear, endYear, startMonth, endMonth, member_as.stri
         assign(
           paste("GDD0_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
+            paste("D:/climate_projection_data/bcvin_raster/CanESM2_RCP85_",
                   member_as.string,
                   "_",
                   i,
@@ -269,7 +269,7 @@ open_MAT_historical <- function(startYear, endYear){ #finished & works
   for (i in startYear:endYear) {
     assign(paste("mat_", i, sep = ""), 
            raster(
-             paste("E:/climate_projection_data/bcvin_raster/Year_",
+             paste("D:/climate_projection_data/bcvin_raster/Year_",
                    i, 
                    "MSY/MAT.asc", 
                    sep = "")
@@ -291,7 +291,7 @@ open_Tmax_m_historical <- function(startYear, endYear, startMonth, endMonth){ #f
       if(j < 10){
         assign(paste("tmax_0", j, "_", i, sep = ""), 
                raster(
-                 paste("E:/climate_projection_data/bcvin_raster/Year_",
+                 paste("D:/climate_projection_data/bcvin_raster/Year_",
                        i,
                        "MSY/Tmax",
                        "0",
@@ -306,7 +306,7 @@ open_Tmax_m_historical <- function(startYear, endYear, startMonth, endMonth){ #f
       else{
         assign(paste("tmax_", j, "_", i, sep = ""), 
                raster(
-                 paste("E:/climate_projection_data/bcvin_raster/Year_",
+                 paste("D:/climate_projection_data/bcvin_raster/Year_",
                        i,
                        "MSY/Tmax",
                        j,
@@ -332,7 +332,7 @@ open_Tmin_m_historical <- function(startYear, endYear, startMonth, endMonth){ #f
         assign(
           paste("tmin_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/Tmin",
                   "0",
@@ -349,7 +349,7 @@ open_Tmin_m_historical <- function(startYear, endYear, startMonth, endMonth){ #f
         assign(
           paste("tmin_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/Tmin",
                   j,
@@ -377,7 +377,7 @@ open_PPT_m_historical <- function(startYear, endYear, startMonth, endMonth){ #fi
         assign(
           paste("ppt_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/PPT",
                   "0",
@@ -394,7 +394,7 @@ open_PPT_m_historical <- function(startYear, endYear, startMonth, endMonth){ #fi
         assign(
           paste("ppt_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/PPT",
                   j,
@@ -422,7 +422,7 @@ open_GDD5_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
         assign(
           paste("GDD5_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/DD5",
                   "_0",
@@ -439,7 +439,7 @@ open_GDD5_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
         assign(
           paste("GDD5_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/DD5",
                   "_",
@@ -468,7 +468,7 @@ open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
         assign(
           paste("GDD0_0", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/DD_0",
                   "_0",
@@ -485,7 +485,7 @@ open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
         assign(
           paste("GDD0_", j, "_", i, sep = ""), 
           raster(
-            paste("E:/climate_projection_data/bcvin_raster/Year_",
+            paste("D:/climate_projection_data/bcvin_raster/Year_",
                   i,
                   "MSY/DD_0",
                   "_",
@@ -507,7 +507,7 @@ open_GDD0_m_historical <- function(startYear, endYear, startMonth, endMonth) { #
 
 
 #aggregating monthly variable over the 20 year period, averaging, and SD 
-#NOTE: these are going to eventually be averaged between member_as.strings. STORE IN A DESCRIPTIVE FOLDER
+#NOTD: these are going to eventually be averaged between member_as.strings. STORE IN A DESCRIPTIVE FOLDER
 #Names do not include which member_as.string the data is from to simplify code
 #labels will be as follows: myVariable_as.string_month_warmingScenario_as.string
 #myVariable_as.string = Tmax, Tmin, PPT, GDD0, or GDD5
@@ -830,7 +830,7 @@ write_yearly_MAT <- function(warmingScenario_as.string){
 #I won't be creating a custom writeRaster function for these because they will all be one-offs
 #I don't think that SD should be included in this output because it would be artificially high.
 #If SD is desired, calculate it with the difference between member_as.strings to get worthwhile data
-#Incomplete
+#DEBUG: the output variable is just the last month in the period... 
 
 combine_monthly_vars <- function(startMonth, endMonth, myVariable_as.string, warmingScenario_as.string) { #finished and works for ppt & nw at least
   if(startMonth > endMonth){ #i.e. Monthly Tmin between October and March:
@@ -959,38 +959,38 @@ open_members <- function(myDescriptiveVariable_as.string){ #tested and works
  if(str_detect(myDescriptiveVariable_as.string, "mw") == TRUE || str_detect(myDescriptiveVariable_as.string, "hw") == TRUE) {
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r1", sep = ""),
-    value = raster(paste( "E:/climate_projection_data/bcvin_raster/r11i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")),
+    value = raster(paste( "D:/climate_projection_data/bcvin_raster/r11i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")),
     envir = .GlobalEnv
   )
   
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r2", sep = ""),
-    value = raster(paste( "E:/climate_projection_data/bcvin_raster/r21i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
+    value = raster(paste( "D:/climate_projection_data/bcvin_raster/r21i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = .GlobalEnv
   )
   
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r3", sep = ""),
-    value = raster(paste( "E:/climate_projection_data/bcvin_raster/r31i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
+    value = raster(paste( "D:/climate_projection_data/bcvin_raster/r31i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = .GlobalEnv
   )
   
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r4", sep = ""),
-    value = raster(paste( "E:/climate_projection_data/bcvin_raster/r41i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
+    value = raster(paste( "D:/climate_projection_data/bcvin_raster/r41i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = .GlobalEnv
   )
   
   assign(
     x = paste(myDescriptiveVariable_as.string, "_r5", sep = ""),
-    value = raster(paste( "E:/climate_projection_data/bcvin_raster/r51i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
+    value = raster(paste( "D:/climate_projection_data/bcvin_raster/r51i1p1/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = .GlobalEnv
   )
  }
   else{
   assign(
     x = paste(myDescriptiveVariable_as.string, "_historical", sep = ""),
-    value = raster(paste( "E:/climate_projection_data/bcvin_raster/historical/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
+    value = raster(paste( "D:/climate_projection_data/bcvin_raster/historical/", myDescriptiveVariable_as.string, ".asc", sep = "")), 
     envir = .GlobalEnv
   )
   }
@@ -1015,7 +1015,7 @@ combine_all_members <- function(myDescriptiveVariable){ #tested and works
     envir = .GlobalEnv
   )
   
-  if(str_detect(myDescriptiveVariable, "ppt") == TRUE) { #expressed as a percentage
+  if(str_detect(myDescriptiveVariable, "ppt|GDD") == TRUE) { #expressed as a percentage
     assign(
       x = paste(myDescriptiveVariable, "_combined_cv", sep = ""),
       value = 
@@ -1043,7 +1043,7 @@ write_combined <- function(myDescriptiveVariable_as.string) {
     ),
     filename = paste(myDescriptiveVariable_as.string, "_combined_sd.asc", sep = "")
   )
-  if(str_detect(myDescriptiveVariable_as.string, "ppt") == TRUE ){
+  if(str_detect(myDescriptiveVariable_as.string, "ppt|GDD") == TRUE ){
   writeRaster(
     get(
       paste(myDescriptiveVariable_as.string, "_combined_cv", sep = "")
@@ -1070,11 +1070,11 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
       value = {
         get(paste(myDescriptiveVariable, "_r", i, sep = "")) %>%
           as.data.frame() %>%
-          mutate(. , member = paste("r", i, sep = "")) %>%
+          mutate(. , member = paste("r", i * 10 + 1, sep = "")) %>%
           rename(., value = str2lang(paste(myDescriptiveVariable)), member = member) 
       },
       envir = .GlobalEnv
-      #should only exist in local environment, but I don't know how to do that syntactically yet
+      #should only exist in function environment, but I don't know how to do that syntactically yet
     )
   }
   assign( 
@@ -1085,32 +1085,36 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   
   if(str_detect(myDescriptiveVariable, "ppt") == TRUE){ 
     lab = "Accumulated Precipitation (mm)"
-    plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
+    plotTitle = ""
     nbins = 38
   }
   
   else if(str_detect(myDescriptiveVariable, "tmax") == TRUE){ 
     lab = "Temperature (°C)"
-    plotTitle = "Comparing Mean Maximum Temperature Projections Between CanESM2 Members"
+    plotTitle = ""
     nbins = 14
   }
   else if(str_detect(myDescriptiveVariable, "tmin") == TRUE){
     lab = "Temperature (°C)"
-    plotTitle = "Comparing Mean Minimum Temperature Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 14
   }
   else if(str_detect(myDescriptiveVariable, "mat")){
     lab = "Temperature (°C)"
-    plotTitle = "Comparing Mean Annual Temperature Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 14
     
   }
   else if(str_detect(myDescriptiveVariable, "GDD5") == TRUE){
     lab = "Degree Days > 5"
-    plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 20
   }
   
   else if(str_detect(myDescriptiveVariable, "GDD0") == TRUE){
     lab = "Degree Days < 0"
-    plotTitle = "Comparing Precipitation Projections Between CanESM2 Members"
+    plotTitle = ""
+    nbins = 14
   }
   
   if(plotStyle == "facet"){
@@ -1138,7 +1142,7 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   if(plotStyle == "density") {
     aesthetics <- 
       ggplot(df_combined, mapping = aes(x = value, fill = member)) +
-      geom_density(alpha = 0.8) + 
+      geom_density(alpha = 0.6) + 
       xlab(lab) +
       ylab("Density") +
       ggtitle(plotTitle)
