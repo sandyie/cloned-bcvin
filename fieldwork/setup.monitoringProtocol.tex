@@ -6,6 +6,17 @@ singlelinecheck=false % <-- important
 ]{caption}
 \usepackage{hyperref}%helps with the email address 
 \usepackage{graphicx} %including pictures 
+\usepackage{array}% http://ctan.org/pkg/array. Used to have images in table nicely 
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+\usepackage{float}
+\usepackage{xcolor}% change text colour 
+
+\usepackage{atbegshi}% http://ctan.org/pkg/atbegshi
 
 \def\labelitemi{--}
 \parindent=0pt
@@ -311,7 +322,7 @@ Unless of course your berry cluster is not the classic ‘conical’ shape (see 
   \label{fig:clustershapes}
 \end{figure}
 
-\item Problem clusters: [ADD TABLE FROM FAITH! SOMEWHERE] sometimes a flagged cluster will be missing, rotten, undeveloped, shriveled, or otherwise messed up. Such clusters are likely to have anomalous Brix readings. If there is a normal, healthy-looking cluster nearby, remove the flag from the bad cluster, flag and sample the healthy cluster. (However, note that you should only take berries from a “count” cluster, that is, one that arises from one of the first four nodes of the cane. Some varieties of grapevines develop a “second crop” of clusters that are borne from much higher in the cane, and are generally much smaller and much less ripe than the main clusters. These are not representative of the normal developmental and ripening trajectory, so should not be sampled.)  If all clusters on a vine are similarly problematic, but there are enough healthy-appearing grapes to sample 5 grapes from a cluster, sample and flag that cluster. Remember that our unit of analysis is the vine (not cluster), so we are better off getting a healthy, representative sample from a vine if it is possible. If all available grapes are seriously deformed or rotten, note this and do not sample. %See table 2 below.
+\item Problem clusters: sometimes a flagged cluster will be missing, rotten, undeveloped, shriveled, or otherwise messed up. Such clusters are likely to have anomalous Brix readings. If there is a normal, healthy-looking cluster nearby, remove the flag from the bad cluster, flag and sample the healthy cluster. (However, note that you should only take berries from a “count” cluster, that is, one that arises from one of the first four nodes of the cane. Some varieties of grapevines develop a “second crop” of clusters that are borne from much higher in the cane, and are generally much smaller and much less ripe than the main clusters. These are not representative of the normal developmental and ripening trajectory, so should not be sampled.)  If all clusters on a vine are similarly problematic, but there are enough healthy-appearing grapes to sample 5 grapes from a cluster, sample and flag that cluster. Remember that our unit of analysis is the vine (not cluster), so we are better off getting a healthy, representative sample from a vine if it is possible. If all available grapes are seriously deformed or rotten, note this and do not sample. See table \ref{tab:disease}.
 
 You should have a clipboard to keep a note of any issues you run into. In later sampling dates you should also note any plants where berries appear {\bf past-maturation and beginning to shrivel} (however, as long as the grapes appear to have developed properly and are only shriveling due to being on the vine too long you should still sample the plant -- once you cannot get juice from the berries then do not sample). Take photos as necessary to document issues or how you are noting shrivel.
 
@@ -338,6 +349,49 @@ So, you skip sampling when all the main crop of berries are destroyed by birds, 
 \item The Brix measurement on the previous sampling date was 30 degrees or higher.
 \item The Brix measurement on two consecutive sampling dates was less than 0.1 Brix different for that exact plant (but ask Lizzie to take a look at any you want to skip for this reason).
 \end{enumerate}
+
+\begin{table}[H]
+\caption{A description of different diseases potentially afflicting winegrapes. This table comes from the Davis protocol. Photos: Lizzie Wolkovich, August 8, 2014.} % title of Table
+%\centering % used for centering table. I dont want my tabel centred 
+\begin{tabular}{ p{3cm}| l | p{4.5cm}| p{4.5cm}}  % left jusitfy columns ( l) or Wrap text after 4cm (p{4cm})
+\hline\hline %inserts double horizontal lines
+Problem & Photo example & Symptoms & Solution (always note issues in field data sheet!)\\ [0.5ex] % inserts table
+%heading
+\hline % inserts single horizontal line
+Berry Rot 
+	& % the and symbol seperates suff in each column 
+	\raisebox{-\totalheight}{\includegraphics[scale=0.11]{BerryRot.jpg}} % scale sets the image size to be nice and small in this case. Raisebox makes the image in line with text.
+	& Strong smell of fermentation; may see fungus; clusters looks ripe but berries basically dissolve into your hands upon touching (and now you’re happy to have gloves!)
+	& Pick a different cluster to pull berries from! If all clusters on a vine are like this, do not sample (note on datasheet and take picture if possible)\\
+\hline 
+Extreme berry shrivel: almost no berries left
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.11]{BerryShrivel2.jpg}} 
+	& All clusters are missing berries or are very shriveled
+	& Skip collecting berries from plant if all clusters look like this\\
+\hline
+Berry shrivel: a few berries left
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.08]{BerryShrivel.jpg}} 
+	& If certain clusters are fine, pick another clusters! If not, select five representative ‘good’ berries (do not pick any undeveloped berries)
+	& Select five representative good berries if possible\\	
+\hline
+Chicken and hen
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.08]{Chicken.jpg}} 
+	& Some of the cluster develops normally, some of the berries do not develop at all (shot berries) and some may appear to be missing 
+	& If certain clusters are fine, pick another clusters! If not, select five representative ‘good’ berries (do not pick any undeveloped berries)\\
+\hline
+Not all berries done developing (but look like someday they will develop)
+	& \raisebox{-\totalheight}{\includegraphics[scale=0.08]{Underdeveloped.jpg}} 
+	& A few berries are undeveloped/green and rest are developed
+	& Select a representative mix of berries; that is take 1 undeveloped berry if 20\% are undeveloped\\
+\hline
+Raisining
+	& \textcolor{red}{\textbf{Need to add pic!}}
+	& Berries are drying out as a result of over-ripening
+	& Collect samples of raisined grapes, unless they are rock-hard and will be impossible to extract juice for measuring Brix. \textbf{For 2015 field season, consider a cutoff point after which resampling is not necessary (e.g., 30° Brix).} \\
+\hline
+\end{tabular}
+\label{tab:disease} % is used to refer this table in the text
+\end{table}
 
 {\bf Shipping grapes to UBC}
 
