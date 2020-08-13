@@ -15,24 +15,24 @@ Arterra,McIntyre ,MC,L,Malbec,598,3309,E-W,Red,2000,32,2.11,0,,MCL
 Arterra,McIntyre ,MC,M,Cabernet Franc,327,3309,E-W,Red,2000,32,4.27,0,,MCM
 Arterra,McIntyre ,MC,M,Cabernet Franc,214,3309,E-W,Red,2000,32,4.1,0,,MCM
 Arterra,McIntyre ,MC,N,Cabernet Franc,214/327,3309/101-14/RG,W-E,Red,2018,32,3.9,0,,MCN
-Arterra,McIntyre ,MC,O,Pinot Noir,777,3309/SO4,E-W,Red,2000,32,2.88,24,,MCO
+Arterra,McIntyre ,MC,O,Pinot Noir,777,3309/SO4,E-W,Red,2000,32,2.88,12,,MCO
 Arterra,McIntyre ,MC,P,Pinot Noir,777,1001-14/3309,W-E,Red,2018,32,1.16,0,,MCP
-Arterra,McIntyre ,MC,Q,Cabernet Sauvignon,15/191/169,SO4/101-14/B,W-E,Red,2000,32,3.88,24,"also root stock 101-14 and B, but avoid",MCQ
+Arterra,McIntyre ,MC,Q,Cabernet Sauvignon,15/191/169,SO4/101-14/B,W-E,Red,2000,32,3.88,12,"also root stock 101-14 and B, but avoid",MCQ
 Arterra,Darkhorse,DH,A,Temperanillo,809,SR,W-E,Red,1990,40,2.31,0,,DHA
 Arterra,Darkhorse,DH,B,Chardonnay,,SR,W-E,White,1990,40,1.43,0,,DHB
 Arterra,Darkhorse,DH,C,Cabernet Sauvignon,,SR,W-E,Red,1990,40,2.21,0,"Clone unknown, so we decided to not sample ",DHC
 Arterra,Darkhorse,DH,D,Cabernet Franc,332,SO4,W-E,Red,1993,40,1.6,0,,DHD
-Arterra,Darkhorse,DH,E,Chardonnay,76,SO4,W-E,White,1993,40,0.63,24,baby plants?,DHE
+Arterra,Darkhorse,DH,E,Chardonnay,76,SO4,W-E,White,1993,40,0.63,20,baby plants?,DHE
 Arterra,Darkhorse,DH,F,Merlot,184,SR,W-E,Red,1990,40,1.89,0,,DHF
-Arterra,Darkhorse,DH,G,Pinot Noir,115,SR,W-E,Red,1990,40,2.33,24,,DHG
+Arterra,Darkhorse,DH,G,Pinot Noir,115,SR,W-E,Red,1990,40,2.33,20,,DHG
 Arterra,Darkhorse,DH,H,Pinot Noir,,,W-E,Red,2019,40,1.83,0,,DHH
 Arterra,Darkhorse,DH,I,Chardonnay,95/76/548,3309/RG/SO4,W-E,White,2019,32,0.13,0,there is also RG and 101-14 rootsock,DHI
-Arterra,Darkhorse,DH,J,Merlot,447,SO4,W-E,Red,1993,40,1.24,24,,DHJ
+Arterra,Darkhorse,DH,J,Merlot,447,SO4,W-E,Red,1993,40,1.24,16,,DHJ
 Arterra,Darkhorse,DH,K,Merlot,181,SO4,W-E,Red,1993,40,0.38,0,,DHK
 Arterra,Darkhorse,DH,L,Chardonnay,76,3309,W-E,White,2019,40,0.25,0,Definitely baby plants,DHL
 Arterra,Darkhorse,DH,M,Marsanne/Roussanne,115,SR,W-E,White,1990,40,0.67,0,,DHM
 Arterra,Darkhorse,DH,N,Chardonnay,76,SO4,W-E,White,1993,40,0.26,0,,DHN
-Arterra,Darkhorse,DH,1,Merlot,347,3309,N-S,Red,2003,32,1.79,24,,DH1
+Arterra,Darkhorse,DH,1,Merlot,347,3309,N-S,Red,2003,32,1.79,16,,DH1
 Arterra,Darkhorse,DH,2,Merlot,181,RGM,N-S,Red,2003,32,2.3,0,,DH2
 Arterra,Darkhorse,DH,3,Merlot,347,3309,W-E,Red,2003,32,1.04,0,,DH3
 Arterra,Whitetail,WT,A,Semillon,317,3309,E-W,White,2000,32,2.98,0,,WTA
@@ -56,44 +56,44 @@ Arterra,Whitetail,WT,M,Riesling,49,SO4,E-W,White,2000,32,6.64,0,too young ,WTM
 Arterra,Whitetail,WT,N,Pinot Blanc,54,SO4,E-W,White,1999,32,3.2,0,,WTN
 Arterra,Whitetail,WT,N2,Vidal,,3309,E-W,White,2010,32,6.37,0,,WTN2
 Arterra,Whitetail,WT,O,Vidal,,3309,E-W,White,2010,32,10.17,0,,WTO
-Arterra,Whitetail,WT,OIB,Chardonnay,6/9576,OWN/3309,E-W,White,2009,32,5.64,0,We set up 36 but took them all down ,WTOIB
+Arterra,Whitetail,WT,OIB,Chardonnay,Jun-76,OWN/3309,E-W,White,2009,32,5.64,0,We set up 36 but took them all down ,WTOIB
 Arterra,Whitetail,WT,P,Pinot Gris,52,SO4,E-W,White,1999,32,4.38,0,,WTP
 ,Whitetail,WT,I,Merlot,,,,,,,,0,No data in sprteadsheet from Arterra ,
 Arterra,NK'MIP,NK,A,Merlot,181,RGM,N-S,Red,2002,32,4.8,0,,NKA
-Arterra,NK'MIP,NK,B,Cabernet Sauvignon,191,RGM,N-S,Red,2002,32,6.8,36,,NKB
-Arterra,NK'MIP,NK,C,Syrah,877174,101-14-759,N-S,Red,2007,32,1.3,36,Shiraz,NKC
+Arterra,NK'MIP,NK,B,Cabernet Sauvignon,191,RGM,N-S,Red,2002,32,6.8,24,,NKB
+Arterra,NK'MIP,NK,C,Syrah,877174,101-14-759,N-S,Red,2007,32,1.3,24,Shiraz,NKC
 Arterra,NK'MIP,NK,D,Cabernet Franc,327,3309,W-E,Red,2004,32,1.7,0,,NKD
 Arterra,NK'MIP,NK,E,Merlot,181,3309-143,N-S,Red,2006,32,0.1,0,"very small block, diff orientation? Root ctock 3309-143",NKE
-Arterra,NK'MIP,NK,F,Syrah,100,RGM,N-S,Red,2005,32,0.1,24,Shiraz,NKF
-Arterra,NK'MIP,NK,G,Merlot,181,3309,N-S,Red,2006,32,3.2,36,,NKG
-QuailsGate,Mannhardt,MA,7-1,Ehrenfelser,6,SO4,,,1984,,2.81,0,,MA7-1
-QuailsGate,Mannhardt,MA,7-2,Ehrenfelser,6,SO4,,,1984,,2.14,0,,MA7-2
-QuailsGate,Mannhardt,MA,7-3,Chenin Blanc,220,SO4/762,,,2006,,5.04,0,,MA7-3
-QuailsGate,Mannhardt,MA,7-4,Pinot Noir,667,SO4,,,1998,,2.71,0,,MA7-4
-QuailsGate,Mannhardt,MA,7-5,Pinot Noir,828,SO4/102,,,2006,,1.04,0,,MA7-5
-QuailsGate,Mannhardt,MA,8-1,Riesling,49,SO4/5,,,2006,,1.23,0,,MA8-1
-QuailsGate,Mannhardt,MA,8-2,Riesling,49,3309/144,,,2006,,1.58,0,,MA8-2
-QuailsGate,Mannhardt,MA,8-3,Pinot Blanc,55,SO4/762,,,2009,,1.9,0,,MA8-3
-QuailsGate,Mannhardt,MA,8-4,Chardonnay,0,101-14/3309,,,2013,,1.11,0,,MA8-4
-QuailsGate,Mannhardt,MA,8-5,Gewurztraminer,47,3309/144,,,2006,,0.58,0,,MA8-5
-QuailsGate,Mannhardt,MA,8-6,Riesling,49,3309/144,,,2006,,0.21,24,,MA8-6
-QuailsGate,Mannhardt,MA,8-7,Pinot Noir,667,SO4/762,,,2006,,1.31,0,,MA8-7
-QuailsGate,Mannhardt,MA,8-8,Pinot Noir,777,3309/144,,,2006,,1.22,24,,MA8-8
-QuailsGate,Mannhardt,MA,8-9,Pinot Noir,777,SO4/102,,,2006,,0.45,0,,MA8-9
-QuailsGate,Mannhardt,MA,8-10,Pinot Noir,828,SO4/762,,,2006,,0.32,0,,MA8-10
-QuailsGate,Mannhardt,MA,9-1,Riesling,49,3309/144,,,2006,,0.68,36,,MA9-1
-QuailsGate,Mannhardt,MA,9-2,Riesling,96,41b.MGT/153,,,2006,,0.74,0,,MA9-2
-QuailsGate,Mannhardt,MA,9-3,Chasselas,76,SO4/102,,,2006,,3.29,0,,MA9-3
-QuailsGate,Mannhardt,MA,9-4,Ehrenfelser,6,5C,,,1977,,1.13,0,,MA9-4
-QuailsGate,Mannhardt,MA,9-5,Riesling,239,5C,,,1977,,1.13,0,,MA9-5
+Arterra,NK'MIP,NK,F,Syrah,100,RGM,N-S,Red,2005,32,0.1,12,Shiraz,NKF
+Arterra,NK'MIP,NK,G,Merlot,181,3309,N-S,Red,2006,32,3.2,24,,NKG
+QuailsGate,Mannhardt,MA,1-Jul,Ehrenfelser,6,SO4,,,1984,,2.81,0,,MA7-1
+QuailsGate,Mannhardt,MA,2-Jul,Ehrenfelser,6,SO4,,,1984,,2.14,0,,MA7-2
+QuailsGate,Mannhardt,MA,3-Jul,Chenin Blanc,220,SO4/762,,,2006,,5.04,0,,MA7-3
+QuailsGate,Mannhardt,MA,4-Jul,Pinot Noir,667,SO4,,,1998,,2.71,0,,MA7-4
+QuailsGate,Mannhardt,MA,5-Jul,Pinot Noir,828,SO4/102,,,2006,,1.04,0,,MA7-5
+QuailsGate,Mannhardt,MA,1-Aug,Riesling,49,SO4/5,,,2006,,1.23,0,,MA8-1
+QuailsGate,Mannhardt,MA,2-Aug,Riesling,49,3309/144,,,2006,,1.58,0,,MA8-2
+QuailsGate,Mannhardt,MA,3-Aug,Pinot Blanc,55,SO4/762,,,2009,,1.9,0,,MA8-3
+QuailsGate,Mannhardt,MA,4-Aug,Chardonnay,0,101-14/3309,,,2013,,1.11,0,,MA8-4
+QuailsGate,Mannhardt,MA,5-Aug,Gewurztraminer,47,3309/144,,,2006,,0.58,0,,MA8-5
+QuailsGate,Mannhardt,MA,6-Aug,Riesling,49,3309/144,,,2006,,0.21,24,,MA8-6
+QuailsGate,Mannhardt,MA,7-Aug,Pinot Noir,667,SO4/762,,,2006,,1.31,0,,MA8-7
+QuailsGate,Mannhardt,MA,8-Aug,Pinot Noir,777,3309/144,,,2006,,1.22,24,,MA8-8
+QuailsGate,Mannhardt,MA,9-Aug,Pinot Noir,777,SO4/102,,,2006,,0.45,0,,MA8-9
+QuailsGate,Mannhardt,MA,10-Aug,Pinot Noir,828,SO4/762,,,2006,,0.32,0,,MA8-10
+QuailsGate,Mannhardt,MA,1-Sep,Riesling,49,3309/144,,,2006,,0.68,24,,MA9-1
+QuailsGate,Mannhardt,MA,2-Sep,Riesling,96,41b.MGT/153,,,2006,,0.74,0,,MA9-2
+QuailsGate,Mannhardt,MA,3-Sep,Chasselas,76,SO4/102,,,2006,,3.29,0,,MA9-3
+QuailsGate,Mannhardt,MA,4-Sep,Ehrenfelser,6,5C,,,1977,,1.13,0,,MA9-4
+QuailsGate,Mannhardt,MA,5-Sep,Riesling,239,5C,,,1977,,1.13,0,,MA9-5
 QuailsGate,Estate,QG,1-1a,Merlot,181,SO4/5,,,1994,,0.17,0,"lower vineyard, not recommended for sampling?",QG1-1a
 QuailsGate,Estate,QG,1-1b,Cabernet Sauvignon,191,SO4/5,,,1994,,0.07,0,"lower vineyard, not recommended for sampling?",QG1-1b
 QuailsGate,Estate,QG,1-1c,Merlot,181,SO4/5,,,1997,,0.21,0,"lower vineyard, not recommended for sampling?",QG1-1c
 QuailsGate,Estate,QG,1-1d,Merlot,347,SO4/5,,,1997,,0.28,0,"lower vineyard, not recommended for sampling?",QG1-1d
-QuailsGate,Estate,QG,1-2,Chardonnay,548,SO4/102,,,1996,,0.42,0,"lower vineyard, not recommended for sampling?",QG1-2
+QuailsGate,Estate,QG,2-Jan,Chardonnay,548,SO4/102,,,1996,,0.42,0,"lower vineyard, not recommended for sampling?",QG1-2
 QuailsGate,Estate,QG,1-2b,Chardonnay,37/95,101-14,,,2013,,0.33,0,,QG1-2b
-QuailsGate,Estate,QG,1-3,Optima,7114,SO4,,,1982,,4.43,0,,QG1-3
-QuailsGate,Estate,QG,1-4,Riesling,21B,SO4,,,1982,,5.07,0,will be ripped out,QG1-4
+QuailsGate,Estate,QG,3-Jan,Optima,7114,SO4,,,1982,,4.43,0,,QG1-3
+QuailsGate,Estate,QG,4-Jan,Riesling,21B,SO4,,,1982,,5.07,0,will be ripped out,QG1-4
 QuailsGate,Estate,QG,1-5a,Pinot Blanc,55,3309/144,,,1997,,3.55,0,,QG1-5a
 QuailsGate,Estate,QG,1-5b,Pinot Blanc,55,3309/144,,,1997,,3.55,0,,QG1-5b
 QuailsGate,Estate,QG,1-5c,Pinot Blanc,55,3309/144,,,1997,,3.55,0,,QG1-5c
@@ -104,48 +104,48 @@ QuailsGate,Estate,QG,1-6a,Sauvignon Blanc,530,3309/144,,,1997,,1.49,0,"lower vin
 QuailsGate,Estate,QG,1-6b,Sauvignon Blanc,530,3309/144,,,1997,,1.49,24,"lower vineyard, but can sample",QG1-6b
 QuailsGate,Estate,QG,1-7a,Chasselas,UCD,Self,,,1975,,4.32,0,,QG1-7a
 QuailsGate,Estate,QG,1-7b,Chasselas,UCD,Self,,,1975,,4.32,0,,QG1-7b
-QuailsGate,Estate,QG,2-1,Syrah,877C,3309,,,2010,,2.69,36,"lower vineyard, staying?",QG2-1
+QuailsGate,Estate,QG,1-Feb,Syrah,877C,3309,,,2010,,2.69,36,"lower vineyard, staying?",QG2-1
 QuailsGate,Estate,QG,2-2a,Merlot,181,SO4/5,,,1998,,2.79,0,"lower vineyard, not recommended for sampling?",QG2-2a
 QuailsGate,Estate,QG,2-2b,Merlot,181,SO4/5,,,1998,,2.79,0,"lower vineyard, not recommended for sampling?",QG2-2b
 QuailsGate,Estate,QG,2-3a,Chasselas,UCD,Self,,,1975,,1.92,0,,QG2-3a
 QuailsGate,Estate,QG,2-3b,Chasselas,UCD,Self,,,1975,,1.92,0,,QG2-3b
-QuailsGate,Estate,QG,2-4,Chardonnay,UCD,Self,,,1987,,1.4,0,"lower vineyard, not recommended for sampling?",QG2-4
-QuailsGate,Estate,QG,2-5,Chardonnay,UCD,Mixed,,,1993,,0.72,0,"lower vineyard, not recommended for sampling?",QG2-5
-QuailsGate,Estate,QG,2-6,Chenin Blanc,220,SO4/5,,,1997,,4.04,0,,QG2-6
-QuailsGate,Estate,QG,2-7,Merlot,347,3309/347,,,1998,,2.7,0,"lower vineyard, not recommended for sampling?",QG2-7
-QuailsGate,Estate,QG,2-8,Merlot,346,3309,,,1998,,0.85,0,"lower vineyard, not recommended for sampling?",QG2-8
-QuailsGate,Estate,QG,2-9,Merlot,346,SO4/762,,,2008,,0.78,0,"lower vineyard, not recommended for sampling?",QG2-9
-QuailsGate,Estate,QG,3-1,Pinot Noir,777,3309/144,,,2005,,1.79,0,high quality,QG3-1
-QuailsGate,Estate,QG,3-2,Marechal Foch,NY,Self,,,1965,,1.1,0,,QG3-2
-QuailsGate,Estate,QG,3-3,Pinot Noir,667,3309/144,,,1996,,2.47,24,,QG3-3
+QuailsGate,Estate,QG,4-Feb,Chardonnay,UCD,Self,,,1987,,1.4,0,"lower vineyard, not recommended for sampling?",QG2-4
+QuailsGate,Estate,QG,5-Feb,Chardonnay,UCD,Mixed,,,1993,,0.72,0,"lower vineyard, not recommended for sampling?",QG2-5
+QuailsGate,Estate,QG,6-Feb,Chenin Blanc,220,SO4/5,,,1997,,4.04,0,,QG2-6
+QuailsGate,Estate,QG,7-Feb,Merlot,347,3309/347,,,1998,,2.7,0,"lower vineyard, not recommended for sampling?",QG2-7
+QuailsGate,Estate,QG,8-Feb,Merlot,346,3309,,,1998,,0.85,0,"lower vineyard, not recommended for sampling?",QG2-8
+QuailsGate,Estate,QG,9-Feb,Merlot,346,SO4/762,,,2008,,0.78,0,"lower vineyard, not recommended for sampling?",QG2-9
+QuailsGate,Estate,QG,1-Mar,Pinot Noir,777,3309/144,,,2005,,1.79,0,high quality,QG3-1
+QuailsGate,Estate,QG,2-Mar,Marechal Foch,NY,Self,,,1965,,1.1,0,,QG3-2
+QuailsGate,Estate,QG,3-Mar,Pinot Noir,667,3309/144,,,1996,,2.47,24,,QG3-3
 QuailsGate,Estate,QG,3-4a,Chardonnay,95,SO4/102,,,1996,,2.39,0,"Dont sample, plants are not doing well and may be removed",QG3-4a
 QuailsGate,Estate,QG,3-4b,Chardonnay,95,SO4/102,,,1996,,2.39,24,,QG3-4b
-QuailsGate,Estate,QG,3-5,Pinot Noir,91R,SO4,,,1990,,0.92,0,,QG3-5
-QuailsGate,Estate,QG,3-6,Pinot Noir,UCD-2,SO4,,,1987,,0.55,0,,QG3-6
-QuailsGate,Estate,QG,3-7,Pinot Noir,93R,5C,,,1987,,0.96,0,,QG3-7
+QuailsGate,Estate,QG,5-Mar,Pinot Noir,91R,SO4,,,1990,,0.92,0,,QG3-5
+QuailsGate,Estate,QG,6-Mar,Pinot Noir,UCD-2,SO4,,,1987,,0.55,0,,QG3-6
+QuailsGate,Estate,QG,7-Mar,Pinot Noir,93R,5C,,,1987,,0.96,0,,QG3-7
 QuailsGate,Estate,QG,3-8a,Pinot Noir,UCD-1,Self,,,1975,,0.57,0,,QG3-8a
 QuailsGate,Estate,QG,3-8b,Pinot Noir,UCD-1,Self,,,1975,,0.57,0,,QG3-8b
-QuailsGate,Estate,QG,4-1,Chardonnay,95,SO4,,,2008,,2.35,0,,QG4-1
-QuailsGate,Estate,QG,4-2,Pinot Noir,667,3309/144,,,2005,,0.9,0,,QG4-2
-QuailsGate,Estate,QG,4-3,Pinot Noir,93R,SO4,,,1990,,2.68,0,,QG4-3
-QuailsGate,Estate,QG,4-4,Marechal Foch,NY,Self,,,1965,,0.83,0,,QG4-4
+QuailsGate,Estate,QG,1-Apr,Chardonnay,95,SO4,,,2008,,2.35,0,,QG4-1
+QuailsGate,Estate,QG,2-Apr,Pinot Noir,667,3309/144,,,2005,,0.9,0,,QG4-2
+QuailsGate,Estate,QG,3-Apr,Pinot Noir,93R,SO4,,,1990,,2.68,0,,QG4-3
+QuailsGate,Estate,QG,4-Apr,Marechal Foch,NY,Self,,,1965,,0.83,0,,QG4-4
 QuailsGate,Estate,QG,4-5a,Cabernet Sauvignon,191,SO4/5,,,2004,,2.36,0,,QG4-5a
 QuailsGate,Estate,QG,4-5b,Cabernet Sauvignon,191,SO4/5,,,2004,,2.36,0,,QG4-5b
-QuailsGate,Estate,QG,4-6,Cabernet Sauvignon,191,SO4/102,,,1997,,1.17,36,,QG4-6
-QuailsGate,Estate,QG,4-7,Pinot Noir,115,SO4/5,,,2005,,0.53,0,,QG4-7
-QuailsGate,Estate,QG,4-8,Pinot Noir,155,3309/144,,,2005,,1.25,24,,QG4-8
-QuailsGate,Estate,QG,4-9,Pinot Noir,777,3309/144,,,2005,,1.63,0,,QG4-9
-QuailsGate,Estate,QG,4-10,Pinot Noir,93R,SO4,,,1990,,1.72,0,,QG4-10
-QuailsGate,Estate,QG,4-11,Pinot Noir,115,SO4/5,,,2003,,1.57,0,,QG4-11
-QuailsGate,Estate,QG,5-1,Chardonnay,76,SO4/102,,,1997,,1.8,0,"top = high vigour low quality, higher quality",QG5-1
-QuailsGate,Estate,QG,5-2,Chardonnay,96,SO4/102,,,1997,,1.92,0,"top = high vigour low quality, higher quality",QG5-2
-QuailsGate,Estate,QG,5-3,Chardonnay,277,SO4/102,,,1997,,1.43,0,"top = high vigour low quality, higher quality",QG5-3
-QuailsGate,Estate,QG,5-4,Chardonnay,809,SO4/102,,,1997,,1.03,24,"top = high vigour low quality, higher quality",QG5-4
-QuailsGate,Estate,QG,5-5,Pinot Noir,115,SO4/762,,,1997,,1.01,0,,QG5-5
-QuailsGate,Estate,QG,5-6,Pinot Noir,777,SO4/102,,,1997,,1.5,0,,QG5-6
-QuailsGate,Estate,QG,5-7,Cabernet Sauvignon,191,SO4/102,,,1997,,0.95,0,,QG5-7
-QuailsGate,Estate,QG,5-8,Gewurztraminer,UCD,Self,,,1994,,0.53,0,,QG5-8
-QuailsGate,Estate,QG,5-9,Gewurztraminer,UCD,Self,,,1989,,1.37,0,,QG5-9
-QuailsGate,Estate,QG,5-10,Pinot Noir,777,3309/144,,,2005,,0.13,0,,QG5-10
-QuailsGate,Estate,QG,6-1,Merlot,181,3309/143,,,2003,,2.39,36,,QG6-1
-QuailsGate,Estate,QG,6-2,Merlot,181,SO4/5,,,2003,,2.53,0,,QG6-2
+QuailsGate,Estate,QG,6-Apr,Cabernet Sauvignon,191,SO4/102,,,1997,,1.17,36,,QG4-6
+QuailsGate,Estate,QG,7-Apr,Pinot Noir,115,SO4/5,,,2005,,0.53,0,,QG4-7
+QuailsGate,Estate,QG,8-Apr,Pinot Noir,155,3309/144,,,2005,,1.25,24,,QG4-8
+QuailsGate,Estate,QG,9-Apr,Pinot Noir,777,3309/144,,,2005,,1.63,0,,QG4-9
+QuailsGate,Estate,QG,10-Apr,Pinot Noir,93R,SO4,,,1990,,1.72,0,,QG4-10
+QuailsGate,Estate,QG,11-Apr,Pinot Noir,115,SO4/5,,,2003,,1.57,0,,QG4-11
+QuailsGate,Estate,QG,1-May,Chardonnay,76,SO4/102,,,1997,,1.8,0,"top = high vigour low quality, higher quality",QG5-1
+QuailsGate,Estate,QG,2-May,Chardonnay,96,SO4/102,,,1997,,1.92,0,"top = high vigour low quality, higher quality",QG5-2
+QuailsGate,Estate,QG,3-May,Chardonnay,277,SO4/102,,,1997,,1.43,0,"top = high vigour low quality, higher quality",QG5-3
+QuailsGate,Estate,QG,4-May,Chardonnay,809,SO4/102,,,1997,,1.03,24,"top = high vigour low quality, higher quality",QG5-4
+QuailsGate,Estate,QG,5-May,Pinot Noir,115,SO4/762,,,1997,,1.01,0,,QG5-5
+QuailsGate,Estate,QG,6-May,Pinot Noir,777,SO4/102,,,1997,,1.5,0,,QG5-6
+QuailsGate,Estate,QG,7-May,Cabernet Sauvignon,191,SO4/102,,,1997,,0.95,0,,QG5-7
+QuailsGate,Estate,QG,8-May,Gewurztraminer,UCD,Self,,,1994,,0.53,0,,QG5-8
+QuailsGate,Estate,QG,9-May,Gewurztraminer,UCD,Self,,,1989,,1.37,0,,QG5-9
+QuailsGate,Estate,QG,10-May,Pinot Noir,777,3309/144,,,2005,,0.13,0,,QG5-10
+QuailsGate,Estate,QG,1-Jun,Merlot,181,3309/143,,,2003,,2.39,36,,QG6-1
+QuailsGate,Estate,QG,2-Jun,Merlot,181,SO4/5,,,2003,,2.53,0,,QG6-2
