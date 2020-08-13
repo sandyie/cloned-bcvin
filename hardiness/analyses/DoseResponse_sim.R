@@ -14,7 +14,7 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(drc)
-library(bayesplot)
+library(bayesplot)# nice posterior check plots 
 
 
 library(foreach)
@@ -201,9 +201,18 @@ ggplot(bhclim, aes(x = meanC, y = lte)) +geom_point() +
 	geom_line(data=predictedHardiness, aes(x=simTemps, y=PredictedNegative))+
 	xlab("Air temp (degrees C)") + 
 	ylab("cold hardiness (LTE50)") +
-	theme_classic()
+	theme_classic()+
+    theme(text = element_text(size=20))
 
+bhclim$meanC30 <-  bhclim$meanC + 30
+bhclim$ltePos <-  -bhclim$lte 
 
+#Plot model results with hardiness and air temp back how they were originally 
+ggplot(bhclim, aes(x = meanC30, y = ltePos)) +geom_point() +
+	xlab("Air temp (degrees C) + 30") + 
+	ylab("-cold hardiness (LTE50)") +
+	theme_classic()+
+    theme(text = element_text(size=20))
 
 
 
@@ -289,30 +298,64 @@ gammaCPrior <- rgamma(1000, shape = 3, rate = 1)
 hist(gammaCPrior)
 gammabPrior <- rgamma(1000, shape = 7, rate = 0.75)
 hist(gammabPrior)
+
+#Plot showing how gamma changes
+gammaCPrior1 <- rgamma(1000, shape = 1, rate = 1)
+gammaCPrior2 <- rgamma(1000, shape = 2, rate = 1)
+gammaCPrior3 <- rgamma(1000, shape = 3, rate = 1)
+
+gammaCPrior4 <- rgamma(1000, shape = 2, rate = 1)
+gammaCPrior5 <- rgamma(1000, shape = 2, rate = 2)
+gammaCPrior6 <- rgamma(1000, shape = 2, rate = 3)
+
+par(mfrow=c(2,3))
+
+plot(density(gammaCPrior1), main = "shape = 1, rate = 1",  xlim = c(-0.5, 12), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(gammaCPrior2), main = "shape = 2, rate = 1",  xlim = c(-0.5, 12), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(gammaCPrior3), main = "shape = 3, rate = 1",  xlim = c(-0.5, 12), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+
+plot(density(gammaCPrior4), main = "shape = 2, rate = 1",  xlim = c(-0.5, 12), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(gammaCPrior5), main = "shape = 2, rate = 2",  xlim = c(-0.5, 12), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(gammaCPrior6), main = "shape = 2, rate = 3",  xlim = c(-0.5, 12), cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+
+par(mfrow=c(1,1))
+
+plot(density(gammaCPrior), main = "c Prior (gamma) shape = 3, rate = 1",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(gammaCPrior), main = "c Prior (gamma)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(gammabPrior), main = "beta Prior (gamma) shape = 7, scale = 0.75",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+
 #Run a model with priors and simulate y values from it, so try and chose sensible priors
 
 #Data
-x <- I(plotingTemps)
-N <- length(plotingTemps)
+x <- I(simTempsPos)
+N <- length(simTempsPos)
 
 stanData_priot_drs <- list(N = N, x = x)
 
 mean(x)
 
 #Plot each prior
-d_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 30, sd = 12)
-c_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 3, sd = 3)
-ehat_Prior <- rtruncnorm(n = 1000 ,a=0, mean = log(34), sd = 0.2)#this has to be a really small number for expinentials to match x values
+d_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 25, sd = 10)
+c_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 2, sd = 0.5)# I should as Cat and Carl and growers what they think this is  
+ehat_Prior <- rtruncnorm(n = 1000 ,a=0, mean = log(34), sd = 0.15)#this has to be a really small number for expinentials to match x values
 sigma_g_Prior <- rtruncnorm(n = 1000,a=0, mean = 0, sd = 2)
 b_Prior <- rnorm(n = 1000, mean = 10, sd = 10)
 
-loge_Prior <- log(e_Prior)
+e_Prior <- exp(ehat_Prior)
+
+log(20)
+
+plot(density(d_Prior), main = "d Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(c_Prior), main = "c Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(ehat_Prior), main = "ehat Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(e_Prior), main = "e Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(sigma_g_Prior), main = "sigma_g Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+plot(density(b_Prior), main = "beta Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
 
 
-hist(d_Prior)
 hist(c_Prior)
 hist(ehat_Prior)#-60 is pretty unlikley, but not I think impossibel enouph. Maybe i coudl tighten this prior
-hist(loge_Prior)
+hist(e_Prior)
 hist(b_Prior)
 hist(sigma_g_Prior)
 hist(exp(ehat_Prior))
@@ -333,10 +376,9 @@ priorModel <- writeLines(readLines("stan/doseResponse_priorCheck.stan"))
 
 R <- 1000
 #thsi model uses the positive transfomed data!
-#drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, 
-#	iter=R, warmup=0, chains=1, refresh=R,
-#    seed=4838282, algorithm="Fixed_param")
-
+drc_prior <- stan(file = "stan/doseResponse_priorCheck.stan", data = stanData_priot_drs, 
+	iter=R, warmup=0, chains=1, refresh=R,
+    seed=4838282, algorithm="Fixed_param")
 priorCheck <- rstan::extract(drc_prior)
 
 hist(priorCheck$mu_y)
@@ -382,19 +424,18 @@ stan_data_drs <- list(N = N, x = x, y = y)
 #data passed to STan needs to be a list of named objects. names here need to match names in model code
 #i make a LIST of the different varables, NOT data frame
 
-#try the most similar model I can manage to teh one on https://discourse.mc-stan.org/t/dose-response-model-with-partial-pooling/13823
-
 
 writeLines(readLines("stan/doseResponseSimple2.stan"))
 
 #thsi used the positive transfomed data!
-#drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 4000, 
-#	iter = 7000, chains = 4, cores = 4, thin = 1)
+drc_simple <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs, warmup = 4000, 
+	iter = 7000, chains = 4, cores = 4, thin = 1)
 
 drcPost <- rstan::extract(drc_simple)
 
 #how do the posteriors look?
-#pairs(drc_simple)
+pairs(drc_simple, pars = c("b", "ehat","d", "c", "sigma_g", "lp__")) 
+
 
 #How does teh predicted data look?
 str(drcPost)
@@ -475,13 +516,14 @@ N <- length(realx)
 stan_data_drs_real <- list(N = N, x = realx, y = realy)
 
 #thsi used the positive transfomed data!
-drc_simple_real <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs_real, warmup = 6000, 
-	iter = 8000, chains = 4, cores = 4, thin = 1)
+drc_simple_real <- stan(file = "stan/doseResponseSimple2.stan", data = stan_data_drs_real, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+pairs(drc_simple_real, pars = c("b", "ehat","d", "c", "sigma_g", "lp__")) 
 
 
 
-
-drcPost <- rstan::extract(drc_simple)
+drcPost <- rstan::extract(drc_simple_real)
 
 #how do the posteriors look?
 #pairs(drc_simple)
@@ -490,7 +532,7 @@ drcPost <- rstan::extract(drc_simple)
 str(drcPost)
 mu_post <- drcPost$mu_y * -1
 hist(mu_post)
-plot(colMeans(mu_post) ~ simTemps)
+plot(colMeans(mu_post) ~ bhclimClean2 $meanC )
 
 y_sim <- drcPost$y_sim * -1
 hist(y_sim)
@@ -531,7 +573,7 @@ plot(meanMuPostY ~ bhclimClean2$lte )
 #How do the predicted values compare to real parameter values? (plot hist with real parameter value)
 
 e_post <- exp(drcPost$ehat)
-hist(e_post)
+hist(e_post - 30)
 abline(v=e,col="red", lty = 2, lwd = 2)
 
 b_post <- drcPost$b
@@ -577,7 +619,7 @@ simTempsPos <- simTemps + 30
 
 b <- 11 #this is the rate paramater, like a slope in a linear regession 
 d <- 24 # maximum hardiness (inverted from -24)
-c <- 3 # minimum hardiness (inverted from -10)
+c <- 2 # minimum hardiness (inverted from -10)
 e <- 37 # Effective dose ED50. x value where y value is halfway bewteen max(d) and min (c)
 sigma_g <- 2
 
@@ -702,7 +744,7 @@ hist(plottingDataPriorhd$X5.)
 
 
 
-#Run with simulated data 
+#Run with simulated data - ncp
 #------------------------------------------------
 
 head(doseSimData)
@@ -711,16 +753,158 @@ N <- length(x)
 y <- doseSimData$finalLTEPos 
 
 variety <- doseSimData$varieties
-n_vars <- length(variety)
+n_vars <- length(unique(variety))
 
 stanData_drs_hd <- list(N = N, x = x, y = y, variety = variety, n_vars = n_vars)
+
+#thsi used the positive transfomed data!
+drc_hd <- stan(file = "stan/doseResponsedVar_ncp.stan", data = stanData_drs_hd, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+
+#plot(drc_hd)
+drc_hd_fit <-  rstan::extract(drc_hd)
+str(drc_hd_fit)
+
+plot(drc_hd_fit$b)
+hist(drc_hd_fit$b)
+abline(v=b ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$c )
+hist(drc_hd_fit$c )
+abline(v=c,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$ehat)
+hist(exp(drc_hd_fit$ehat))
+abline(v=e ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$d )
+hist(drc_hd_fit$d )
+abline(v=d ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$d_var_sigma)
+hist(drc_hd_fit$d_var_sigma )
+abline(v=dvarsigma ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$mu_y)
+hist(drc_hd_fit$mu_y )
+
+plot(drc_hd_fit$b ~ drc_hd_fit$c)
+plot(drc_hd_fit$b ~ drc_hd_fit$ehat )
+plot(drc_hd_fit$b ~ drc_hd_fit$d )
+plot(drc_hd_fit$b ~ drc_hd_fit$sigma_g)
+plot(drc_hd_fit$b ~ drc_hd_fit$d_var_sigma)
+
+plot(drc_hd_fit$ehat ~ drc_hd_fit$c )
+plot(drc_hd_fit$ehat ~ drc_hd_fit$d )
+plot(drc_hd_fit$ehat ~ drc_hd_fit$sigma_g)
+plot(drc_hd_fit$ehat ~ drc_hd_fit$d_var_sigma)
+
+plot(drc_hd_fit$d ~ drc_hd_fit$b )
+plot(drc_hd_fit$d  ~ drc_hd_fit$sigma_g)
+plot(drc_hd_fit$d ~ drc_hd_fit$d_var_sigma)
+
+pairs(drc_hd_fit)
+
+
+str(drc_hd_fit)
+pairs(drc_hd, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "lp__")) 
+
+str(drc_hd)
+
+#explore post retrodictive values
+meanYs <- colMeans(drc_hd_fit$y_sim) * -1
+quantsYs <- apply( drc_hd_fit$y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesYs <- data.frame(t(quantsYs[c(2, 5),]* -1)) # chaneg back to negative values 
+quatersPYs <- quantsYs[c(3, 4),]* -1 
+
+plottingDataPost2 <- data.frame(t(quatersPYs))
+plottingDataPost2$MeanY <- meanYs 
+plottingDataPost2$x <- doseSimData$airtempCold 
+
+plottingDataPost2$X5. <- extremesYs$X5.
+plottingDataPost2$X95. <- extremesYs$X95.
+
+
+postTempsPlot2 <- ggplot(data = plottingDataPost2, aes(x = x, y = MeanY ))
+postTempsPlot2 + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = doseSimData$airtempCold  , y = doseSimData$negLTE))
+
+
+plot(meanYs ~ doseSimData$negLTE)#teh model cuts off at 0, so there is clustering around these values 
+
+color_scheme_set("darkgray")
+posterior_cp <- as.array(drc_hd)
+#mcmc_parcoord(posterior_cp) thsi crashes 
+#plot variety level differences 
+
+drc_hd_fit$d_var_sigma # one each itteration (4000)
+
+rawVarDs <- data.frame(drc_hd_fit$d_var_raw)# each row is an itteration and each column a variety
+varD <- rawVarDs
+
+for (i in 1:n_vars){ # get variety level differences from ncp
+	varD[i,] <- rawVarDs[i,] * drc_hd_fit$d_var_sigma[i]
+}
+
+meanVarEffect <- colMeans(varD)
+quantsVarEffects <- apply( varD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanDneg<- mean(drc_hd_fit$d)*-1
+
+dvarsG <- meanVarEffect + mean(drc_hd_fit$d)
+
+plot(dvarsG ~ dvars) # plot mean predicted variety effect against simulated 
+
+color_scheme_set("viridis")
+mcmc_intervals(varD + -drc_hd_fit$d) + geom_vline(xintercept = meanDneg, linetype="dotted", color = "grey")  #intercepts 
+
+#It looks like a tight prior on c costrains the posterior of b and e? Because they are somewhat colinear. 
+#Maybe that is to be expected, though, with thsi sort of shape? 
+
+predictedVarietyDs <- varD + drc_hd_fit$d
+simulatedVarietyDs <- dvars
+
+#How well do posteriors compare to orginal simulated variety effects?
+longPredDs <- gather(predictedVarietyDs, key = "variety", value = "prediction")
+unique(as.character(longPredDs$variety))
+longPredDs$variety <- as.factor(longPredDs$variety)
+
+levelsVariety <- paste("X", c(1:20),sep = "")
+longPredDs$variety <- factor(longPredDs$variety ,
+    levels = levelsVariety,ordered = TRUE)
+nRepVar <- nrow(longPredDs)/length(levels(longPredDs$variety))#how many predicted values per variety 
+longPredDs$SimulatedD <- rep(dvars, each = nRepVar) # repeat original simulated values that many times 
+
+
+varBoxesD <- ggplot(data = longPredDs, aes(x = variety, y = prediction))
+varBoxesD + geom_boxplot()+
+	geom_point(aes(x = variety, y = SimulatedD), colour = "Red")+ # pretty good.
+	theme_classic()
+
+
+
+
+
+
+
+
+
+
+
+
+#try non centred parameterisation
+#-----------------------------------------
 
 #thsi used the positive transfomed data!
 drc_hd <- stan(file = "stan/doseResponsedVar.stan", data = stanData_drs_hd, warmup = 1000, 
 	iter = 2000, chains = 4, cores = 4, thin = 1)
 
-str(drc_hd)
-#pairs(drc_hd, pars = c("c", "d", "b", "ehat", "d_var_sigma", "sigma_g", "mu_y")) - gettinga  plotting error 
+
 #plot(drc_hd)
 drc_hd_fit <-  rstan::extract(drc_hd)
 str(drc_hd_fit)
@@ -798,4 +982,143 @@ plot(meanYs ~ doseSimData$negLTE)
 
 color_scheme_set("darkgray")
 posterior_cp <- as.array(drc_hd)
-#mcmc_parcoord(posterior_cp) thsi crashes 
+
+meanAlphaVarEndo <- data.frame(drc_hd_fit$za_variety * mean(drc_hd_fit$var_sigma[,1]))
+mcmc_intervals(meanAlphaSiteEndo) + geom_vline(xintercept = mean(drc_hd_fit$alpha_g), linetype="dotted", color = "grey")  #intercepts 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Try with real data - ncp
+#---------------------------------
+#remove na rows
+bhclimClean3 <- bhclim[!is.na(bhclim$lte),]
+bhclimClean2 <- bhclimClean3[!bhclimClean3$variety == "",]
+
+#Try to standardize x variable instead of adding 30 - no because of ehat transformation 
+
+
+realy <- bhclimClean2$lte * -1
+realx <- I(bhclimClean2 $meanC + 30)
+N <- length(realx)
+
+
+realvariety <- as.integer(as.factor(as.character(bhclimClean2$variety)))
+realn_vars <- length(unique(realvariety))
+
+stan_data_drs_real_var <- list(N = N, x = realx, y = realy, variety = realvariety, n_vars = realn_vars)
+
+#thsi used the positive transfomed data!
+drc_simple_real <- stan(file = "stan/doseResponsedVar_ncp.stan", data = stan_data_drs_real_var, warmup = 2000, 
+	iter = 3000, chains = 4, cores = 4, thin = 1)
+
+
+pairs(drc_simple_real, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "lp__")) 
+
+drcPost <- rstan::extract(drc_simple_real)
+
+#how do the posteriors look?
+#pairs(drc_simple)
+
+#How does teh predicted data look?
+str(drcPost)
+mu_post <- drcPost$mu_y * -1
+hist(mu_post)
+plot(colMeans(mu_post) ~ simTemps)
+
+y_sim <- drcPost$y_sim * -1
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- bhclimClean2 $meanC 
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = bhclimClean2 $meanC , y = bhclimClean2$lte ))
+
+
+
+plot(colMeans(y_sim) ~ simTemps)
+
+# ------  get the z score for each value 
+
+meanMuPostY <- apply(y_sim, 2, mean)
+sdMuPostY <- apply(y_sim, 2, sd)
+
+zScoreY <-  (bhclimClean2$lte  - meanMuPostY) / sdMuPostY
+
+plot(zScoreY ~ bhclimClean2$lte )
+plot(meanMuPostY ~ bhclimClean2$lte )
+
+
+
+#How do the predicted values compare to real parameter values? (plot hist with real parameter value)
+
+e_post <- exp(drcPost$ehat)
+hist(e_post-30)
+
+b_post <- drcPost$b
+hist(b_post)
+
+c_post <- drcPost$c
+hist(c_post)
+
+d_post <- drcPost$d
+hist(d_post)
+
+sigma_post <- drcPost$sigma_g
+hist(sigma_post)
+
+
+d_var_sigma <- drcPost$d_var_sigma # one each itteration (4000)
+hist(d_var_sigma)
+
+rawVarDs <- data.frame(drcPost$d_var_raw)# each row is an itteration and each column a variety
+varD <- rawVarDs
+
+for (i in 1:n_vars){ # get variety level differences from ncp
+	varD[i,] <- rawVarDs[i,] * drcPost$d_var_sigma[i]
+}
+
+meanVarEffect <- colMeans(varD)
+quantsVarEffects <- apply( varD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanDneg<- mean(drcPost$d)
+
+dvarsG <- meanVarEffect + mean(drcPost$d)
+
+plot(dvarsG ~ dvars) # plot mean predicted variety effect against simulated 
+
+colnames(varD) <- levels(as.factor(as.character(bhclimClean2$variety)))
+
+color_scheme_set("viridis")
+mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
