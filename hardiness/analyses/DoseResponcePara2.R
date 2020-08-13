@@ -192,10 +192,10 @@ plot(simLTE ~ x , pch = 16, col = 2, xlab = "Simulated temperatures", ylab = "wi
 #Try some prior distributions
 #----------------------------
 
-betaPrior <-  rtruncnorm(n = 1000,a=0, mean = 0, sd = 10)
+betaPrior <-  rgamma(n = 1000, shape = 5, rate = 1)
 hist(betaPrior)
 
-etaPrior <- rnorm(n = 1000, mean = 0, sd = 0.35) # more than 0.35 makes the model go funny. This is mean plus/minus 10 degrees. 
+etaPrior <- rnorm(n = 1000, mean = 0, sd = 0.15) # more than 0.35 makes the model go funny for simuated data, more than 0.15 for real data. This is mean plus/minus 10 degrees. 
 etaTprior <- etaPrior*sd(simTemps) + mean(simTemps)
 hist(simTemps)
 hist(etaPrior)
@@ -351,8 +351,8 @@ N <- length(realx)
 stan_data_drs_real <- list(N = N, x = realx, y = realy)
 
 #thsi used the positive transfomed data!
-drc_simple_real <- stan(file = "stan/doseResponsedPar2.stan", data = stan_data_drs_real, warmup = 1000, 
-	iter = 2000, chains = 4, cores = 4, thin = 1)
+drc_simple_real <- stan(file = "stan/doseResponsedPar2.stan", data = stan_data_drs_real, warmup = 3000, 
+	iter = 4000, chains = 4, cores = 4, thin = 1)
 
 
 
