@@ -18,3 +18,12 @@ Gewurztraminer,GW,GZT,not in phen data
 Muscat ottonel,MU,MSC,
 Muscat ottonel,MU,MUS,MSC also matched MU
 Semillon,SM,SEM,
+Chenin blanc,CB,CBL,
+Ehrenfelser,EH,EHR,
+Muscat ottonel,MO,,
+Muscato Giallo,MG,,
+Barbera,BA,,
+Sangiovese,SA,,
+Gamay feaux,GF,,
+Gamay noir,GN,,
+Gamay noir/Gamay feaux,GA,GAM,Matched GN and GF
