@@ -1,0 +1,5 @@
+Notes about GDD for the bcvin work.
+Started 16 Aug 2020. Mira Garner.
+
+14 Aug 2020
+Scott Carlson told April that Arterra uses a base temperature of 10.3 degrees C for their GDD calculations.
