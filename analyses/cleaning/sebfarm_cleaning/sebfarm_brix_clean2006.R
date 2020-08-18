@@ -44,21 +44,48 @@ SebF2006 <- select(SebF2006, vineyard, everything())
 SebF2006 <- select(SebF2006, company, everything())
 SebF2006 <- select(SebF2006, -notes, notes)
 
-#Deriving the vineyard from the code entered in block, and isolating the block
-SebF2006$block <- gsub("^\\*", "", SebF2006$block) #removing asterix
-SebF2006$vineyard <- paste(SebF2006$vineyard, SebF2006$block, sep = "") #pasting block value to vineyard
-SebF2006$block <- gsub("[0-9]+", "", SebF2006$block) #removing vineyard digits to isolate block
+#Removing incorrect code
+SebF2006 <- SebF2006[!(SebF2006$block=="SPEPCF" & SebF2006$variety=="CSA"), ]
 
-#isolating vineyard numbers
+#Addressing vineyard and block codes
+SebF2006$block <- gsub("^\\*", "", SebF2006$block) #removing asterix
+SebF2006$vineyard <- paste(SebF2006$vineyard, SebF2006$block, sep = "") #pasting block value to empty vineyard cell
+
+#Removing blocks that do not exist 
+#GAB***may not have blocks and it might just be the full variety code... but not sure.
+#DEK***
+
+#vineyard (codes to look into: )
 for(i in 1:nrow(SebF2006)){
-  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2006[i, "block"]))){
-    SebF2006$vineyard[i] <- gsub("[a-zA-Z]", "", SebF2006$vineyard[i])
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2006[i, "block"]))){ #isolating vineyard numbers
+    SebF2006$vineyard[i] <- gsub("[A-Z]", "", SebF2006$vineyard[i])
   } 
 }
 
-#isolating block IDs
 for(i in 1:nrow(SebF2006)){
-  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2006[i, "block"]))){
+  if(isTRUE(grepl(pattern = "[A-Z]+", x = SebF2006[i, "vineyard"]))){ #isolating remaining vineyard character codes
+    SebF2006$vineyard[i] <- substr(SebF2006$vineyard[i], 1:6, 3:6)
+  } 
+}
+
+#block (blocks to look into: )
+SebF2006$block <- gsub("[0-9]+", "", SebF2006$block) #removing vineyard digits to isolate block
+
+for(i in 1:nrow(SebF2006)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2006[i, "block"]))){ #isolating blocks
     SebF2006$block[i] <- gsub("^.{0,2}", "", SebF2006$block[i])
   } 
 }
+
+for(i in 1:nrow(SebF2006)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{6}([^A-Z]|$)", x = SebF2006[i, "block"]))){ #isolating blocks with 6 letters
+    SebF2006$block[i] <- gsub("^.{0,5}", "", SebF2006$block[i])
+  } 
+}
+
+for(i in 1:nrow(SebF2006)){
+  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{5}([^A-Z]|$)", x = SebF2006[i, "block"]))){ #isolating blocks with 5 letters
+    SebF2006$block[i] <- gsub("^.{0,4}", "", SebF2006$block[i])
+  } 
+}
+

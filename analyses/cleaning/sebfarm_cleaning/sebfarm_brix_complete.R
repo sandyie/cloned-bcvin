@@ -5,6 +5,7 @@ rm(list=ls())
 options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning")
+path <- getwd() #trying to assign path variable
 
 #Sourcing 2004-2018 cleaning scripts
 source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2004.R")
@@ -26,10 +27,16 @@ source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebf
 SebF_Brix <- rbind(SebF2004, SebF2005, SebF2006, SebF2007, SebF2008, SebF2009, SebF2010, SebF2011,
                    SebF2012, SebF2013, SebF2014, SebF2015, SebF2017, SebF2018)
 
-#Removing rows with NA
-SebF_Brix <- SebF_Brix[!(is.na(SebF_Brix$value)), ]
+#Removing empty rows and rows with NA
+#SebF_Brix <- SebF_Brix[!(SebF_Brix$vineyard==""), ] #empty
+SebF_Brix <- SebF_Brix[!(is.na(SebF_Brix$value)), ] #NA
 
-#Addressing issue with vineyard code and block number
+#Removing empty rows
+SebF_Brix <- SebF_Brix[!(SebF_Brix$vineyard==""), ] 
+
+#Examining brix
+brix <- SebF_Brix_Complete[which(SebF_Brix_Complete$event=="brix"), ]
+brix <- brix[order(brix$block, brix$vineyard), ]
 
 #Export Final Output
 setwd("/Users/phoebeautio/desktop/bcvin/analyses/output/sebfarm_clean")

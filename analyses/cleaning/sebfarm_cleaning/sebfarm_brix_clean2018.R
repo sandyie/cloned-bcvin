@@ -48,3 +48,23 @@ SebF2018 <- pivot_longer(SebF2018, #tidyr
 #Reordering column names : #unique columns (time, code ID, product, calculated/potassium?) ask EW
 #"company", "vineyard", "block", "variety", "year", "month", "day", "event", "value", "notes"
 SebF2018 <- select(SebF2018, -notes, notes)
+
+#Isolating block ID
+SebF2018$block <- gsub("[0-9]+", "", SebF2018$block) #removing vineyard number
+
+  #removing variety (2 digit)
+    for(i in 1:nrow(SebF2018)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2018[i, "block"]))){
+        SebF2018$block[i] <- gsub("^.{0,2}", "", SebF2018$block[i])
+      } 
+    }
+
+  #removing vareity (3 digit)
+    for(i in 1:nrow(SebF2018)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{4}([^A-Z]|$)", x = SebF2018[i, "block"]))){
+        SebF2018$block[i] <- gsub("^.{0,3}", "", SebF2018$block[i])
+      } 
+    }
+
+#isolating vineyard numbers
+SebF2018$vineyard <- gsub("SF", "", SebF2018$vineyard)
