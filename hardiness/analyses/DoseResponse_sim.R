@@ -1001,13 +1001,6 @@ mcmc_intervals(meanAlphaSiteEndo) + geom_vline(xintercept = mean(drc_hd_fit$alph
 
 
 
-
-
-
-
-
-
-
 #Try with real data - ncp
 #---------------------------------
 #remove na rows
@@ -1122,3 +1115,389 @@ colnames(varD) <- levels(as.factor(as.character(bhclimClean2$variety)))
 
 color_scheme_set("viridis")
 mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+
+
+
+
+
+# Add site level variation as well
+#---------------------------------------------------------------------
+
+
+
+#simulate data 
+
+#inputs
+nrep <- 20 # number of reps of each variety 
+meanTemp <- 4
+sigmaTemp <- 8
+simTemps <- rnorm(nrep, meanTemp,sigmaTemp)
+
+
+#make temperatures positive because teh x value cant be negative. I do this by adding 20 to the data
+# I will also model teh hardiness resonse as inverted sp plants get a higher number as they get more cold hardy rather than a more negative number
+simTempsPos <- simTemps + 30
+
+#Set model parameters - I have no idea what they should be so I will run a similar model in R (below)
+
+b <- 11 #this is the rate paramater, like a slope in a linear regession 
+d <- 24 # maximum hardiness (inverted from -24)
+c <- 2 # minimum hardiness (inverted from -10)
+e <- 37 # Effective dose ED50. x value where y value is halfway bewteen max(d) and min (c)
+sigma_g <- 2
+
+
+# here I am focusing on maximum hardiness first because this value is recorded to vary between varieties
+
+#simulate data
+nvariety <- 10
+varNames <- as.factor(c(1:nvariety)) # make 20 "varieties" named "1" to "20"
+
+nsite <- 10
+siteNames <- as.factor(c(1:nsite))
+
+bvarsigma <- 0
+bvars <- rtruncnorm(n = nvariety , mean = b, sd = bvarsigma)
+
+dvarsigma <- 5
+dvars <- rnorm(nvariety , 0, dvarsigma)
+dvarsi <- rep(dvars, each = nrep* nsite)
+
+dsitesigma <- 2
+dsites <- rnorm(nsite, 0, dsitesigma)
+dsitesi <- rep(rep(dsites, each = nrep), each = n_vars)
+
+cvarsigma <- 0
+cvars <- rnorm(nvariety , c, cvarsigma)
+
+evarsigma <- 0
+evars <- rnorm(nvariety , e, evarsigma)
+
+#make a database to hold results
+varieties <- rep(varNames, each = nsite)
+sites <- rep(siteNames, by = nvariety)
+varietiesN <- rep(varieties, each = nrep)
+sitesN <- rep(sites, each = nrep)
+
+airtemp <- rep(simTempsPos, times = nvariety*nsite)
+
+doseSimData <- data.frame(cbind(varietiesN, airtemp))
+doseSimData$sitesN <- sitesN
+doseSimData$varietyEffectD <- dvarsi
+doseSimData$siteEffectD<- dsitesi
+
+doseSimData$ltePositive <- NA
+
+head(doseSimData)
+
+#loop through each row
+for (i in 1:length(doseSimData$ltePositive)){
+	doseSimData$ltePositive[i] <- c + ( (d + dvarsi[i] + dsitesi[i]-c) / (1 + exp(b*(log(airtemp[i])-log(e)))))
+}
+
+#add some variation 
+doseSimData$eps <- rnorm(n = nrow(doseSimData), mean = 0, sd = sigma_g)
+
+doseSimData$finalLTEPos <- doseSimData$ltePositive + doseSimData$eps 
+
+#add columns where data is not transformed to eb positive
+doseSimData$negLTE <- doseSimData$finalLTEPos *-1
+doseSimData$airtempCold <- doseSimData$airtemp - 30
+
+hist(dvarsi)
+
+#make some data to plot the line mean model
+plotingTemps <- rnorm(100, meanTemp,sigmaTemp) + 30
+plotingTemps <- sort(plotingTemps)
+plotingTempsCold <- plotingTemps - 30
+
+plottingLTE <- (c + ( (d-c) / (1 + exp(b*(log(plotingTemps)-log(e)))))) * -1
+
+head(doseSimData)
+
+
+plot(doseSimData$negLTE ~ doseSimData$airtempCold, 
+	xlab = "air temp (degrees)", 
+	ylab = "LTE50 (degrees C)", 
+	pch = 16, 
+	col = 4,
+	main = "bsigma = 1, dsig = 5, csig = 0, esig = 0, gsig= 5")
+lines(plottingLTE ~ plotingTempsCold)
+
+
+#Prior predictive check
+#-------------------------------------------
+
+
+doseSimData$varieties
+R <- 1000
+
+x <- I(doseSimData$airtemp )
+N <- length(x)
+
+variety <- doseSimData$varietiesN
+n_vars <- length(unique(variety))
+
+site <- as.numeric(doseSimData$sitesN)
+n_sites<- length(unique(sites))
+
+stanData_priot_drs_hd <- list(N = N, x = x, variety = variety, n_vars = n_vars, site = site, n_sites = n_sites)
+
+drc_prior_hd <- stan(file = "stan/doseResponse_priorCheck_varsSites.stan", data = stanData_priot_drs_hd, 
+	iter=R, warmup=0, chains=1, refresh=R,
+    seed=4838282, algorithm="Fixed_param")
+
+
+priorCheckhd <- rstan::extract(drc_prior_hd)
+
+hist(priorCheckhd$mu_y)
+hist(priorCheckhd$y_sim) # very few values above 0. That is good. 
+hist(priorCheckhd$ehat)
+hist(priorCheckhd$e)
+hist(priorCheckhd$d_var_sigma)
+hist(priorCheckhd$d_site_sigma)
+
+meanSimYhd <- colMeans(priorCheckhd$y_sim) 
+quantsSimYhd <- apply( priorCheckhd$y_sim , 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremeshd <- quantsSimYhd[c(2, 5),]
+quatershd <- quantsSimYdh[c(3, 4),]
+
+plottingDataPriorhd <- data.frame(t(quantsSimYhd) * -1)
+plottingDataPriorhd$MeanY <- meanSimYhd * -1
+plottingDataPriorhd$x <- plotingTempsColdhd
+
+
+priorTempsPlothd <- ggplot(data = plottingDataPriorhd, aes(x = x, y = MeanY ))
+priorTempsPlothd + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()
+
+
+#Run simyulated data though model
+#--------------------------
+
+
+head(doseSimData)
+x <- I(doseSimData$airtemp )
+N <- length(x)
+y <- doseSimData$finalLTEPos 
+
+variety <- doseSimData$varieties
+n_vars <- length(unique(variety))
+
+site <- as.numeric(doseSimData$sitesN)
+n_sites<- length(unique(sites))
+
+
+stanData_drs_hd <- list(N = N, x = x, y = y, variety = variety, n_vars = n_vars, sites = site, n_sites = n_sites)
+
+#thsi used the positive transfomed data!
+drc_hd <- stan(file = "stan/doseResponsedVarSite_ncp.stan", data = stanData_drs_hd, warmup = 1000, 
+	iter = 2000, chains = 4, cores = 4, thin = 1)
+
+
+#plot(drc_hd)
+drc_hd_fit <-  rstan::extract(drc_hd)
+str(drc_hd_fit)
+
+plot(drc_hd_fit$b)
+hist(drc_hd_fit$b)
+abline(v=b ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$c )
+hist(drc_hd_fit$c )
+abline(v=c,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$ehat)
+hist(exp(drc_hd_fit$ehat))
+abline(v=e ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$d )
+hist(drc_hd_fit$d )
+abline(v=d ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$d_var_sigma)
+hist(drc_hd_fit$d_var_sigma )
+abline(v=dvarsigma ,col="red", lty = 2, lwd = 2)
+
+plot(drc_hd_fit$mu_y)
+hist(drc_hd_fit$mu_y )
+
+pairs(drc_hd, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "d_site_sigma", "lp__")) 
+
+
+
+#explore post retrodictive values
+meanYs <- colMeans(drc_hd_fit$y_sim) * -1
+quantsYs <- apply( drc_hd_fit$y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesYs <- data.frame(t(quantsYs[c(2, 5),]* -1)) # chaneg back to negative values 
+quatersPYs <- quantsYs[c(3, 4),]* -1 
+
+plottingDataPost2 <- data.frame(t(quatersPYs))
+plottingDataPost2$MeanY <- meanYs 
+plottingDataPost2$x <- doseSimData$airtempCold 
+
+plottingDataPost2$X5. <- extremesYs$X5.
+plottingDataPost2$X95. <- extremesYs$X95.
+
+
+postTempsPlot2 <- ggplot(data = plottingDataPost2, aes(x = x, y = MeanY ))
+postTempsPlot2 + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = doseSimData$airtempCold  , y = doseSimData$negLTE))
+
+#Try with real data 
+#-------------------------
+
+
+bhclimClean3 <- bhclim[!is.na(bhclim$lte),]
+bhclimClean2 <- bhclimClean3[!bhclimClean3$variety == "",]
+
+#Clean siet column 
+
+bhclimClean2$site2 <- as.character(bhclimClean2$site)
+unique(bhclimClean2$site2 )
+
+bhclimClean2$site2[bhclimClean2$site2 == "Osoyoos northeast"] <- "Osoyoos, northeast"
+bhclimClean2$site2[bhclimClean2$site2 == "Oliver east"] <- "Oliver, east"
+bhclimClean2$site2[bhclimClean2$site2 == "Osoyoos west"] <- "Osoyoos, west"
+
+
+#Try to standardize x variable instead of adding 30 - no because of ehat transformation 
+
+
+realy <- bhclimClean2$lte * -1
+realx <- I(bhclimClean2 $meanC + 30)
+N <- length(realx)
+
+head(bhclimClean2)
+
+realvariety <- as.integer(as.factor(as.character(bhclimClean2$variety)))
+realn_vars <- length(unique(realvariety))
+
+realsite <- as.integer(as.factor(as.character(bhclimClean2$site2)))
+realn_site <- length(unique(realsite))
+
+stan_data_drs_real_var <- list(N = N, x = realx, y = realy, variety = realvariety, 
+	n_vars = realn_vars, sites = realsite, n_sites = realn_site)
+
+#thsi used the positive transfomed data!
+drc_simple_real <- stan(file = "stan/doseResponsedVarSite_ncp.stan", data = stan_data_drs_real_var, warmup = 2000, 
+	iter = 3000, chains = 4, cores = 4, thin = 1)
+
+pairs(drc_simple_real, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "lp__")) 
+
+drcPost <- rstan::extract(drc_simple_real)
+
+#how do the posteriors look?
+#pairs(drc_simple)
+
+#How does teh predicted data look?
+str(drcPost)
+mu_post <- drcPost$mu_y * -1
+hist(mu_post)
+plot(colMeans(mu_post) ~ bhclimClean2 $meanC)
+
+
+y_sim <- drcPost$y_sim * -1
+
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- bhclimClean2 $meanC 
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = bhclimClean2 $meanC , y = bhclimClean2$lte ))
+
+
+
+plot(colMeans(y_sim) ~ bhclimClean2 $meanC)
+
+
+#What are the predicted parameter values?
+
+e_post <- exp(drcPost$ehat)
+hist(e_post-30)
+
+b_post <- drcPost$b
+hist(b_post)
+
+c_post <- drcPost$c
+hist(c_post)
+
+d_post <- drcPost$d
+hist(d_post)
+
+sigma_post <- drcPost$sigma_g
+hist(sigma_post)
+
+
+d_var_sigma <- drcPost$d_var_sigma # one each itteration (4000)
+hist(d_var_sigma)
+
+d_site_sigma <- drcPost$d_site_sigma # one each itteration (4000)
+hist(d_site_sigma)
+
+#compare varietyt and site effect 
+plot(density(d_var_sigma), col = 2)
+lines(density(d_site_sigma), col = 4)
+text(1.5, 2, "Blue = site \nRed = variety")
+
+#Variety plot 
+rawVarDs <- data.frame(drcPost$d_var_raw)# each row is an itteration and each column a variety
+varD <- rawVarDs
+
+for (i in 1:n_vars){ # get variety level differences from ncp
+	varD[i,] <- rawVarDs[i,] * drcPost$d_var_sigma[i]
+}
+
+meanVarEffect <- colMeans(varD)
+quantsVarEffects <- apply( varD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanDneg<- mean(drcPost$d)
+
+dvarsG <- meanVarEffect + mean(drcPost$d)
+
+colnames(varD) <- levels(as.factor(as.character(bhclimClean2$variety)))
+
+color_scheme_set("viridis")
+mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+
+#site Plot 
+
+rawsiteDs <- data.frame(drcPost$d_site_raw)# each row is an itteration and each column a variety
+siteD <- rawsiteDs
+
+for (i in 1:n_sites){ # get variety level differences from ncp
+	siteD[i,] <- rawsiteDs[i,] * drcPost$d_site_sigma[i]
+}
+
+meanSiteEffect <- colMeans(siteD)
+quantsSiteEffects <- apply( siteD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanDneg <- mean(drcPost$d)
+
+dsiteG <- meanSiteEffect + mean(drcPost$d)
+
+
+colnames(siteD) <- levels(as.factor(as.character(bhclimClean2$site2)))
+
+color_scheme_set("viridis")
+mcmc_intervals(-siteD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+
