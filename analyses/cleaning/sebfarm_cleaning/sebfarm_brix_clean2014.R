@@ -51,6 +51,7 @@ SebF2014$vineyard <- paste(SebF2014$vineyard, SebF2014$block, sep = "") #pasting
 
 #vineyard
 for(i in 1:nrow(SebF2014)){
+  if(SebF2014[i, "vineyard"] == "BR1GWA" | SebF2014[i, "vineyard"] == "BR1PGB") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3,4}([^A-Z]|$)", x = SebF2014[i, "block"]))){ #isolating vineyard numbers
     SebF2014$vineyard[i] <- gsub("[A-Z]", "", SebF2014$vineyard[i])
   } 

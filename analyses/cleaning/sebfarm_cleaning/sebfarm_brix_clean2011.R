@@ -48,17 +48,6 @@ SebF2011 <- select(SebF2011, -notes, notes)
 SebF2011$block <- gsub("^\\*", "", SebF2011$block) #removing asterix
 SebF2011$vineyard <- paste(SebF2011$vineyard, SebF2011$block, sep = "") #pasting block value to empty vineyard cell
 
-#Removing blocks that don't exists
-#CVMER
-#CVPGJ (has a block, J, but only a 2 letter vin code?)
-#GSFCJ 2 letter vin code
-#HGLCHD
-#HGLMER
-#HGLPGR
-#SIDMER
-#SIDPGR
-#SIDSBL
-
 #vineyard
 for(i in 1:nrow(SebF2011)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2011[i, "block"]))){ #isolating vineyard numbers
@@ -71,6 +60,9 @@ for(i in 1:nrow(SebF2011)){
     SebF2011$vineyard[i] <- substr(SebF2011$vineyard[i], 1:6, 3:6)
   } 
 }
+
+SebF2011$vineyard[which(SebF2011$vineyard=="CVM" | SebF2011$vineyard=="CVP")] <- "CV" #correcting vin code
+SebF2011$vineyard[which(SebF2011$vineyard=="GSF")] <- "GS" #correcting vin code
 
 #block
 SebF2011$block <- gsub("[0-9]+", "", SebF2011$block) #removing vineyard digits to isolate block

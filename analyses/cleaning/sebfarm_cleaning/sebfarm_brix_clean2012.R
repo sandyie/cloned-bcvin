@@ -51,21 +51,9 @@ SebF2012 <- SebF2012[!(is.na(SebF2012$year)), ]
 SebF2012$block <- gsub("^\\*", "", SebF2012$block) #removing asterix
 SebF2012$vineyard <- paste(SebF2012$vineyard, SebF2012$block, sep = "") #pasting block value to empty vineyard cell
 
-#Removing blocks that don't exist
-#13RGWA
-#GSPGJ (2 digit vin code)
-#GSFCJ
-#HGLPGR
-#*10PGR, PGR
-#BR1PGB - numerical/ letter vin code
-#HGLCHD
-#SIDMER
-#R13GWA - numerical/ letter vin code
-#CVMERM - 2 digit vin code
-#HGLMER
-
-#vineyard (codes to look into: )
+#vineyard
 for(i in 1:nrow(SebF2012)){
+  if(SebF2012[i, "vineyard"] == "R13GWA" | SebF2012[i, "vineyard"] == "BR1PGB" | SebF2012[i, "vineyard"] == "R13PGB" | SebF2012[i, "vineyard"] == "BR1GWA") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2012[i, "block"]))){ #isolating vineyard numbers
     SebF2012$vineyard[i] <- gsub("[A-Z]", "", SebF2012$vineyard[i])
   } 
@@ -76,6 +64,9 @@ for(i in 1:nrow(SebF2012)){
     SebF2012$vineyard[i] <- substr(SebF2012$vineyard[i], 1:6, 3:6)
   } 
 }
+
+SebF2012$vineyard[which(SebF2012$vineyard=="CVM" | SebF2012$vineyard=="CVP")] <- "CV" #correcting vin code
+SebF2012$vineyard[which(SebF2012$vineyard=="GSF" | SebF2012$vineyard=="GSP")] <- "GS" #correcting vin code
 
 #block
 SebF2012$block <- gsub("[0-9]+", "", SebF2012$block) #removing vineyard digits to isolate block

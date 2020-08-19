@@ -48,8 +48,9 @@ SebF2015 <- select(SebF2015, -notes, notes)
 SebF2015$block <- gsub("^\\*", "", SebF2015$block) #removing asterix
 SebF2015$vineyard <- paste(SebF2015$vineyard, SebF2015$block, sep = "") #pasting block value to empty vineyard cell
 
-#vineyard
+#vineyard 
 for(i in 1:nrow(SebF2015)){
+  if(SebF2015[i, "vineyard"] == "CCPN8" | SebF2015[i, "vineyard"] == "R13GWA" | SebF2015[i, "vineyard"] == "R13PGB" | SebF2015[i, "vineyard"] == "SDHP107") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3,4}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating vineyard numbers
     SebF2015$vineyard[i] <- gsub("[A-Z]", "", SebF2015$vineyard[i])
   } 
@@ -61,7 +62,7 @@ for(i in 1:nrow(SebF2015)){
   } 
 }
 
-#block (codes that need looking into: CCPN8 for PNN; SDHP107 for PGR (also SDHPG97 for PGR)
+#block
 SebF2015$block <- gsub("[0-9]+", "", SebF2015$block) #removing vineyard digits to isolate block
 
 for(i in 1:nrow(SebF2015)){
@@ -85,12 +86,6 @@ for(i in 1:nrow(SebF2015)){
 for(i in 1:nrow(SebF2015)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{5}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating blocks with 5 letters
     SebF2015$block[i] <- gsub("^.{0,4}", "", SebF2015$block[i])
-  } 
-}
-
-for(i in 1:nrow(SebF2015)){
-  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{7}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating blocks with 7 letters
-    SebF2015$block[i] <- gsub("^.{0,5}", "", SebF2015$block[i])
   } 
 }
 

@@ -48,8 +48,12 @@ SebF2017 <- select(SebF2017, -notes, notes)
 SebF2017$block <- gsub("^\\*", "", SebF2017$block) #removing asterix
 SebF2017$vineyard <- paste(SebF2017$vineyard, SebF2017$block, sep = "") #pasting block value to empty vineyard cell
 
-#vineyard(ADDexcept for: BR1GWA; BR1PGB; BR1RSC; PHTA10; PHTA11; PHTA12; PHTA2; PHTA3; RG1CHB; RG1MEC; RG1RSA; RG2CFA; RG2PGB; RG2RSC; SD1CAA; SD3GWA; 
-#SD3PGC; SD4RSA/SD4RSE)----
+#vineyard---PHTA10; PHTA11; PHTA12; PHTA2; PHTA3
+#if(SebF2017[i, "vineyard"] == "BR1PGB" | SebF2017[i, "vineyard"] == "BR1RSC" | SebF2017[i, "vineyard"] == "RG1CHB" | 
+#SebF2017[i, "vineyard"] == "RG1MEC" | SebF2017[i, "vineyard"] == "RG1RSA" | SebF2017[i, "vineyard"] == "RG2CFA"| 
+#SebF2017[i, "vineyard"] == "RG2PGB" | SebF2017[i, "vineyard"] == "RG2RSC" | SebF2017[i, "vineyard"] == "SD1CAA" | 
+#SebF2017[i, "vineyard"] == "SD3GWA" | SebF2017[i, "vineyard"] == "SD3PGC" | SebF2017[i, "vineyard"] == "SD4RSA" | 
+#SebF2017[i, "vineyard"] == "SD4RSE" | SebF2017[i, "vineyard"] == "BR1GWA") next
 
 for(i in 1:nrow(SebF2017)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3,4}([^A-Z]|$)", x = SebF2017[i, "block"]))){ #isolating vineyard numbers
@@ -87,12 +91,6 @@ for(i in 1:nrow(SebF2017)){
 for(i in 1:nrow(SebF2017)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{5}([^A-Z]|$)", x = SebF2017[i, "block"]))){ #isolating blocks with 5 letters
     SebF2017$block[i] <- gsub("^.{0,4}", "", SebF2017$block[i])
-  } 
-}
-
-for(i in 1:nrow(SebF2017)){
-  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{7}([^A-Z]|$)", x = SebF2017[i, "block"]))){ #isolating blocks with 7 letters
-    SebF2017$block[i] <- gsub("^.{0,5}", "", SebF2017$block[i])
   } 
 }
 

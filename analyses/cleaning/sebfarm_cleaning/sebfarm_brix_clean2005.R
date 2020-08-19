@@ -53,23 +53,28 @@ SebF2005 <- SebF2005[!(SebF2005$block=="SPEPCF" & SebF2005$variety=="CSA"), ]
 SebF2005$block <- gsub("^\\*", "", SebF2005$block) #removing asterix
 SebF2005$vineyard <- paste(SebF2005$vineyard, SebF2005$block, sep = "") #pasting block value to empty vineyard cell
 
-#Remove values from blocks that do not exist
-#(SPEPCF, GAB, SDHME, SDHGZ (any SDH), MIlLER. None have blocks)
-
 #vineyard
 for(i in 1:nrow(SebF2005)){
+  if (SebF2005[i, "vineyard"] == "GAB") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2005[i, "block"]))){ #isolating vineyard numbers
     SebF2005$vineyard[i] <- gsub("[A-Z]", "", SebF2005$vineyard[i])
   } 
 }
 
 for(i in 1:nrow(SebF2005)){
+  if (SebF2005[i, "vineyard"] == "MILLER" | SebF2005[i, "vineyard"] == "GAB") next
   if(isTRUE(grepl(pattern = "[A-Z]+", x = SebF2005[i, "vineyard"]))){ #isolating remaining vineyard character codes
     SebF2005$vineyard[i] <- substr(SebF2005$vineyard[i], 1:6, 3:6)
   } 
 }
 
 #block
+#Removing blocks from vineyards without blocks
+SebF2005$block[which(SebF2005$block=="SDHGZ")] <- ""
+SebF2005$block[which(SebF2005$block=="SDHME")] <- ""
+SebF2005$block[which(SebF2005$vineyard=="MILLER")] <- ""
+SebF2005$block[which(SebF2005$vineyard=="GAB")] <- ""
+
 SebF2005$block <- gsub("[0-9]+", "", SebF2005$block) #removing vineyard digits to isolate block
 
 for(i in 1:nrow(SebF2005)){

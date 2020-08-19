@@ -48,20 +48,9 @@ SebF2010 <- select(SebF2010, -notes, notes)
 SebF2010$block <- gsub("^\\*", "", SebF2010$block) #removing asterix
 SebF2010$vineyard <- paste(SebF2010$vineyard, SebF2010$block, sep = "") #pasting block value to empty vineyard cell
 
-#Removing blocks that don't exist
-#HERCAF
-#HGLCHD
-#HGLMER
-#ORKMER
-#SIDMER
-#CMAPGR
-#HGLPGR
-#RG1PGR
-#SIDPGR
-#SIDSBL
-
 #vineyard
 for(i in 1:nrow(SebF2010)){
+  if (SebF2010[i, "vineyard"] == "RG1PGR") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2010[i, "block"]))){ #isolating vineyard numbers
     SebF2010$vineyard[i] <- gsub("[A-Z]", "", SebF2010$vineyard[i])
   } 

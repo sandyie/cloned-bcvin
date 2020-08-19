@@ -46,22 +46,19 @@ SebF2008 <- select(SebF2008, company, everything())
 SebF2008 <- select(SebF2008, -notes, notes)
 
 #Removing incorrect code
-SebF2007 <- SebF2007[!(SebF2007$block=="SPEPCF" & SebF2007$variety=="CSA"), ]
+SebF2008 <- SebF2008[!(SebF2008$block=="SPEPCF" & SebF2008$variety=="CSA"), ]
 
 #Addressing vineyard and block codes
 SebF2008$block <- gsub("^\\*", "", SebF2008$block) #removing asterix from block
 SebF2008$vineyard <- gsub("^\\*", "", SebF2008$vineyard) #removing asterix from vineyard
-
-#Removing blocks that don't exist
-#CVCHD
-#CVMER
-#CVSBL
-#CVSHZ
-#DROGAM?
-#MILLER
-#PACPGR?
+SebF2008$vineyard[which(SebF2008$vineyard=="MIL")] <- "MILLER" #making MILLER vineyard code uniform
+SebF2008$vineyard[which(SebF2008$vineyard=="CVC" | SebF2008$vineyard=="CVM" | SebF2008$vineyard=="CVS")] <- "CV" #correcting vin code
 
 #block
+#Removing blocks from vineyards without blocks
+SebF2008$block[which(SebF2008$vineyard=="MILLER")] <- ""
+SebF2008$block[which(SebF2008$vineyard=="CV")] <- ""
+
 SebF2008$block <- gsub("[0-9]+", "", SebF2008$block) #removing vineyard digits to isolate block
 
 for(i in 1:nrow(SebF2008)){

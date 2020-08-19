@@ -44,12 +44,16 @@ SebF2013 <- select(SebF2013, vineyard, everything())
 SebF2013 <- select(SebF2013, company, everything())
 SebF2013 <- select(SebF2013, -notes, notes)
 
+#Removing incorrect code (18MEG for RSL, this was recommended by the grower/MG)
+SebF2013 <- SebF2013[!(SebF2013$block=="18MEG" & SebF2013$variety=="RSL"), ]
+
 #Addressing vineyard and block codes
 SebF2013$block <- gsub("^\\*", "", SebF2013$block) #removing asterix
 SebF2013$vineyard <- paste(SebF2013$vineyard, SebF2013$block, sep = "") #pasting block value to empty vineyard cell
 
 #vineyard
 for(i in 1:nrow(SebF2013)){
+  if(SebF2013[i, "vineyard"] == "BR1GWA" | SebF2013[i, "vineyard"] == "BR1PGB") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2013[i, "block"]))){ #isolating vineyard numbers
     SebF2013$vineyard[i] <- gsub("[A-Z]", "", SebF2013$vineyard[i])
   } 
@@ -61,7 +65,7 @@ for(i in 1:nrow(SebF2013)){
   } 
 }
 
-#block (blocks to look into: 16MUA for MSC; 18MEG for RSL)
+#block
 SebF2013$block <- gsub("[0-9]+", "", SebF2013$block) #removing vineyard digits to isolate block
 
 for(i in 1:nrow(SebF2013)){
