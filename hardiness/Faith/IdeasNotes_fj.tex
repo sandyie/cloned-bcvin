@@ -105,6 +105,15 @@ Need to consider the effect of higher CO$^2$ alongside warming conditions. \\
 
 Winegrape hardiness is closely linked to daily maximum and mean temperatures, rather than minimum temperatures \citep{Hubackova1996}. 
 
+\cite{Hannah2013} - in their sup info they describe a selection fo climate variables used in Maxent modeling. They also include a tabel in sup info of which variables came out as most important. 
+\begin{itemize} 
+	\item mean minimum temp of coldest month (28\%)
+	\item mean minimum temp of coldest month during growing seaseon (22\%)
+	\item total GDD (above 10 degrees C) during teh growing season {21\%}
+	\item also annual precipitation, mean temp in growing season, seasonality of precipitation, max tem of warmest month, mean diurnal temp range 
+\end{itemize}
+
+
 \subsection{List of variables to look at}
 
 \begin{itemize} 
@@ -319,8 +328,9 @@ Priors:
 \rho \sim LKJcorr (2)
 \end{gather*}
 
-\subsection{Dose Response Curve}
+\subsection{Dose Response Curves}
 
+Basic curve:
 \begin{equation*}
 \mu=f(x,(b,c,d,e))=c+\frac{d-c}{1+e^{b(log(x)-\tilde{e})}}
 \end{equation*}
@@ -332,7 +342,7 @@ Where:\\
 	$x$ is the concentration of the dose (amount of winter cold) \\
 	$b$ is the response rate (slope)\\
 	$d$ is the upper asymptote of the response (maximum hardiness)\\
-	$b$ is the lower asymptote of the response (minimum hardiness)\\
+	$c$ is the lower asymptote of the response (minimum hardiness)\\{}
 	$e$ is the effective dose ED50 (winter temperature where cold hardiness is half way between min and max)  \\
 	$\tilde{e}$ is the log of the effective dose ED50\\
 
@@ -341,11 +351,71 @@ Priors (hardiness has been multipled with -1 to be positive, and 30 has been add
 	$d \sim Normal(25, 10)$ \\
 	$c \sim gamma(3,1)$\\
 	$\tilde{e} \sim normal(log(30), 0.1)$ \\
-	$\sigma \sim normal(0,5)$
+	$\sigma \sim normal(0,5)${}
+
+Basic curve with non centred parametirisation on d for variety:
+\begin{equation*}
+\mu=f(x_{i},(b,c,d,e))=c+\frac{d_{var,i}-c}{1+e^{b(log(x_{i})-\tilde{e})}}
+\end{equation*}
+\begin{equation*}
+{d}_{var} = d + dr_{var} * \sigma_{dvar}
+\end{equation*}
+\begin{equation*}
+\tilde{y}_{i}\sim normal(\mu_{i},\sigma)
+\end{equation*}
+
+Where:\\
+	$x$ is the concentration of the dose (amount of winter cold) \\
+	$b$ is the response rate (slope)\\
+	$d_{var}$ is the upper asymptote of the response (maximum hardiness) for each variety\\
+	$\sigma_{dvar}$ is the standard deviation of the effect of varieties on maximum winter hardiness\\
+	$dr_{var}$ is the non centred parameterization values for varieties \\
+	$b$ is the lower asymptote of the response (minimum hardiness)\\
+	$e$ is the effective dose ED50 (winter temperature where cold hardiness is half way between min and max)  \\
+	$\tilde{e}$ is the log of the effective dose ED50\\
+
+Priors (hardiness has been multipled with -1 to be positive, and 30 has been added to air temp)
+	$b \sim gamma(5,1)$\\
+	$d \sim Normal(25, 10)$ \\
+	$\sigma_{dvar} \sim normal(0,5)$ \\
+	$dr_{var} \sim normal(0,1)$ \\
+	$c \sim gamma(3,1)$\\
+	$\tilde{e} \sim normal(log(30), 0.1)$ \\
+	$\sigma \sim normal(0,5)$\\
+Reparameterisezed curve:
+This is the same model, but reparameterized to be easier to fit. See 
+\url{https://discourse.mc-stan.org/t/difficulties-with-logistic-population-growth-model/8286/3}
+
+\begin{equation*}
+\mu=f(x,(y_{0},\beta,\eta))=\frac{y_{0}(1 +e^{\eta\beta})}{1+e^{-\beta(\eta - x)}}
+\end{equation*}
+\begin{equation*}
+\tilde{y}_{i}\sim normal(\mu_{i},\sigma)
+\end{equation*}
+
+Priors.
+Hardiness has been multipled with -1 to be positive, and air temp has been standardized (mean is 0).\\
+	$\beta \sim Normal(10,5)$\\
+	$\eta \sim Normal(0, 0.35)$ \\
+	$y_{0} \sim halfNormal(15,5)$\\
+	$\sigma \sim normal(0,5)$\\
+
+They centered and scaled x before fitting the model, so y0 is the value at the midpoint of data. In my case 
+$y_{0}$ is meaningful because it represents winter hardiness when air temperature is 0, so just as freezing risk starts. 
+ 
+
+
+
+
+
+
 
 
 
 \bibliographystyle{/home/faith/Documents/Bibtex/styles/besjournals/besjournals}
+
+
+
 \bibliography{/home/faith/Documents/Bibtex/mendeleyStuff/library}
 
 \end{document}
