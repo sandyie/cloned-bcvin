@@ -65,6 +65,24 @@ SebF2018$block <- gsub("[0-9]+", "", SebF2018$block) #removing vineyard number
         SebF2018$block[i] <- gsub("^.{0,3}", "", SebF2018$block[i])
       } 
     }
+  
+  #removing vareity (5 digit)
+    for(i in 1:nrow(SebF2018)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{5}([^A-Z]|$)", x = SebF2018[i, "block"]))){ 
+        SebF2018$block[i] <- gsub("^.{0,4}", "", SebF2018$block[i])
+      } 
+    }
+
+  #removing vareity (6 digit)
+    for(i in 1:nrow(SebF2018)){
+      if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{6}([^A-Z]|$)", x = SebF2018[i, "block"]))){ #isolating blocks with 6 letters
+        SebF2018$block[i] <- gsub("^.{0,5}", "", SebF2018$block[i])
+      } 
+    }
 
 #isolating vineyard numbers
 SebF2018$vineyard <- gsub("SF", "", SebF2018$vineyard)
+
+#Removing empty rows (this should be looked into)
+SebF2018 <- SebF2018[!(is.na(SebF2018$year)), ]
+SebF2018 <- SebF2018[!(SebF2018$company=="" & SebF2018$vineyard==""), ] #84 empty rows, likely an error in reading in the CSV

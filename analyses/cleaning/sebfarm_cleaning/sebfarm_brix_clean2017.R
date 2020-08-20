@@ -48,18 +48,22 @@ SebF2017 <- select(SebF2017, -notes, notes)
 SebF2017$block <- gsub("^\\*", "", SebF2017$block) #removing asterix
 SebF2017$vineyard <- paste(SebF2017$vineyard, SebF2017$block, sep = "") #pasting block value to empty vineyard cell
 
-#vineyard---PHTA10; PHTA11; PHTA12; PHTA2; PHTA3
-#if(SebF2017[i, "vineyard"] == "BR1PGB" | SebF2017[i, "vineyard"] == "BR1RSC" | SebF2017[i, "vineyard"] == "RG1CHB" | 
-#SebF2017[i, "vineyard"] == "RG1MEC" | SebF2017[i, "vineyard"] == "RG1RSA" | SebF2017[i, "vineyard"] == "RG2CFA"| 
-#SebF2017[i, "vineyard"] == "RG2PGB" | SebF2017[i, "vineyard"] == "RG2RSC" | SebF2017[i, "vineyard"] == "SD1CAA" | 
-#SebF2017[i, "vineyard"] == "SD3GWA" | SebF2017[i, "vineyard"] == "SD3PGC" | SebF2017[i, "vineyard"] == "SD4RSA" | 
-#SebF2017[i, "vineyard"] == "SD4RSE" | SebF2017[i, "vineyard"] == "BR1GWA") next
-
+#vineyard
 for(i in 1:nrow(SebF2017)){
+  if(SebF2017[i, "vineyard"] == "BR1PGB" | SebF2017[i, "vineyard"] == "BR1RSC" | SebF2017[i, "vineyard"] == "RG1CHB" | 
+     SebF2017[i, "vineyard"] == "RG1MEC" | SebF2017[i, "vineyard"] == "RG1RSA" | SebF2017[i, "vineyard"] == "RG2CFA"| 
+     SebF2017[i, "vineyard"] == "RG2PGB" | SebF2017[i, "vineyard"] == "RG2RSC" | SebF2017[i, "vineyard"] == "SD1CAA" | 
+     SebF2017[i, "vineyard"] == "SD3GWA" | SebF2017[i, "vineyard"] == "SD3PGC" | SebF2017[i, "vineyard"] == "SD4RSA" |
+     SebF2017[i, "vineyard"] == "PHTA10" | SebF2017[i, "vineyard"] == "PHTA11" | SebF2017[i, "vineyard"] == "PHTA12" | 
+     SebF2017[i, "vineyard"] == "PHTA2" | SebF2017[i, "vineyard"] == "PHTA3" |
+     SebF2017[i, "vineyard"] == "SD4RSE" | SebF2017[i, "vineyard"] == "BR1GWA") next
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3,4}([^A-Z]|$)", x = SebF2017[i, "block"]))){ #isolating vineyard numbers
     SebF2017$vineyard[i] <- gsub("[A-Z]", "", SebF2017$vineyard[i])
   } 
 }
+
+SebF2017$vineyard[which(SebF2017$vineyard=="PHTA10" | SebF2017$vineyard=="PHTA11" | SebF2017$vineyard=="PHTA12" |
+                          SebF2017$vineyard=="PHTA2" | SebF2017$vineyard=="PHTA3")] <- "PHT"
 
 for(i in 1:nrow(SebF2017)){
   if(isTRUE(grepl(pattern = "[A-Z]+", x = SebF2017[i, "vineyard"]))){ #isolating remaining vineyard character codes
@@ -68,7 +72,21 @@ for(i in 1:nrow(SebF2017)){
 }
 
 #block 
-SebF2017$block <- gsub("[0-9]+", "", SebF2017$block) #removing vineyard digits to isolate block
+SebF2017$block[which(SebF2017$block=="PHTA10")] <- "A10"
+SebF2017$block[which(SebF2017$block=="PHTA11")] <- "A11"
+SebF2017$block[which(SebF2017$block=="PHTA12")] <- "A12"
+SebF2017$block[which(SebF2017$block=="PHTA2")] <- "A2"
+SebF2017$block[which(SebF2017$block=="PHTA3")] <- "A3"
+SebF2017$block[which(SebF2017$block=="SZVLMER")] <- "R" 
+
+
+for(i in 1:nrow(SebF2017)){
+  if(SebF2017[i, "block"] == "A10" | SebF2017[i, "block"] == "A11" | SebF2017[i, "block"] == "A12" | 
+     SebF2017[i, "block"] == "A2" | SebF2017[i, "block"] == "A3") next
+  if(isTRUE(grepl(pattern = "[0-9]+", "", x = SebF2017[i, "block"]))){ #isolating remaining vineyard character codes
+    SebF2017$block[i] <- gsub("[0-9]+", "", SebF2017$block[i])
+  } 
+}
 
 for(i in 1:nrow(SebF2017)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2017[i, "block"]))){ #isolating 1 digit blocks

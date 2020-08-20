@@ -63,7 +63,21 @@ for(i in 1:nrow(SebF2015)){
 }
 
 #block
-SebF2015$block <- gsub("[0-9]+", "", SebF2015$block) #removing vineyard digits to isolate block
+SebF2015$block[which(SebF2015$block=="SDHPG97")] <- "97"
+SebF2015$block[which(SebF2015$block=="SDHP107")] <- "107"
+SebF2015$block[which(SebF2015$block=="CCPN8")] <- "8"
+SebF2015$block[which(SebF2015$block=="R13PGB")] <- "B"
+SebF2015$block[which(SebF2015$block=="PHTCHA2")] <- "A2"
+SebF2015$block[which(SebF2015$block=="PHTCHB3")] <- "B3"
+SebF2015$block[which(SebF2015$block=="R13GWA")] <- "A"
+
+for(i in 1:nrow(SebF2015)){
+  if(SebF2015[i, "block"] == "8" | SebF2015[i, "block"] == "97" | SebF2015[i, "block"] == "107" | 
+     SebF2015[i, "block"] == "B" | SebF2015[i, "block"] == "A2" | SebF2015[i, "block"] == "B3") next
+  if(isTRUE(grepl(pattern = "[0-9]+", "", x = SebF2015[i, "block"]))){ #isolating remaining vineyard character codes
+    SebF2015$block[i] <- gsub("[0-9]+", "", SebF2015$block[i])
+  } 
+}
 
 for(i in 1:nrow(SebF2015)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{3}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating 1 digit blocks
@@ -79,18 +93,6 @@ for(i in 1:nrow(SebF2015)){
 
 for(i in 1:nrow(SebF2015)){
   if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{6}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating blocks with 6 letters
-    SebF2015$block[i] <- gsub("^.{0,5}", "", SebF2015$block[i])
-  } 
-}
-
-for(i in 1:nrow(SebF2015)){
-  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{5}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating blocks with 5 letters
-    SebF2015$block[i] <- gsub("^.{0,4}", "", SebF2015$block[i])
-  } 
-}
-
-for(i in 1:nrow(SebF2015)){
-  if(isTRUE(grepl(pattern = "(^|[^A-Z])[A-Z]{7}([^A-Z]|$)", x = SebF2015[i, "block"]))){ #isolating blocks with 7 letters
     SebF2015$block[i] <- gsub("^.{0,5}", "", SebF2015$block[i])
   } 
 }
