@@ -1,8 +1,8 @@
 ########################## 2004_SebFarms_Brix.csv Cleaning (PA) ##########################
 
 #Housekeeping 
-rm(list=ls())
-options(stringsAsFactors = FALSE)
+#rm(list=ls())
+#options(stringsAsFactors = FALSE)
 
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/input/sebastianfarms/brix/")
 library(tidyverse) 
@@ -69,7 +69,6 @@ for(i in 1:nrow(SebF2004)){
 
 #block
 #Removing blocks from vineyards without blocks
-#GAM has other entires with blocks, so DROGAM is assumed to be block M, if not, remove.
 SebF2004$block[which(SebF2004$block=="SDHGZ")] <- ""
 SebF2004$block[which(SebF2004$vineyard=="MILLER")] <- ""
 SebF2004$block[which(SebF2004$vineyard=="GAB")] <- ""

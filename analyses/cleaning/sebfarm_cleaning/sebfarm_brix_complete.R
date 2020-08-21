@@ -4,24 +4,27 @@
 rm(list=ls())
 options(stringsAsFactors = FALSE)
 
+#Setting working directory
 setwd("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning")
-path <- getwd() #trying to assign path variable
+
+#Setting path variable, this can be changed
+dirpath <- "/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/"
 
 #Sourcing 2004-2018 cleaning scripts
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2004.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2005.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2006.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2007.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2008.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2009.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2010.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2011.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2012.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2013.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2014.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2015.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2017.R")
-source("/Users/phoebeautio/Desktop/bcvin/analyses/cleaning/sebfarm_cleaning/sebfarm_brix_clean2018.R")
+source(paste(dirpath, "sebfarm_brix_clean2004.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2005.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2006.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2007.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2008.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2009.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2010.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2011.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2012.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2013.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2014.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2015.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2017.R", sep = ""))
+source(paste(dirpath, "sebfarm_brix_clean2018.R", sep = ""))
 
 #Binding all years into one dataframe
 SebF_Brix <- rbind(SebF2004, SebF2005, SebF2006, SebF2007, SebF2008, SebF2009, SebF2010, SebF2011,
@@ -35,7 +38,7 @@ SebF_Brix <- SebF_Brix[!(is.na(SebF_Brix$value)), ] #NA
 SebF_Brix <- SebF_Brix[!(SebF_Brix$vineyard==""), ] 
 
 #Examining brix
-brix <- SebF_Brix_Complete[which(SebF_Brix_Complete$event=="brix"), ]
+brix <- SebF_Brix[which(SebF_Brix$event=="brix"), ]
 brix <- brix[order(brix$block, brix$vineyard), ]
 
 #Export Final Output
