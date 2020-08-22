@@ -34,3 +34,36 @@ As for the rest I am not sure what varietals they are, could be typos.  If you p
 
 Cheers,
 Victor 
+
+Follow-up from From Victor Faraco on 17 August 2020:
+
+Hi Mira,
+
+I’m not sure of these codes. They are definitely not our vineyards but could have been old grower contracts. Sorry I could not be as much help.
+
+Cheers,
+
+Victor
+
+
+[From: Mira Garner <mira.garner@gmail.com>
+Sent: 14-Aug-20 10:16 AM
+To: Lizzie Wolkovich <e.wolkovich@ubc.ca>
+Cc: Victor Faraco <vfaraco@sebastianfarms.ca>; Robert Achurch <rachurch@sebastianfarms.ca>; Devin Methven <dmethven@sebastianfarms.ca>
+Subject: Re: Need help with variety codes
+
+Hi Victor,
+
+I found the following vineyard codes for the mystery varieties. For FOC, there were two different vineyard codes so I included the year each first appeared.
+
+ 
+BC - SPEBCE
+FOC - SPEMFA (2004), SPEFOA (2007)
+FC - GSFCJ
+
+
+Thanks for your help!
+
+Cheers,
+
+Mira]
