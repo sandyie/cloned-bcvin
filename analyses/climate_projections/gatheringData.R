@@ -646,7 +646,9 @@ GDD5_05_10_nw <- calc(gdd_nw_stack_0510, fun = sum)
 
 minTemp_12_03_nw <- calc(tmin_nw_1203, fun = min)
 
-
+writeRaster(minTemp_12_03_nw, "minTemp_12_03_nw.asc")
+writeRaster(GDD5_04_09_nw, "GDD5_04_09_nw.asc")
+writeRaster(GDD5_05_10_nw, "GDD5_05_10_nw.asc")
 
 #Creating the variables with monthly periods. The function is broken and this is a better solution: (mw/hw for each) GDD5_04_09, GDD5_05_10, tmin_12_03
 open_members("GDD5_04_mw")
