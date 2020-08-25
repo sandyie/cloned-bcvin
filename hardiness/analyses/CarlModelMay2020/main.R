@@ -4,14 +4,19 @@
 
 library(tidyverse)
 
-setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/CarlModelMay2020")
+if(length(grep("faith", getwd())>0)) { 
+  setwd("~/Documents/github/bcvin/bcvin/hardiness/analyses/CarlModelMay2020") 
+} else setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/CarlModelMay2020")
 source("helpfulFunctions.R")
 source("magicNumbers.R")
 source("IFstatements.R")
-
+list.files()
 
 ###Loading and preparing data for the model. 
-setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/input")
+
+if(length(grep("faith", getwd())>0)) { 
+  setwd("~/Documents/github/bcvin/bcvin/hardiness/analyses/input") 
+} else setwd("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/hardiness/analyses/input")
 
 data_files <- list.files(pattern = ".csv")
 necessaryFiles <- grep("budhardiness", data_files)
