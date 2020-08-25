@@ -1,0 +1,164 @@
+%document describing teh final version of ny dosse response model and what I think about its fit. Writen by Faith, started Augst 21st 2020.
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{textcomp}%amoung other things, it allows degrees C to be added
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc} % allow funny letters in citaions 
+\usepackage[nottoc]{tocbibind} %should add Refences to the table of contents?
+\usepackage{amsmath} % making nice equations 
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\title{Winegrape Hardiness \\ My final (I hope) dose response model}
+\date{\today}
+\author{Faith Jones}
+
+
+\begin{document}
+%\renewcommand{\refname}{\CHead{}}%not sure what this was supposed to do 
+\renewcommand{\bibname}{References}%names reference list 
+
+{}
+\maketitle{}
+\tableofcontents
+
+\section{Background}
+Dose response curves are regression models. The exact form of dose response models varies somewhat, encompassing a range of different statistical models including nonlinear regression models, generalized regression and parametric survival analyses \cite{Ritz2015}. What connects these models is their application: to model the effect of some dose on a biological response. The model assesses the relationship between what is traditionally named the ``dose'' or ``concentration'' and the ``response'' or ``effect''. This terminology comes from the model's  original use in pharmacology for modeling the effects of substances on physiology. The dose is usually some sort of biological stress that elicits a response from a biological organism. Dose values should be non-negative \cite{Rudemo1989} and the response values should change monotonically with increasing dose. Variations on the dose-response model have been applied to a wide variety of ecological questions, including species richness responses to nitrogen \cite{Jones2018a}, eco-toxicology \cite{Haanstra1985}, and phenology (winegrape budburst dates) \cite{Kovaleski2019}. \\
+
+My analyses focus on sigmoid curve log-logistic models. These models are used to model relationships between variables with asymptotic minimum and maximum response values. I use the four parameter log-logistic model described in \cite{Ritz2015} and the below section, where the relationship between the dose and the response is a function of a maximum response, a minimum response, a response rate, and a dose giving a 50\% response. A benefit of this model is that the parameters are easily interpretable and biologically meaningful \cite{Seefeldt2016}\\
+
+\section{Model Structure}
+\subsection {Basic Model}
+
+As introduced above, I use a four parameter log-logistic model to model winegrape cold hardiness Equation \eqref{eq:1}. We used mean 2 day air temperature for our modeling because \textbf{Check Carl's reasoning} and because winegrape hardiness is closely linked to mean air temperatures \cite{Hubackova1996}. Air temperature readings were taken at \textbf{Penticton agCanada site??? check}. \\
+
+Some modifications to the original data are needed, though, before analysis. Firstly, to ensure the dose values are always positive, I added 30 to each air temperature value. Secondly, I multiplied the hardiness values with \-1 so that larger values in the model meant higher winter hardiness. This was to make interpreting the minimum and maximum asymptotes of the model more intuitive. \\
+
+\begin{equation*}
+\label{eq:1}
+\mu=f(x,(b,c,d,e))=c+\frac{d-c}{1+exp^{b(log(x)-\tilde{e})}}
+\end{equation*}
+\begin{equation*}
+\label{eq:2}
+\tilde{y}_{i}\sim normal(\mu_{i},\sigma)
+\end{equation*}
+
+Where:\\
+	$x$ is the concentration of the dose (amount of winter cold) \\
+	$b$ is the response rate (slope)\\
+	$d$ is the upper asymptote of the response (maximum hardiness)\\
+	$c$ is the lower asymptote of the response (minimum hardiness)\\
+	$e$ is the effective dose ED50 (winter temperature where cold hardiness is half way between min and max)  \\
+	$\tilde{e}$ is the log of the effective dose ED50\\
+
+\subsection {Full Model}
+
+The final model includes hierarchical variance for different varieties and sites on the $d$ (maximum hardiness) parameter and for variety on the $b$ (rate of change) parameter Equation \ref{eqn:modelWithPriors} \\
+
+We expected different sites to vary in their maximum hardiness because the model uses temperature data for a single site but the weather conditions at sites in the Okanagan Valley can vary substantially. For example (\textbf{insert name of site}) is a site on a south facing slope close to the lake shore and so is warmer, whereas the colder site of (\textbf{insert name of site}) is further north and more inland. Such micro-climatic differences should cause maximum hardiness to be less in warmer sites and more in colder sites. \\
+
+Winegrapes have been domesticated for many thousands of years, and over that time growers have cultivated a wide range of varieties (genetically unique variants) with different physiological and ecological characteristics. Winegrape varieties consequently vary a lot in many of their traits. Although the exact mechanisms behind winegrape winter hardiness are unknown, winter hardiness seems to vary across varieties \cite{Mills2006,Ferguson2014,Kovaleski2018a}. Winegrapes may have different rates of change of winter hardiness\cite{Kovaleski2018a,Ferguson2014} and different maximum hardiness values \cite{Ferguson2014}. We included a hierarchical effect of variety on both maximum hardiness and the rate of change of hardiness so we could assess how variable variety specific winter hardiness is. \\
+
+We built our dose response model in a Bayesian framework using Stan \textbf{cite stan version} in R \textbf{cite rstan and r}. An essential part of modeling using Bayesian methods is the choice of prior expectations on each parameter value. Our priors are specified in Equation \ref{modelWithPriors}, and were generally chosen to encompass all possible parameter combinations according to our current physiological understanding of winegrape hardiness. The exception to this is parameter $c$, minimum winter hardiness. Our data did not span the full range of the sigmoid curve relationship of winter hardiness to air temperature; we lack data on minimum hardiness. This is a problem for model estimating. An estimation of minimum hardiness of winegrapes was taken from a selection of sources: -3\textdegree C \cite{Ferguson2011}, -1.2\textdegree C \cite{Ferguson2014} \textbf{more sources}. We fed this estimation into the model as a prior constrained closely around -2\textdegree C.  
+
+
+
+
+
+\begin{equation*}
+\label{modelWithPriors}
+\mu=f(x_{i},(b,c,d,e))=c+\frac{(d+d_{var,i} + d_{site,i}) -c}{1+exp^{b_{var}(log(x_{i})-\tilde{e})}}
+\end{equation*}
+\begin{equation*}
+{d}_{var} = dr_{var} * \sigma_{dvar}
+\end{equation*}
+\begin{equation*}
+{d}_{site} = dr_{site} * \sigma_{dsite}
+\end{equation*}
+\begin{equation*}
+{b}_{var} = br_{var} * \sigma_{bvar}
+\end{equation*}
+\begin{equation*}
+\tilde{y}_{i}\sim normal(\mu_{i},\sigma)
+\end{equation*}
+
+Where:\\
+	$x$ is the concentration of the dose (amount of winter cold) \\
+	$b$ is the response rate (slope)\\
+	$d$ is the grand upper asymptote of the response (maximum hardiness hardiness) 
+	$d_{var}$ is the effect of each variety on the upper asymptote of the response (maximum hardiness)\\
+	$d_{site}$ is the effect of each site on the upper asymptote of the response (maximum hardiness)\\
+	$\sigma_{dvar}$ is the standard deviation of the effect of varieties on maximum winter hardiness\\
+	$\sigma_{dsite}$ is the standard deviation of the effect of sites on maximum winter hardiness\\
+	$dr_{var}$ is the non centred parameterization values for varieties effect on maximum hardiness d\\
+	$dr_{site}$ is the non centred parameterization values for sites effect on maximum hardiness d\\
+	$b$ is the lower asymptote of the response (minimum hardiness)\\
+	$\sigma_{bvar}$ is the standard deviation of the effect of varieties on rate of change of winter hardiness\\
+	$br_{var}$ is the non centred parameterization values for varieties effect on rate of change\\
+	$e$ is the effective dose ED50 (winter temperature where cold hardiness is half way between min and max)  \\
+	$\tilde{e}$ is the log of the effective dose ED50\\
+
+Priors (hardiness has been multiplied with -1 to be positive, and 30 has been added to air temp)\\
+	$b \sim gamma(7,1)$\\
+	$\sigma_{bvar} \sim normal(0,3)$ \\
+	$br_{var} \sim normal(0,1)$ \\
+	$d \sim Normal(25, 10)$ \\
+	$\sigma_{dvar} \sim gamma(2.5,1.75)$ \\
+	$dr_{var} \sim normal(0,1)$ \\
+	$\sigma_{dsite} \sim gamma(2.5,1.75)$ \\
+	$dr_{site} \sim normal(0,1)$ \\
+	$c \sim normal(2,0.5)$\\
+	$\tilde{e} \sim normal(log(30), 0.15)$ \\
+	$\sigma \sim normal(0,5)$\\
+
+
+
+\section{Model fit}
+\subsection{Prior Predictive Checks}
+Plot of predicted values
+\subsection{Retrodictive Checks}
+Pairs plot
+Plot of predicted values against real data
+plot of predicted data against real data
+
+\subsection{Estimated Parameter Values}
+Table of values for each parameter 
+Panel of plots for each parameter 
+Plot of effect of variety and site on d
+Plot of effect of varieties on d
+Plot of effect of sites on d
+Plot of effects of varieties on b
+
+\subsection{Predictions}
+Description and citation of data from Washington 
+Plot of model prediction x ~ y 
+
+
+\section{Discussion}
+
+Generally the model seems to do a good job of predicting values, even from new datasets/areas. 
+
+Some uncertainty around predicted values though 
+
+Model overestimates hardiness in autumn if there is an especially cold snap - how can I work with this?
+
+Site differences - how do these compare to our (Carl's) knowledge of the geography of the sites?
+
+Variety differences - compare to results in \cite{Ferguson2014}'s table of winegrape variety max hardiness. Also contrast our results of no effect on rates of change to results by \cite{Ferguson2014,Kovaleski2018a,Kovaleski2019}. 
+
+Compare relative importance of variety and site for growers adapting to climate change. 
+
+\bibliographystyle{/home/faith/Documents/Bibtex/styles/besjournals/besjournals}
+
+
+
+\bibliography{/home/faith/Documents/Bibtex/mendeleyStuff/library}
+
+\end{document}
+

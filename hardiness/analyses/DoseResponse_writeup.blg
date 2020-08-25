@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: DoseResponse_writeup.aux
+The style file: /home/faith/Documents/Bibtex/styles/besjournals/besjournals.bst
+Database file #1: /home/faith/Documents/Bibtex/mendeleyStuff/library.bib
+You've used 11 entries,
+            2805 wiz_defined-function locations,
+            1129 strings with 14101 characters,
+and the built_in function-call counts, 6990 in all, are:
+= -- 593
+> -- 326
+< -- 2
++ -- 125
+- -- 115
+* -- 599
+:= -- 1119
+add.period$ -- 22
+call.type$ -- 11
+change.case$ -- 93
+chr.to.int$ -- 12
+cite$ -- 11
+duplicate$ -- 476
+empty$ -- 485
+format.name$ -- 147
+if$ -- 1344
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 103
+newline$ -- 37
+num.names$ -- 44
+pop$ -- 184
+preamble$ -- 1
+purify$ -- 82
+quote$ -- 0
+skip$ -- 161
+stack$ -- 0
+substring$ -- 355
+swap$ -- 266
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 99
+warning$ -- 0
+while$ -- 52
+width$ -- 0
+write$ -- 124
