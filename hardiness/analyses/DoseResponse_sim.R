@@ -15,6 +15,7 @@ library(tidyr)
 library(dplyr)
 library(drc)
 library(bayesplot)# nice posterior check plots 
+library(rethinking) # for functiosn to get hpdi
 
 
 library(foreach)
@@ -22,10 +23,6 @@ library(doParallel)
 parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
 
 set.seed(16)
-
-#Washington state hardiness data
-otherCabSovData <- read.csv("input/WashingtonHardinessData_Ferguson.csv")
-
 
 
 if(length(grep("Lizzie", getwd())>0)) { 
@@ -46,6 +43,11 @@ clim$day<- format(clim$date,"%d")
 head(clim)
 climsm <- subset(clim, select=c("Year", "month","day", "Mean.Temp..C.", "Mean.Temp.Flag", "date", "Date.Time"))
 names(climsm) <- c("Year", "month","day", "meanC", "meanC.flag", "date", "Date.Time")
+
+#Washington state hardiness data
+otherCabSovData <- read.csv("input/WashingtonHardinessData_Ferguson.csv")
+
+
 
 # hardiness data
 #--------------------------
@@ -300,8 +302,9 @@ logc_Prior<- rlnorm(1000, meanlog = 3, sdlog = 1)
 hist(log(logc_Prior)	)
 gammaCPrior <- rgamma(1000, shape = 3, rate = 1)
 hist(gammaCPrior)
-gammabPrior <- rgamma(1000, shape = 7, rate = 0.75)
-hist(gammabPrior)
+gammabPrior <- rgamma(1000, shape = 7, rate = 1)
+
+hist(gammabPrior, main = "b Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
 
 #Plot showing how gamma changes
 gammaCPrior1 <- rgamma(1000, shape = 1, rate = 1)
@@ -341,20 +344,31 @@ mean(x)
 #Plot each prior
 d_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 25, sd = 10)
 c_Prior <- rtruncnorm(n = 1000 ,a=0, mean = 2, sd = 0.5)# I should as Cat and Carl and growers what they think this is  
-ehat_Prior <- rtruncnorm(n = 1000 ,a=0, mean = log(34), sd = 0.15)#this has to be a really small number for expinentials to match x values
+ehat_Prior <- rtruncnorm(n = 1000 ,a=0, mean = log(30), sd = 0.15)#centred around mean temperature, se 20
 sigma_g_Prior <- rtruncnorm(n = 1000,a=0, mean = 0, sd = 2)
-b_Prior <- rnorm(n = 1000, mean = 10, sd = 10)
+b_Prior <- gamma(n = 1000, shape = 7, rate = 1)
 
 e_Prior <- exp(ehat_Prior)
 
+ 
+d_var_sigma <- rgamma(1000, shape = 2.5, rate = 1.75)
+d_var_raw <- rnorm(1000, mean = 0, sd = 1)
+ 
+b_var_sigma <- rnorm(1000, mean = 0, sd = 3)
+b_var_raw <- rnorm(1000, mean = 0, sd = 1)
+  
+d_site_sigma <- rgamma(1000, shape = 2.5, rate = 1.75)
+d_site_raw <- rnorm(1000, mean = 0, sd = 1)
+
 log(20)
 
-plot(density(d_Prior), main = "d Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
-plot(density(c_Prior), main = "c Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
-plot(density(ehat_Prior), main = "ehat Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
-plot(density(e_Prior), main = "e Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
-plot(density(sigma_g_Prior), main = "sigma_g Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
-plot(density(b_Prior), main = "beta Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(d_Prior, main = "d Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(c_Prior, main = "c Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(ehat_Prior, main = "ehat Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(e_Prior, main = "e Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(sigma_g_Prior, main = "sigma_g Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+#plot(density(b_Prior), main = "beta Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(gammabPrior, main = "b Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
 
 
 hist(c_Prior)
@@ -365,6 +379,9 @@ hist(sigma_g_Prior)
 hist(exp(ehat_Prior))
 hist(log(x))
 mu_y_Prior <- x * 0
+
+
+
 
 #Run the model just once to see if I am in the right ball park 
 for(i in 1:N){
@@ -1833,6 +1850,104 @@ hist(y_sim)
 meanySimPost <- apply(y_sim, 2, mean)
 quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
 
+#get mean values without effect of variety and site 
+cPost <- median(drcPost$c) 
+dPost <- mean(drcPost$d)
+bPost <- median(drcPost$b)
+eHatPost <- mean(drcPost$ehat) 
+
+uniqueXsRaw <- c(-15:25)
+uniqueXs <- uniqueXsRaw+30
+
+#Middle values
+meanYs <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	meanYs[i] <- cPost + (( dPost - cPost) / (1 + exp(bPost*(log(uniqueXs[i])-eHatPost))))
+}
+
+
+#Upper and lower hpdi of parameters and predicted mean values 
+SDRealY2<- apply(data.frame(drcPost$mu_y ), 2, HPDI) 
+
+realYs2 <- data.frame(colMeans(drcPost$mu_y))
+head(realYs2)
+realYs2$upperHPDI <- SDRealY2[1,]
+realYs2$lowerHPDI <- SDRealY2[2,]
+
+lowerd <- HPDI(data.frame(drcPost$d))[1]
+upperd <- HPDI(data.frame(drcPost$d))[2]
+
+lowerc <- HPDI(data.frame(drcPost$c))[1]
+upperc <- HPDI(data.frame(drcPost$c))[2]
+
+lowerb <- HPDI(data.frame(drcPost$b))[1]
+upperb <- HPDI(data.frame(drcPost$b))[2]
+
+lowerehat <- HPDI(data.frame(drcPost$ehat))[1]
+upperehat <- HPDI(data.frame(drcPost$ehat))[2]
+
+#Lower mean values
+lowerMeanYs <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	lowerMeanYs[i] <- lowerc + (( lowerd - lowerc) / (1 + exp(lowerb*(log(uniqueXs[i])-lowerehat))))
+}
+
+#Upper mean values
+upperMeanYs <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	upperMeanYs[i] <- upperc + (( upperd - upperc) / (1 + exp(upperb*(log(uniqueXs[i])-upperehat))))
+}
+
+#Getting the maximum and minimum effect of variety (not bothering with b because no real effect)
+VarietyEffectsMean <- colMeans(data.frame(drcPost$var_d ))
+min_d_var <- min(VarietyEffectsMean)
+max_d_var <- max(VarietyEffectsMean)
+
+#Getting the maximum and minimum effect of site
+siteEffectsMean <- colMeans(data.frame(drcPost$site_d ))
+min_d_site <- min(siteEffectsMean)
+max_d_site <- max(siteEffectsMean)
+
+#Lower mean values with min site and variety 
+lowerMeanYsVarSite <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	lowerMeanYsVarSite[i] <- (lowerc + (( lowerd + min_d_var + min_d_site  - lowerc) / (1 + exp(lowerb*(log(uniqueXs[i])-lowerehat)))))* -1
+}
+
+#Upper mean values with max site and variety 
+upperMeanYsVarSite <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	upperMeanYsVarSite[i] <- (upperc + (( upperd + max_d_var + max_d_site - upperc) / (1 + exp(upperb*(log(uniqueXs[i])-upperehat)))))*-1
+}
+
+#adding obervational model sigma_g
+meanSigmaG <- mean(drcPost$sigma_g)
+upperMeanYsSigma <- upperMeanYsVarSite - meanSigmaG
+lowerMeanYsSigma <- lowerMeanYsVarSite +  meanSigmaG
+
+
+plottingDataPost2 <- data.frame(cbind(uniqueXsRaw, meanYs))
+plottingDataPost2$negMeanYs <- -meanYs
+plottingDataPost2$upperMeanYs <- -upperMeanYs
+plottingDataPost2$lowerMeanYs <- -lowerMeanYs
+plottingDataPost2$upperMeanYsVarSite <- upperMeanYsVarSite
+plottingDataPost2$lowerMeanYsVarSite <- lowerMeanYsVarSite
+plottingDataPost2$upperMeanYsSigma <- upperMeanYsSigma
+plottingDataPost2$lowerMeanYsSigma <- lowerMeanYsSigma
+
+
+postTempsPlot <- ggplot(data = plottingDataPost2, aes(x = uniqueXsRaw, y = negMeanYs ))
+postTempsPlot + 
+	geom_line(colour = "palevioletred4") + 
+	theme_classic() +
+	geom_ribbon(aes(ymin= lowerMeanYsSigma, ymax=  upperMeanYsSigma),fill = "palevioletred", alpha = 0.3) +
+	geom_ribbon(aes(ymin= lowerMeanYsVarSite, ymax=  upperMeanYsVarSite),fill = "palevioletred2", alpha = 0.3) +
+	geom_ribbon(aes(ymin= lowerMeanYs, ymax=  upperMeanYs),fill = "palevioletred3", alpha = 0.3) +
+	geom_point(aes(x = meanC , y = lte ), data = bhclimClean2)
+
+
+
+
 extremesP <- quantsSimYPost[c(2, 5),]
 quatersP <- quantsSimYPost[c(3, 4),]
 
@@ -1840,7 +1955,7 @@ plottingDataPost <- data.frame(t(quantsSimYPost))
 plottingDataPost$MeanY <- meanySimPost 
 plottingDataPost$x <- bhclimClean2 $meanC 
 
-
+#plot of predicted mean values and 89% highest probability density index 
 postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
 postTempsPlot + 
 	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
@@ -1851,6 +1966,11 @@ postTempsPlot +
 
 
 plot(colMeans(y_sim) ~ bhclimClean2 $meanC)
+
+plot(colMeans(y_mu) ~ bhclimClean2 $lte)
+
+plot(colMeans(y_sim) ~ bhclimClean2 $lte)
+
 
 
 #What are the predicted parameter values?
@@ -1991,16 +2111,177 @@ drcPost_Predict <- rstan::extract(drc_simple_predict)
 predicted_mu <- drcPost_Predict$mu_y_p
 predicted_y <- drcPost_Predict$y_sim_p
 
-plot(colMeans(predicted_mu) ~ )
+plot(colMeans(-predicted_mu) ~ otherCabSovData$T_mean )
+plot(colMeans(-predicted_y) ~ otherCabSovData$Observed_Hc)
+
+y_sim <- drcPost_Predict$y_sim_p * -1
+
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- otherCabSovData$T_mean
+
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = otherCabSovData$T_mean , y = otherCabSovData$Observed_Hc ))
+
+#Use hpdi instead
+postTrmpsHPDI <- apply( y_sim, 2 , HPDI, prob=89) 
+plottingDataPost$upperHPDI89 <- postTrmpsHPDI[2,]
+plottingDataPost$lowerHPDI89 <- postTrmpsHPDI[1,]
+
+
+plottingDataPost$upperHPDI97 <- postTrmpsHPDI[2,]#soem empty columsn for teh loop 
+plottingDataPost$lowerHPDI97 <- postTrmpsHPDI[1,]
+
+for(i in 1:ncol(y_sim)){
+	hpdii <- HPDI(y_sim[i,], prob = 97)
+	plottingDataPost$upperHPDI97[i] <- hpdii[2]
+	plottingDataPost$lowerHPDI97[i] <- hpdii[1]
+}
+
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= lowerHPDI89, ymax=  upperHPDI89), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= lowerHPDI97, ymax=  upperHPDI97), , fill = "palevioletred2", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = otherCabSovData$T_mean , y = otherCabSovData$Observed_Hc ))
 
 
 
 
 
+#Plots for the writeup document 
+#-----------------------------------------
+
+#Prior histograms	
+png("DoseResponse_WriteupImages/Priors.png")
+par(mfrow=c(3,4)) 
+hist(d_Prior, main = "d Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(c_Prior, main = "c Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(ehat_Prior, main = "ehat Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(e_Prior, main = "e Prior (sigma 0.15)",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(gammabPrior, main = "b Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(sigma_g_Prior, main = "sigma_g Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(d_var_sigma, main = "d_var_sigma Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(d_var_raw, main = "d_var_raw Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(b_var_sigma, main = "b_var_sigma Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(b_var_raw, main = "b_var_raw Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(d_site_sigma , main = "d_site_sigma Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(d_site_raw , main = "d_site_raw Prior",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+dev.off()
+
+par(mfrow=c(1,1)) 
+
+#Prior predictive check 
+#Bands are the 25/75% preditions and the extreme values (0/100% predictions)
+png("DoseResponse_WriteupImages/PriorPrediction.png")
+priorTempsPlothd <- ggplot(data = plottingDataPriorhd, aes(x = x, y = MeanY ))
+priorTempsPlothd + 
+	geom_ribbon(aes(ymin= X0., ymax=  X100.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()
+dev.off()
+
+#Pairs plot from model with real data 
+png("DoseResponse_WriteupImages/PairsPlot.png")
+pairs(drc_simple_real, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "d_site_sigma", "b_var_sigma", "lp__")) 
+dev.off()
+
+#Plot of predicted values against real data
+#plot of predicted mean values and 89% hihest probability density index 
+# bands are (from middle outwards) mean estimate without hierarchy, upper and lower hpdi of estimate without hierarchy, 
+#   mean prediction with largest effects of site and variety combined, effect of variety and site plus/minus sigma g 
+png("DoseResponse_WriteupImages/PredWithReal.png")
+
+postTempsPlot <- ggplot(data = plottingDataPost2, aes(x = uniqueXsRaw, y = negMeanYs ))
+postTempsPlot + 
+	geom_line(colour = "palevioletred4") + 
+	theme_classic() +
+	geom_ribbon(aes(ymin= lowerMeanYsSigma, ymax=  upperMeanYsSigma),fill = "palevioletred", alpha = 0.3) +
+	geom_ribbon(aes(ymin= lowerMeanYsVarSite, ymax=  upperMeanYsVarSite),fill = "palevioletred2", alpha = 0.3) +
+	geom_ribbon(aes(ymin= lowerMeanYs, ymax=  upperMeanYs),fill = "palevioletred3", alpha = 0.3) +
+	geom_point(aes(x = meanC , y = lte ), data = bhclimClean2)+
+	labs(y= "Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")
+dev.off()
 
 
+#plot of predicted data against real data
+bhclimClean2$PostMuLTE <- colMeans(mu_post)
+
+png("DoseResponse_WriteupImages/PredAgainstReal.png")
+
+postTempsPlot <- ggplot(data = bhclimClean2, aes(x = lte, y = PostMuLTE ))
+postTempsPlot + 
+	geom_point(colour = "palevioletred4") + 
+	theme_classic() +
+	labs(x= "Observed winter hadiness (LTE50 Decgrees C)", y = "Predicted winter hadiness (LTE50 Decgrees C)")
+dev.off()
+
+#Panel of plots for each parameter 
+png("DoseResponse_WriteupImages/Parameters.png")
+par(mfrow=c(3,4)) 
+hist(drcPost$d, main = "d",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$c, main = "c",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$ehat, main = "ehat",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$e, main = "e",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$b, main = "b",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$sigma_g, main = "sigma_g",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$d_var_sigma, main = "d_var_sigma",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$d_var_raw, main = "d_var_raw",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$b_var_sigma, main = "b_var_sigma",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$b_var_raw, main = "b_var_raw",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$d_site_sigma , main = "d_site_sigma",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+hist(drcPost$d_site_raw , main = "d_site_raw",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)
+dev.off() 
+
+#Plot of effect of variety and site on d
+
+png("DoseResponse_WriteupImages/VarSiteD.png")
+plot(density(d_var_sigma), col = 2, main = "",  cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5,
+	xlab = "probability", ylab = "density")
+lines(density(d_site_sigma), col = 4)
+text(1.5, 2, "Blue = site \nRed = variety")
+dev.off() 
+
+#Plot of effect of varieties on d
+png("DoseResponse_WriteupImages/varDs.png")
+color_scheme_set("viridis")
+mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+dev.off()
+
+#Plot of effect of sites on d
+png("DoseResponse_WriteupImages/siteDs.png")
+color_scheme_set("viridis")
+mcmc_intervals(-siteD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+dev.off()
+
+#Plot of effects of varieties on b
+png("DoseResponse_WriteupImages/varBs.png")
+color_scheme_set("viridis")
+mcmc_intervals(varB + -drcPost$b) + geom_vline(xintercept = meanB, linetype="dotted", color = "grey")  #intercepts 
+dev.off()
 
 
+#Plot of model prediction x ~ y (Washington Data)
 
-
+png("DoseResponse_WriteupImages/WashingtonPrediction.png")
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = otherCabSovData$T_mean , y = otherCabSovData$Observed_Hc ))+
+	labs(y= "Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")
+dev.off()
 
