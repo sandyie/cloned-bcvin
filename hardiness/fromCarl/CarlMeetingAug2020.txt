@@ -1,0 +1,58 @@
+26 August 2020
+Lizzie meets with Carl Bogdanoff
+
+Some to do items…
+
+- Try some other varieties in R (maybe Riesling), if easy (is it easy?).
+- Current models are all very similar in structure (compared to changes with Chard). 
+- Criteria of never be >2 degree off for any year (see summary table 2). 
+- Try some cross-validation statistics in addition to R2
+- Get other data?
+- Our models are likely best for prediction, his models probably work best *now* for growers: is there any way we can show this?
+
+- Side note: Fall frost versus spring frost versus hardiness 
+
+
+<><><><><><>
+<> Notes <>
+<><><><><><>
+
+- Started with 7 day averages, then 3, now 2 …. has not tried 1 day
+
+- Best idea would be to use 48 hours before (min max min max) … that’s the previous two days NOT using the current daily max (which has not happened)
+
+- Hardiness before budburst is likely -3 or 4 (maybe -5) … but can’t measure it because they’re too much free water (that’s always there and always shows up in analyses around -10 … so you need to measure hardiness Oct 20 or onward because the hardiness is not so close to this -10 value). They’re likely hardy to -10 around Oct 20. You need to see the intracellular water peak.
+
+- Dormancy is connected but not so related to the to hardiness … buds can get more hardy after they’re ecodormant. No one knows what causes hardiness — winegrapes it’s antifreeze but caused by drying or more sugars produced or what?
+
+ - Polynomial — 4th order lets the curve have a flat bit; it fits all data at once (not year by year)
+
+- Riesling stays hardier than Chard (it break bud earlier). Riesling breaks bud later, and ripens later (but with low GDD).
+
+- Build fit to true LTE year by year (but changes added sweep back through old years, so one model for old years).
+
+- Multipliers make a small difference at max hardiness because the diff per day is really small (multiply by 0). Divided into 6 sections (3 sections divided in half). These dates are constant across varieties. (Carl says ‘these dates are totally arbitrary” but they’re not — each period has two (acc, max, de-acc … de-acc breaks on Leap Year). Multipliers for warm and cold temperatures (two columns).
+… there is a limit of -24.5 until Dec 7 as a string of cold (or warm) days could lead to crazy high temperatures. Actually, there’s more a multiplier that does this until 7 Dec and then if predicted LTE gets below -24.5 before 7 Dec it is reset to -24.5 on 7 Dec.
+… during acclimation the plants only get more hardy … except sometimes. 
+
+- Max hardiness is -25.8. You can loose peaks when super cold, “something else going on in cells.” They have checked how long it takes for plants to lose hardiness in the lab (about 4 hours … they collect in rooftop carrier). 
+
+- They break dormancy around mid- January or so. 
+
+- Kelowna had a lot of winter kill last year due to stretch of cold days (and wind). They did not capture this in their measurements. Maybe it is the wind via desiccation or something. Experiment drops 4 C/hr but it never happens that fast in nature (doing the experiment slower than 4C/hr does not change this) 
+
+- If things are really hardy and its April the plants will de-acc fast, the model often will not go fast enough so change the sign. 
+
+- “A limit to maximum hardiness that depends on period.” 
+
+- January 7th — inflection to de-acc … a little. 
+
+- For this and Shiraz model — two outlier data points (way out) were removed from mean calculations. 
+
+- Model changes by day — compare first two files and last two files (as these were days with big changes). 
+
+- There are 8 varieties you could probably do a model for (but be careful of young vines that were sampled, labelled 1 yr, 2 yr).
+
+- Max hardiness is early January here (it’s later out east, partly because of Great Lakes freeze over in part and lose all that heat).
+
+
