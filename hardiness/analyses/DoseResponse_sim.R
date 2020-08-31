@@ -1945,6 +1945,18 @@ postTempsPlot +
 	geom_ribbon(aes(ymin= lowerMeanYs, ymax=  upperMeanYs),fill = "palevioletred3", alpha = 0.3) +
 	geom_point(aes(x = meanC , y = lte ), data = bhclimClean2)
 
+#Whats going on with the less cold hardy values around -2?
+bhclimClean2[bhclimClean2$lte > -15 & bhclimClean2$meanC < 0,]
+data2014 <- bhclimClean2[bhclimClean2$ Year == 2014]
+problemPoints <- bhclimClean2[bhclimClean2$date == "2014-11-11",]
+par(mfrow=c(2,1)) 
+#Hardiness
+plot(data2014$date, data2014$lte  , pch = 16, cex.lab = 1.5, cex.axis = 1.5, xlab = "", ylab = "hardiness")
+points(problemPoints$date, problemPoints$lte, pch = 16, col = 2)
+#airtemp
+plot(data2014$date, data2014$meanC  , pch = 16, cex.lab = 1.5, cex.axis = 1.5, xlab = "date", ylab= "air temperature")
+points(problemPoints$date, problemPoints$meanC, pch = 16, col = 2)
+par(mfrow=c(1,1)) 
 
 
 
@@ -2010,7 +2022,7 @@ for (i in 1:n_vars){ # get variety level differences from ncp
 	varD[i,] <- rawVarDs[i,] * drcPost$d_var_sigma[i]
 }
 
-meanVarEffect <- colMeans(varD)
+meanVarEffect <- colMeans(varD)+ mean(drcPost$d)
 quantsVarEffects <- apply( varD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
 
 meanDneg<- mean(drcPost$d)
@@ -2022,6 +2034,47 @@ colnames(varD) <- levels(as.factor(as.character(bhclimClean2$variety)))
 color_scheme_set("viridis")
 mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
 
+quantsVarEffectsHPDI <- apply( varD, 2 , HPDI)
+quantsVarEffectsHPDI + mean(drcPost$d)
+
+#Hardiness taken from fergusonetal2014
+fergusonHardinessNames <- c( "Cabernet Franc", "Cabernet Sauvignon", "Chardonnay", "Gewurztraminer", 
+	"Merlot",  "Pinot gris",  "Riesling","Sauvignon blanc","Shiraz", "Viognier")
+
+Values <- c(-23.5, -25.4,-25.7,-24.9 ,-25.0,-24.0,-26.1,-24.9,-24.2,-24.0)
+ferValues <- data.frame(cbind(fergusonHardinessNames, Values))
+ferValues$Values <- as.numeric(as.character(ferValues$Values))
+
+comparisonVarieties <- -1*(varD[,colnames(varD)%in%fergusonHardinessNames] +  mean(drcPost$d))
+
+names(comparisonVarieties)
+
+hist(comparisonVarieties[,1], main = "Cabernet Franc")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Cabernet Franc"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties[,2], main = "Cabernet Sauvignon", xlim = c(-26, -20))
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Cabernet Sauvignon"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Chardonnay, main = "Chardonnay")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Chardonnay"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Gewurztraminer, main = "Gewurztraminer")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Gewurztraminer"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Merlot, main = "Merlot")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Merlot"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties[,6], main = "Pinot gris")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Pinot gris"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Riesling, main = "Riesling")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Riesling"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties[,8], main = "Sauvignon blanc")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Sauvignon blanc"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Viognier, main = "Viognier")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Viognier"], , col="red", lwd=3, lty=2)
 
 
 #Variety plot - slope
@@ -2110,9 +2163,17 @@ drcPost_Predict <- rstan::extract(drc_simple_predict)
 
 predicted_mu <- drcPost_Predict$mu_y_p
 predicted_y <- drcPost_Predict$y_sim_p
+otherCabSovData$pred_mu <- -colMeans(drcPost_Predict$mu_y_p)
 
 plot(colMeans(-predicted_mu) ~ otherCabSovData$T_mean )
 plot(colMeans(-predicted_y) ~ otherCabSovData$Observed_Hc)
+
+postTempsPlot <- ggplot(data = otherCabSovData, aes(x = Observed_Hc, y = pred_mu ))
+postTempsPlot + geom_point() + 
+	theme_classic()+
+	labs(y= "Predicted Winter hadiness (LTE50 C)", x = "Observed Winter Hardiness (LTE50 C)")+
+	theme(text = element_text(size=20))
+
 
 y_sim <- drcPost_Predict$y_sim_p * -1
 
@@ -2190,7 +2251,10 @@ priorTempsPlothd <- ggplot(data = plottingDataPriorhd, aes(x = x, y = MeanY ))
 priorTempsPlothd + 
 	geom_ribbon(aes(ymin= X0., ymax=  X100.), , fill = "palevioletred", alpha = 0.5) +
 	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
-	geom_line() + theme_classic()
+	labs(y= "Predicted Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")+
+	geom_line() + theme_classic()+
+	theme(text = element_text(size=20))
+
 dev.off()
 
 #Pairs plot from model with real data 
@@ -2212,7 +2276,8 @@ postTempsPlot +
 	geom_ribbon(aes(ymin= lowerMeanYsVarSite, ymax=  upperMeanYsVarSite),fill = "palevioletred2", alpha = 0.3) +
 	geom_ribbon(aes(ymin= lowerMeanYs, ymax=  upperMeanYs),fill = "palevioletred3", alpha = 0.3) +
 	geom_point(aes(x = meanC , y = lte ), data = bhclimClean2)+
-	labs(y= "Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")
+	labs(y= "Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")+
+	theme(text = element_text(size=20))
 dev.off()
 
 
@@ -2225,7 +2290,9 @@ postTempsPlot <- ggplot(data = bhclimClean2, aes(x = lte, y = PostMuLTE ))
 postTempsPlot + 
 	geom_point(colour = "palevioletred4") + 
 	theme_classic() +
-	labs(x= "Observed winter hadiness (LTE50 Decgrees C)", y = "Predicted winter hadiness (LTE50 Decgrees C)")
+	labs(x= "Observed winter hadiness (LTE50 Decgrees C)", y = "Predicted winter hadiness (LTE50 Decgrees C)")+
+	theme(text = element_text(size=20))
+
 dev.off()
 
 #Panel of plots for each parameter 
@@ -2257,19 +2324,22 @@ dev.off()
 #Plot of effect of varieties on d
 png("DoseResponse_WriteupImages/varDs.png")
 color_scheme_set("viridis")
-mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  +
+	theme(text = element_text(size=20))
 dev.off()
 
 #Plot of effect of sites on d
 png("DoseResponse_WriteupImages/siteDs.png")
 color_scheme_set("viridis")
-mcmc_intervals(-siteD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(-siteD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey") +
+	theme(text = element_text(size=20))
 dev.off()
 
 #Plot of effects of varieties on b
 png("DoseResponse_WriteupImages/varBs.png")
 color_scheme_set("viridis")
-mcmc_intervals(varB + -drcPost$b) + geom_vline(xintercept = meanB, linetype="dotted", color = "grey")  #intercepts 
+mcmc_intervals(varB + -drcPost$b) + geom_vline(xintercept = meanB, linetype="dotted", color = "grey") +
+	theme(text = element_text(size=20))
 dev.off()
 
 
@@ -2282,6 +2352,63 @@ postTempsPlot +
 	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
 	geom_line() + theme_classic()+
 	geom_point(aes(x = otherCabSovData$T_mean , y = otherCabSovData$Observed_Hc ))+
-	labs(y= "Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")
+	labs(y= "Winter hadiness (LTE50 Decgrees C)", x = "Mean 2 Day air temperature (degrees C)")+
+	theme(text = element_text(size=20))
 dev.off()
 
+#Plot of the model predictions for washington data againts observed data
+
+png("DoseResponse_WriteupImages/WashingtonPrediction2.png")
+postTempsPlot <- ggplot(data = otherCabSovData, aes(x = Observed_Hc, y = pred_mu ))
+postTempsPlot + geom_point() + 
+	theme_classic()+
+	labs(y= "Predicted Winter hadiness (LTE50 C)", x = "Observed Winter Hardiness (LTE50 C)")+
+	theme(text = element_text(size=20))
+dev.off()
+
+#Whats going on with the less cold hardy values around -2?
+png("DoseResponse_WriteupImages/2014Data.png")
+par(mfrow=c(2,1)) 
+#Hardiness
+plot(data2014$date, data2014$lte  , pch = 16, cex.lab = 1.5, cex.axis = 1.5, xlab = "", ylab = "hardiness")
+points(problemPoints$date, problemPoints$lte, pch = 16, col = 2)
+#airtemp
+plot(data2014$date, data2014$meanC  , pch = 16, cex.lab = 1.5, cex.axis = 1.5, xlab = "date", ylab= "air temperature")
+points(problemPoints$date, problemPoints$meanC, pch = 16, col = 2)
+par(mfrow=c(1,1)) 
+dev.off()
+
+#Cpompare to Ferguson
+
+png("DoseResponse_WriteupImages/compareFerg.png")
+par(mfrow=c(3,4))
+
+hist(comparisonVarieties[,1], main = "Cabernet Franc")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Cabernet Franc"], , col="red", lwd=3, lty=2,cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties[,2], main = "Cabernet Sauvignon", xlim = c(-26, -20))
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Cabernet Sauvignon"], , col="red", lwd=3, lty=2 , cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties$Chardonnay, main = "Chardonnay")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Chardonnay"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties$Gewurztraminer, main = "Gewurztraminer")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Gewurztraminer"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties$Merlot, main = "Merlot")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Merlot"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties[,6], main = "Pinot gris")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Pinot gris"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties$Riesling, main = "Riesling")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Riesling"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties[,8], main = "Sauvignon blanc")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Sauvignon blanc"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+hist(comparisonVarieties$Viognier, main = "Viognier")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Viognier"], , col="red", lwd=3, lty=2, cex.lab = 1.5, cex.axis = 1.5)
+
+par(mfrow=c(1,1)) 
+dev.off()
