@@ -8,6 +8,7 @@
 ## Load libraries
 library(rstan)
 library(shinystan)
+library(rstanarm)
 
 ## Set options
 options(mc.cores = parallel::detectCores()) # Detect cores
@@ -54,25 +55,52 @@ data.stan <- list(y = bb.arterra$GDD,
                   variety = as.numeric(as.factor(bb.arterra$variety)),
                   n_variety = length(unique(bb.arterra$variety)))
 
-### Fit using Stan model
+### Fit using Stan model (model 1 = no grand intercept)
 stanmodel1 <- stan("Stan/intpool.stan", data = data.stan, iter = 5000, warmup = 2500, chains = 4)
 
-## Summarize posterior distribution
-summary(stanmodel1, pars = c("mu_a_variety", "sigma_a_variety", "sigma_y"))$summary
+### Fit using Stan model (model 2 = with grand intercept)
+stanmodel2 <- stan("Stan/intpool2.stan", data = data.stan, iter = 5000, warmup = 2500, chains = 4)
 
-## Diagnostics
+## Summarize posterior distributions (model 1)
+summary(stanmodel1, pars = c("mu_a_variety", "sigma_a_variety", "sigma_y", "a_variety"))$summary
+
+## Summarize posterior distributions (model 2)
+summary(stanmodel2, pars = c("a_grand", "sigma_a_variety", "sigma_y", "a_variety"))$summary
+
+## Diagnostics (model 1)
 launch_shinystan(stanmodel1)
 
-extract.stanmodel1 <- extract(stanmodel1)
+## Diagnostics (model 2)
+launch_shinystan(stanmodel2)
 
-extract.stanmodel1$
+## Compare model 2 with rstanarm
+rstanarmmodel <- stan_lmer(GDD ~ (1 | varietynum),
+                           data = bb.arterra,
+                           prior = normal(location = 0, scale = 10),
+                           prior_intercept = normal(location = 400, scale = 50, autoscale = FALSE),
+                           prior_aux = normal(location = 0, scale = 10),
+                           seed = 202010,
+                           iter = 5000,
+                           chains = 4,
+                           cores = 4)
 
+## Summarize both
+summary(rstanarmmodel)
+summary(stanmodel2, pars = c("a_grand", "sigma_a_variety", "sigma_y", "a_variety"))$summary # varieties numbered but in same order
+
+
+## Code for plotting
+extract.stanmodel2 <- extract(stanmodel2)
 varieties <- unique(bb.arterra$variety)
-varieties[order(varieties)]
+varieties <- varieties[order(varieties)]
 
 pdf(file = "Varieties.pdf", width = 12, height = 12, onefile = TRUE)
+
 par(mfrow = c(4, 4))
 for(i in 1:length(varieties)){
-    plot(density(extract.stanmodel1$a_variety[, i]), main = varieties[i])
+    plot(density(extract.stanmodel2$a_variety[, i], bw = 1), main = varieties[i])
+    clip(-100, 100, 0, 1)
+    abline(v = 0, lty = "dotted")
 }
+
 dev.off()

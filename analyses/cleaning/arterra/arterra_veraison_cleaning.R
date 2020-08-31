@@ -40,3 +40,22 @@ veraison3 <- cbind(veraison2, company)
 
 # reorder and select only the correct columns
 clean_art_veraison <- select(veraison3, c("company", "vineyard", "block", "variety", "year", "month", "day", "event"))
+
+######
+###### WARNING: Code below is for preliminary analyses (Geoff)
+###### 
+
+# remove entries with no data for day
+clean_art_veraison <- subset(clean_art_veraison, is.na(clean_art_veraison$day) == FALSE)
+
+# replace month names with numbers (names must match format of month.abb constant)
+clean_art_veraison$month <- match(clean_art_veraison$month, month.abb)
+
+# create a date column
+clean_art_veraison$dates <- paste(clean_art_veraison$year, clean_art_veraison$month, clean_art_veraison$day, sep="-")
+
+# extract day of year
+clean_art_veraison$dayofyear <- strftime(strptime(clean_art_veraison$dates,format="%Y-%m-%d"), format = "%j")
+
+# save working copy to temporary folder
+write.csv(file = "../../output/temporary/arterra_veraison_clean.csv", x = clean_art_veraison, row.names = FALSE)
