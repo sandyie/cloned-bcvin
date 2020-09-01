@@ -62,17 +62,18 @@ I made a quick sketch that might help visualise things, see Figure \ref{fig:Dash
 \end{itemize}
 
 \section{How do we make a dashboard?}
-I have never attempted something like this before, but here is what I have learned so far. To achieve a dashboard I think we need a we page to link it to. ALso we need some platform to build it. By far the most popular option is ESRI's ArgGIS Online tool (\url{https://www.esri.com/en-us/arcgis/products/arcgis-dashboards/overview}). These are stick and professional looking, and there are a lot of tutorials on-line to help. Unfortunately there is also a subscription fee. I have contacted our IT people because it is possible that UBC Forestry already has a subscription we could tap into. QGIS, an open source and free mapping program, might provide an alternative, but I do not think it is as slick and I think it is just a map rather than map and graphs (see \url{https://www.qgistutorials.com/en/docs/web_mapping_with_qgis2web.html}  and \url{https://qgiscloud.com/}). Another alternative might be to use R. This page \url{https://shiny.rstudio.com/articles/dashboards.html} suggests either the flexdashboard or the shinydashboard packages. See \url{https://rstudio.github.io/shinydashboard/structure.html} for how to use Shiny. I just looked briefly but it looks like it would do the job.       
+I have never attempted something like this before, but here is what I have learned so far. To achieve a dashboard I think we need a we page to link it to. ALso we need some platform to build it. By far the most popular option is ESRI's ArgGIS Online tool (\url{https://www.esri.com/en-us/arcgis/products/arcgis-dashboards/overview}). These are slick and professional looking, and there are a lot of tutorials on-line to help. Unfortunately there is also a subscription fee. I have contacted our IT people because it is possible that UBC Forestry already has a subscription we could tap into. QGIS, an open source and free mapping program, might provide an alternative, but I do not think it is as slick and I think it is just a map rather than map and graphs (see \url{https://www.qgistutorials.com/en/docs/web_mapping_with_qgis2web.html}  and \url{https://qgiscloud.com/}). Another alternative might be to use R. This page \url{https://shiny.rstudio.com/articles/dashboards.html} suggests either the flexdashboard or the shinydashboard packages. See \url{https://rstudio.github.io/shinydashboard/structure.html} for how to use Shiny. I just looked briefly but it looks like it would do the job. Lizzie strongly prefers the R rout, and over the summer Adam Fong made some progress in this respect. I am not exactly sure what he did because I haven't got the code working on my computer yet, but the code is in bcvin\/hardiness\/dashboard. Adam also got a hardiness model designed by Carl from AgCanada working in R, but again I am getting error messages when I run the code. Once we have the model and dashboard code up and running we should have a better idea of where we are at.           
 
 \section{Next steps}
 
 We need to:
 \begin{itemize}
 	\item Decide what we want the dashboard to do and how it should look
-	\item Chose a platform (ESRI vs R)
+	\item Get Adam's code to work and see what he has achieved 
 	\item Figure out how to scrape data and where to get data from
-	\item Chose a hardiness model 
-	\item Figure out how to make a dashboard
+	\item Chose a hardiness model - probably the one Adam has coded up that we got from Carl
+	\item Figure out how to make a dashboard!
+	\item Decide who should host the dashboard 
 \end{itemize}
 \end{document}
 
