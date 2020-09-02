@@ -10,6 +10,14 @@
 \def\labelitemi{--}
 \parindent=0pt
 
+\newenvironment{smitemize}{
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0.8pt}
+  \setlength{\parsep}{0pt}}
+{\end{itemize}
+}
+
 \begin{document}
 
 \title{Thoughts on an improved temperature model}
@@ -18,7 +26,36 @@
 \maketitle
 \tableofcontents
 
-\section{What Lizzie suggests we do}
+\newpage
+\section{Plant temperature}
+
+Continuing our discussion of how to improve our temperature model, I did some reading in grapevine canopy and berry temperature, especially compared to the temperature data that we have---measured air temperature. \\
+
+This is a well-studied topic. People have been using basic energy flux models for this since at least \citet{millar1972} and developing them here and there into models growers can use to estimate berry temperature \citep[e.g.,][]{cola2009}. There are also continuing comparisons of how canopy and berry temperatures relate to measured air temperature \citep[e.g.,][]{costa2019,pena2020}. After all those years, though I am not sure there is an agreed-upon model (I found the \citet{millar1972} the best paper I read). Papers from Washington state diverged from those in Chile, and these's not even consistent info on `our temperature station was $x$ far away and in this type of location,' so I feel a little uncomfortable doing too much more than thinking on where and how to let the plant temperature vary from the air temperature. \\
+
+That said, I think I gleaned a few insights useful to our priors and our temperature model. 
+
+\begin{smitemize}
+\item Sun and shade matter to berries: \citet{millar1972} found exposed fruit was 1.4-7.3 C higher than measured air temperature and shaded fruit were 0.5-4.4 C lower. (Relatedly, most radiative heat for berries goes into sensible, so you can ignore latent heat etc.)
+\item Sun and shade matter to leaves also: \citet{millar1972} found exposed leaves were similar to measured air temperature and shaded leaves were 0.9 C lower. (Relatedly, most latent heat matters a lot with leaves.) \citet{pena2020} found canopy seemed to increase diurnal temperature range (canopy minima 1.2 C less than air and maxima 2.0 higher) though I am not sure how consistent this is as other studies did not mention it. 
+\item Aspect and row positioning, as well as trellising matter to temperature \citep{costa2019}, though I didn't find a consistent model of this. But it makes sense.
+\item From conversations with collaborators---cover crop matters, so if you have a cover crop between rows that will reduce temperature.... at least while it's alive. So does irrigation. And irrigation x cover crop: if you have overhead irrigation it keeps your cover crop alive longer and keeps temperatures lower.
+\item Lags: I found conflicting info on whether plant temperature lags behind air temperature (or vice versa I guess). \citet{costa2019} found a lag of several hours for max temp comparing canopy (later max, around 17:00) and air (high from 11-17:00) while \citet{pena2020} reported no lag.
+\end{smitemize}
+
+Here's how this could matter to our model:
+
+\begin{smitemize}
+\item Several of these factors are vineyard-specific (trellising, irrigation, generally cover crop) and some are block-specific (aspect, row positioning), suggesting we might want to let the temperature model vary at these levels if possible.
+\item Some of these factors vary across the season: the cover crop often dies later in the season and growers often remove leaves to increase light/warmth in cool climates later in the season. But then, other places leave the leaves up .... not sure we want to deal with this. 
+\item We often assume 40 C is the upper limit for most plant processes, as proteins denature above that, but we might want to think about where to set that prior (i.e., make sure it is on plant-temperature, not air temperature).
+\item I think we can assume no lag, since there is not a known one. 
+\end{smitemize}
+
+% How much of this should be embedded in the model? Growers want models that work with air temperature so ....
+
+
+\section{Lizzie's early-August thoughts}
 
 I think the sine curve is not so bad. If we want to improve we could consider a spline (or something similar) {\bf to capture weather fronts,} which is our main issue (to me, at least, from looking at the residuals). I would also like to {\bf add a baseline long-term trend} since most locations are getting warmer with climate change. Even if we don't see it here I'd be interested in having it in the model soon-ish as we would want it in most models. 
 
@@ -73,12 +110,14 @@ There are other interesting as Logan (1, 2, 3), Anderson, Sine. But I did not te
 
 Lizzie notes: the two files are in the phenmodels/temperatre refs folder, but I am not sure they include temperature models.
 
+\bibliographystyle{..//..//..//refs/styles/amnat}
+\renewcommand{\refname}{\CHead{}}
+
+\emph{References}
+\bibliography{..//..//..//refs/planttemperature/plantemp.bib}
+
 \end{document}
 
 https://gracilis.carleton.ca/davidson/publications/2010/Newlands_Environ_2010.pdf
 
-\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
-\renewcommand{\refname}{\CHead{}}
 
-\emph{References}
-\bibliography{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/LizzieMainMinimal}
