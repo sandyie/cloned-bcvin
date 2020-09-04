@@ -6,6 +6,7 @@
 //needs x and y to be positive 
 // thsi model is different from doseResponseSimple in that ehat rather than e is used. 
 
+
 data {
   int<lower=1> N;                           // Number of observations
   vector<lower=1>[N] x;                      // Dose values (air temperature)
@@ -26,10 +27,10 @@ model {
   vector[N] mu_y;
 
   // Priors on parameters
-  c ~ normal(2, 0.5);                    // centred around 3, coudl very towards 0.  
+  c ~ normal(2, 1);                    // centred around 3, coudl very towards 0.  
   d ~ normal(25, 10);               // centred around maximum hardiness, 10 se 
   ehat ~ normal(log(30), 0.15);   // centred around mean temperature, se 20
-  b ~ gamma(7, 0.75);                 // centred around 1, not really sure of appropriate prior tbh  
+  b ~ gamma(10, 5);                 // centred around 1, not really sure of appropriate prior tbh  
   sigma_g ~ normal(0, 5);           // I have little concept of how much variation there shoudl be, thsi is a stab in the dark
 
   //liklyhood function 
