@@ -2,10 +2,11 @@ Notes about GDD for the bcvin work.
 Started 16 Aug 2020. Mira Garner.
 
 14 Aug 2020
-Scott Carlson told April that Arterra uses a base temperature of 10.3 degrees C for their GDD calculations.
+Scott Carlson told April that Arterra uses a base temperature of 10.3 degrees C for their GDD calculations. 
 
 31 Aug 2020
-April said: Tbase at Dark Horse is 10.3
+Mike Watson also uses 10.3 degrees C for GDD calculations at Dark Horse.
 
-4 Sep 2020:
-April said: Nelson at Nk'mip says their Tbase is 1
+4 Sept 2020
+Nelson uses 10 degrees C for the base temperature for GDD calculations at Nk'Mip.
+

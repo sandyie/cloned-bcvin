@@ -41,8 +41,37 @@ clim$date <- as.Date(clim$Date.Time, format="%m/%d/%y")
 clim$month <- format(clim$date, "%b")
 clim$day<- format(clim$date,"%d")
 head(clim)
-climsm <- subset(clim, select=c("Year", "month","day", "Mean.Temp..C.", "Mean.Temp.Flag", "date", "Date.Time"))
-names(climsm) <- c("Year", "month","day", "meanC", "meanC.flag", "date", "Date.Time")
+
+#Replace NA temps with mean from day before and after for min and max temps 
+for(i in 1:nrow(clim)){
+	if(is.na(clim$Max.Temp..C.[i])){
+		clim$Max.Temp..C.[i] <- mean(clim$Max.Temp..C.[i-1] + clim$Max.Temp..C.[i+1])
+	}
+	if(is.na(clim$Min.Temp..C.[i])){
+		clim$Min.Temp..C.[i] <- mean(clim$Min.Temp..C.[i-1] + clim$Min.Temp..C.[i+1])
+	}
+}
+
+
+
+#Make mean temp for last 24 hours by sing yesterdays max and today's min. the logic behind thsi is that Carl takes measurements mid morning. 
+for(i in 1:nrow(clim)){
+	if(i == 1){#If toay is first temp listed then ise max from today as well as min from today
+		clim$mean1DayC[i] <- clim$Max.Temp..C. [i] + clim$Min.Temp..C.[i])/2
+	#}else if (is.na(clim$Max.Temp..C. [i])){
+#		clim$mean1DayC[i] <- clim$Mean.Temp..C.[i]
+#			} else if (is.na(clim$Max.Temp..C. [i-1])){ # if there is no max temp for yesterday then I will use toaday's max temp
+#		clim$mean1DayC[i] <- (clim$Max.Temp..C. [i] + clim$Min.Temp..C.[i])/2
+	} else clim$mean1DayC[i] <-  (clim$Max.Temp..C. [i-1] + clim$Min.Temp..C.[i])/2
+}
+
+is.na(clim$Max.Temp..C.)
+is.na(clim$Mean.Temp..C.)
+plot(clim$Max.Temp..C. ~ clim$Mean.Temp..C.)
+
+
+climsm <- subset(clim, select=c("Year", "month","day", "Mean.Temp..C.", "Mean.Temp.Flag", "date", "Date.Time", "mean1DayC"))
+names(climsm) <- c("Year", "month","day", "meanC", "meanC.flag", "date", "Date.Time", "mean1DayC")
 
 #Washington state hardiness data
 otherCabSovData <- read.csv("input/WashingtonHardinessData_Ferguson.csv")
@@ -137,7 +166,9 @@ bhclim$variety <- as.factor(bhclim$variety)
 
 plot(bhclim$lte ~bhclim $Datestrptime)
 plot(bhclim$lte ~bhclim $month_day )
-plot(bhclim$lte ~bhclim $meanC)
+plot(bhclim$lte ~bhclim $mean1DayC)
+
+tail(bhclim)
 
 
 
@@ -2412,3 +2443,348 @@ abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Viognier"], , c
 
 par(mfrow=c(1,1)) 
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+#--------------------------------------------------------------
+#Try with 1 day temperature 
+#-----------------------------------------------------------------
+
+
+bhclimClean3 <- bhclim[!is.na(bhclim$lte),]
+bhclimClean2 <- bhclimClean3[!bhclimClean3$variety == "",]
+
+#Clean siet column 
+
+bhclimClean2$site2 <- as.character(bhclimClean2$site)
+unique(bhclimClean2$site2 )
+
+bhclimClean2$site2[bhclimClean2$site2 == "Osoyoos northeast"] <- "Osoyoos, northeast"
+bhclimClean2$site2[bhclimClean2$site2 == "Oliver east"] <- "Oliver, east"
+bhclimClean2$site2[bhclimClean2$site2 == "Osoyoos west"] <- "Osoyoos, west"
+
+realy <- bhclimClean2$lte * -1
+realx <- I(bhclimClean2 $mean1DayC + 30)
+N <- length(bhclimClean2 $mean1DayC)
+plot(bhclimClean2$lte ~ bhclimClean2 $mean1DayC )
+
+head(bhclimClean2)
+
+realvariety <- as.integer(as.factor(as.character(bhclimClean2$variety)))
+realn_vars <- length(unique(realvariety))
+
+realsite <- as.integer(as.factor(as.character(bhclimClean2$site2)))
+realn_site <- length(unique(realsite))
+
+stan_data_drs_real_var <- list(N = N, x = realx, y = realy, variety = realvariety, 
+	n_vars = realn_vars, sites = realsite, n_sites = realn_site)
+
+#thsi used the positive transfomed data!
+drc_simple_real2 <- stan(file = "stan/doseResponseDBVarSite_ncp.stan", data = stan_data_drs_real_var, warmup = 2000, 
+	iter = 3000, chains = 4, cores = 4, thin = 1)
+
+pairs(drc_simple_real2, pars = c("b", "c","d","ehat","sigma_g", "d_var_sigma", "d_site_sigma", "b_var_sigma", "lp__")) 
+
+drcPost2 <- rstan::extract(drc_simple_real2)
+
+#how do the posteriors look?
+#pairs(drc_simple)
+
+#How does teh predicted data look?
+str(drcPost2)
+mu_post <- drcPost2$mu_y * -1
+hist(mu_post)
+plot(colMeans(mu_post) ~ bhclimClean2 $mean1DayC)
+
+
+y_sim <- drcPost2$y_sim * -1
+
+hist(y_sim)
+meanySimPost <- apply(y_sim, 2, mean)
+quantsSimYPost <- apply( y_sim, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+#get mean values without effect of variety and site 
+cPost <- median(drcPost2$c) 
+dPost <- mean(drcPost2$d)
+bPost <- median(drcPost2$b)
+eHatPost <- mean(drcPost2$ehat) 
+
+uniqueXsRaw <- c(-15:25)
+uniqueXs <- uniqueXsRaw+30
+
+#Middle values
+meanYs <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	meanYs[i] <- cPost + (( dPost - cPost) / (1 + exp(bPost*(log(uniqueXs[i])-eHatPost))))
+}
+
+
+#Upper and lower hpdi of parameters and predicted mean values 
+SDRealY2<- apply(data.frame(drcPost2$mu_y ), 2, HPDI) 
+
+realYs2 <- data.frame(colMeans(drcPost2$mu_y))
+head(realYs2)
+realYs2$upperHPDI <- SDRealY2[1,]
+realYs2$lowerHPDI <- SDRealY2[2,]
+
+lowerd <- HPDI(data.frame(drcPost2$d))[1]
+upperd <- HPDI(data.frame(drcPost2$d))[2]
+
+lowerc <- HPDI(data.frame(drcPost2$c))[1]
+upperc <- HPDI(data.frame(drcPost2$c))[2]
+
+lowerb <- HPDI(data.frame(drcPost2$b))[1]
+upperb <- HPDI(data.frame(drcPost2$b))[2]
+
+lowerehat <- HPDI(data.frame(drcPost2$ehat))[1]
+upperehat <- HPDI(data.frame(drcPost2$ehat))[2]
+
+#Lower mean values
+lowerMeanYs <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	lowerMeanYs[i] <- lowerc + (( lowerd - lowerc) / (1 + exp(lowerb*(log(uniqueXs[i])-lowerehat))))
+}
+
+#Upper mean values
+upperMeanYs <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	upperMeanYs[i] <- upperc + (( upperd - upperc) / (1 + exp(upperb*(log(uniqueXs[i])-upperehat))))
+}
+
+#Getting the maximum and minimum effect of variety (not bothering with b because no real effect)
+VarietyEffectsMean <- colMeans(data.frame(drcPost2$var_d ))
+min_d_var <- min(VarietyEffectsMean)
+max_d_var <- max(VarietyEffectsMean)
+
+#Getting the maximum and minimum effect of site
+siteEffectsMean <- colMeans(data.frame(drcPost2$site_d ))
+min_d_site <- min(siteEffectsMean)
+max_d_site <- max(siteEffectsMean)
+
+#Lower mean values with min site and variety 
+lowerMeanYsVarSite <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	lowerMeanYsVarSite[i] <- (lowerc + (( lowerd + min_d_var + min_d_site  - lowerc) / (1 + exp(lowerb*(log(uniqueXs[i])-lowerehat)))))* -1
+}
+
+#Upper mean values with max site and variety 
+upperMeanYsVarSite <- uniqueXs
+for (i in 1:length( uniqueXs)){
+	upperMeanYsVarSite[i] <- (upperc + (( upperd + max_d_var + max_d_site - upperc) / (1 + exp(upperb*(log(uniqueXs[i])-upperehat)))))*-1
+}
+
+#adding obervational model sigma_g
+meanSigmaG <- mean(drcPost2$sigma_g)
+upperMeanYsSigma <- upperMeanYsVarSite - meanSigmaG
+lowerMeanYsSigma <- lowerMeanYsVarSite +  meanSigmaG
+
+
+plottingDataPost2 <- data.frame(cbind(uniqueXsRaw, meanYs))
+plottingDataPost2$negMeanYs <- -meanYs
+plottingDataPost2$upperMeanYs <- -upperMeanYs
+plottingDataPost2$lowerMeanYs <- -lowerMeanYs
+plottingDataPost2$upperMeanYsVarSite <- upperMeanYsVarSite
+plottingDataPost2$lowerMeanYsVarSite <- lowerMeanYsVarSite
+plottingDataPost2$upperMeanYsSigma <- upperMeanYsSigma
+plottingDataPost2$lowerMeanYsSigma <- lowerMeanYsSigma
+
+
+postTempsPlot <- ggplot(data = plottingDataPost2, aes(x = uniqueXsRaw, y = negMeanYs ))
+postTempsPlot + 
+	geom_line(colour = "palevioletred4") + 
+	theme_classic() +
+	geom_ribbon(aes(ymin= lowerMeanYsSigma, ymax=  upperMeanYsSigma),fill = "palevioletred", alpha = 0.3) +
+	geom_ribbon(aes(ymin= lowerMeanYsVarSite, ymax=  upperMeanYsVarSite),fill = "palevioletred2", alpha = 0.3) +
+	geom_ribbon(aes(ymin= lowerMeanYs, ymax=  upperMeanYs),fill = "palevioletred3", alpha = 0.3) +
+	geom_point(aes(x = mean1DayC , y = lte ), data = bhclimClean2)
+
+#Whats going on with the less cold hardy values around -2?
+bhclimClean2[bhclimClean2$lte > -15 & bhclimClean2$mean1DayC < 0,]
+data2014 <- bhclimClean2[bhclimClean2$Year == 2014,]
+problemPoints <- bhclimClean2[bhclimClean2$date == "2014-11-11",]
+par(mfrow=c(2,1)) 
+#Hardiness
+plot(data2014$date, data2014$lte  , pch = 16, cex.lab = 1.5, cex.axis = 1.5, xlab = "", ylab = "hardiness")
+points(problemPoints$date, problemPoints$lte, pch = 16, col = 2)
+#airtemp
+plot(data2014$date, data2014$mean1DayC  , pch = 16, cex.lab = 1.5, cex.axis = 1.5, xlab = "date", ylab= "air temperature")
+points(problemPoints$date, problemPoints$mean1DayC, pch = 16, col = 2)
+par(mfrow=c(1,1)) 
+
+
+
+extremesP <- quantsSimYPost[c(2, 5),]
+quatersP <- quantsSimYPost[c(3, 4),]
+
+plottingDataPost <- data.frame(t(quantsSimYPost))
+plottingDataPost$MeanY <- meanySimPost 
+plottingDataPost$x <- bhclimClean2 $mean1DayC 
+
+#plot of predicted mean values and 89% highest probability density index 
+postTempsPlot <- ggplot(data = plottingDataPost, aes(x = x, y = MeanY ))
+postTempsPlot + 
+	geom_ribbon(aes(ymin= X5., ymax=  X95.), , fill = "palevioletred", alpha = 0.5) +
+	geom_ribbon(aes(ymin= X25., ymax=  X75.), , fill = "palevioletred", alpha = 0.5) + 
+	geom_line() + theme_classic()+
+	geom_point(aes(x = bhclimClean2 $mean1DayC , y = bhclimClean2$lte ))
+
+
+
+plot(colMeans(y_sim) ~ bhclimClean2 $mean1DayC)
+
+plot(colMeans(y_mu) ~ bhclimClean2 $lte)
+
+plot(colMeans(y_sim) ~ bhclimClean2 $lte)
+
+
+
+#What are the predicted parameter values?
+
+e_post <- exp(drcPost$ehat)
+hist(e_post-30)
+
+b_post <- drcPost$b
+hist(b_post)
+
+c_post <- drcPost$c
+hist(c_post)
+
+d_post <- drcPost$d
+hist(d_post)
+
+sigma_post <- drcPost$sigma_g
+hist(sigma_post)
+
+
+d_var_sigma <- drcPost$d_var_sigma # one each itteration (4000)
+hist(d_var_sigma)
+
+d_site_sigma <- drcPost$d_site_sigma # one each itteration (4000)
+hist(d_site_sigma)
+
+#compare varietyt and site effect 
+plot(density(d_var_sigma), col = 2)
+lines(density(d_site_sigma), col = 4)
+text(1.5, 2, "Blue = site \nRed = variety")
+
+#Variety plot - max hardiness 
+rawVarDs <- data.frame(drcPost$d_var_raw)# each row is an itteration and each column a variety
+varD <- rawVarDs
+
+for (i in 1:n_vars){ # get variety level differences from ncp
+	varD[i,] <- rawVarDs[i,] * drcPost$d_var_sigma[i]
+}
+
+meanVarEffect <- colMeans(varD)+ mean(drcPost$d)
+quantsVarEffects <- apply( varD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanDneg<- mean(drcPost$d)
+
+dvarsG <- meanVarEffect + mean(drcPost$d)
+
+colnames(varD) <- levels(as.factor(as.character(bhclimClean2$variety)))
+
+color_scheme_set("viridis")
+mcmc_intervals(-varD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+
+quantsVarEffectsHPDI <- apply( varD, 2 , HPDI)
+quantsVarEffectsHPDI + mean(drcPost$d)
+
+#Hardiness taken from fergusonetal2014
+fergusonHardinessNames <- c( "Cabernet Franc", "Cabernet Sauvignon", "Chardonnay", "Gewurztraminer", 
+	"Merlot",  "Pinot gris",  "Riesling","Sauvignon blanc","Shiraz", "Viognier")
+
+Values <- c(-23.5, -25.4,-25.7,-24.9 ,-25.0,-24.0,-26.1,-24.9,-24.2,-24.0)
+ferValues <- data.frame(cbind(fergusonHardinessNames, Values))
+ferValues$Values <- as.numeric(as.character(ferValues$Values))
+
+comparisonVarieties <- -1*(varD[,colnames(varD)%in%fergusonHardinessNames] +  mean(drcPost$d))
+
+names(comparisonVarieties)
+
+hist(comparisonVarieties[,1], main = "Cabernet Franc")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Cabernet Franc"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties[,2], main = "Cabernet Sauvignon", xlim = c(-26, -20))
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Cabernet Sauvignon"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Chardonnay, main = "Chardonnay")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Chardonnay"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Gewurztraminer, main = "Gewurztraminer")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Gewurztraminer"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Merlot, main = "Merlot")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Merlot"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties[,6], main = "Pinot gris")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Pinot gris"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Riesling, main = "Riesling")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Riesling"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties[,8], main = "Sauvignon blanc")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Sauvignon blanc"], , col="red", lwd=3, lty=2)
+
+hist(comparisonVarieties$Viognier, main = "Viognier")
+abline(v = ferValues$Values[ferValues$fergusonHardinessNames == "Viognier"], , col="red", lwd=3, lty=2)
+
+
+#Variety plot - slope
+rawVarBs <- data.frame(drcPost$b_var_raw)# each row is an itteration and each column a variety
+varB <- rawVarBs
+
+for (i in 1:n_vars){ # get variety level differences from ncp
+	varB[i,] <- rawVarBs[i,] * drcPost$b_var_sigma[i]
+}
+
+meanVarEffectB <- colMeans(varB)
+quantsVarEffectsB <- apply( varB, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanB<- mean(drcPost$b)
+
+bvarsG <- meanVarEffectB + mean(drcPost$b)
+
+colnames(varB) <- levels(as.factor(as.character(bhclimClean2$variety)))
+
+color_scheme_set("viridis")
+mcmc_intervals(varB + -drcPost$b) + geom_vline(xintercept = meanB, linetype="dotted", color = "grey")  #intercepts 
+
+
+
+#site Plot 
+
+rawsiteDs <- data.frame(drcPost$d_site_raw)# each row is an itteration and each column a variety
+siteD <- rawsiteDs
+
+for (i in 1:n_sites){ # get variety level differences from ncp
+	siteD[i,] <- rawsiteDs[i,] * drcPost$d_site_sigma[i]
+}
+
+meanSiteEffect <- colMeans(siteD)
+quantsSiteEffects <- apply( siteD, 2 , quantile , probs = c(0, 0.05, 0.25, 0.75, 0.95, 1) , na.rm = TRUE )
+
+meanDneg <- mean(drcPost$d)
+
+dsiteG <- meanSiteEffect + mean(drcPost$d)
+
+
+colnames(siteD) <- levels(as.factor(as.character(bhclimClean2$site2)))
+
+color_scheme_set("viridis")
+mcmc_intervals(-siteD + -drcPost$d) + geom_vline(xintercept = -meanDneg, linetype="dotted", color = "grey")  #intercepts 
+
+
+
+
+

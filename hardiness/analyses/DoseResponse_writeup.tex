@@ -26,7 +26,7 @@
 %\renewcommand{\refname}{\CHead{}}%not sure what this was supposed to do 
 \renewcommand{\bibname}{References}%names reference list 
 
-{}
+
 \maketitle{}
 \tableofcontents
 
@@ -221,6 +221,28 @@ The model does a fairly good job of predicting winter hardiness in this new data
   \caption{The observed winter hardiness of Cabernet sauvignon at the Washington State experimental plot plotted against the observed data for each temperature. }
   \label{fig:WashingtonPredictionyy}
 \end{figure}
+
+\subsection{1 day mean temperatures}
+I tried the model with 1 day mean temperature which I calculated using todays minimum temperatures and yesterday's maximum temperature. The plot looks a little odd (Figure \ref{fig:OneDayPredxyDRC}). For some reason with the 1 day temperatures there are more coasions where hardiness is qhite a bit lower than the model predicts. Maybe 3 day average woudl work even better, if the averaging helps smooth out those unusually cold days that currently throw the model? The model did not fit as well in terms of the parameter posteriors (Figure \ref{fig:OneDayPairsDRC}) and I got lost of warning red text after Stan finished running. For some reason there is multimodality in the parameter posteriors, thsi is probably teh reason for all the model fit problems.  
+
+\begin{figure}
+  \includegraphics[scale = 0.75]{OneDayPredxyDRC.png}
+  \caption{The variation in rate of change of hardiness (b) of each variety.The gray dotted lien represents the mean rate of change of hardiness (b).}
+  \label{fig:OneDayPredxyDRC}
+\end{figure}
+
+
+\begin{figure}
+  \includegraphics[scale = 0.75]{OneDayPairsDRC.png}
+  \caption{The variation in rate of change of hardiness (b) of each variety.The gray dotted lien represents the mean rate of change of hardiness (b).}
+  \label{fig:OneDayPairsDRC}
+\end{figure}
+
+\subsection{multimodality in the posteriors }
+I tried to recreate the multi-modality i was seeing in some of the earlier models. The only prior combination I successfully found with this multi-modality was when I did not restrict b to be positive. There were two sets of values, one for positive slopes and one for negative slopes. Otherwise the problem with posteriors was mostly in the co-linearity between ehat and c.  
+
+
+
 
 \section{Discussion}
 
