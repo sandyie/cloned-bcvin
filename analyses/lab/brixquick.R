@@ -9,6 +9,8 @@ options(stringsAsFactors=FALSE)
 # Setting working directory. Add in your own path in an if statement for your file structure
 if(length(grep("Lizzie", getwd())>0)) { 
   setwd("~/Documents/git/projects/vinmisc/bcvin/analyses/lab") 
+} else if(length(grep("faith", getwd())>0)){
+  setwd("/home/faith/Documents/github/bcvin/bcvin/analyses/lab") 
 } else setwd("~/Documents/git/ospree/analyses")
 
 library(ggplot2)
