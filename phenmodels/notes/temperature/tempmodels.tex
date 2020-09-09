@@ -27,6 +27,52 @@
 \tableofcontents
 
 \newpage
+\section{What we aim to do}
+We want to improve our survival model with a better temperature model. As Mike explained (12 July 2020 email):\\
+
+In general I'd say the big scientific input on the temperature side of things 
+would be:\\
+
+a) What temperature summary is the best input to the phenology model, 
+    i.e. $T_{mean}$ or $T_{min}$ or $T_{max}$, etc.\\
+b) How do the temperature recordings relate to that summary, for example 
+    the recoding at any given time during the day could be considered a ``noisy'' 
+    measurement of that summary.\\
+c) How accurate are the temperature recordings\\
+
+Basically we need to know how much to smooth the temperature time 
+series in order to convert the discrete readings into something continuous 
+that we can input into the survival model.
+
+
+\section{Where I think we're at now ...}
+
+Mike wrote on 12 August 2020, ``One thing to keep in mind is that there are many levels of detail with which we can model 
+these effects.  If we assume the relationship between recorded temperature and meaningful
+energy input are so complicated that it’s hard to build an explicit model then that differences 
+can just be absorbed into the measurement variability.  In other words we’d do a separate 
+spline fit for each plant to account for all of that heterogeneity.  The next level of  complexity 
+would be to have varying parameters everywhere, and then at some point we could have a 
+more mechanistic model.  Even if we can’t construct an explicit mechanistic model, however,
+reasoning about it conceptually should give us a wealth of information about time scales and
+other orders of magnitude from which we can construct principled prior models for the cruder
+models.  Lots of exciting science to do!''\\
+
+
+And on 4 September 2020 (in reply to me sending a version of this document):\\
+
+``Milad's spline introduction (included as one of the links [from Ailene, see \href{https://github.com/milkha/Splines_in_Stan/blob/master/splines_in_stan.pdf}{Splines in Stan}]) is definitely one of the better
+introductions out there, let alone for applications in Stan.\\
+
+One thing to keep in mind is the we can always separate some of the local temperature 
+effects from the temperature model.  In particular if we have a high-level temperature 
+model that captures seasonality + trend + weather fronts then shading and other such
+effects can be modeled with varying intercepts between the ``temperature'' and what 
+goes into the Wang-Engels model.  They could also be added as intercepts between 
+the Wang-Engels output and the survival probability; which is more appropriate depends 
+on whether or not the effect is better modeled as modifying the input temperature or the
+input energy.''
+
 \section{Plant temperature}
 
 Continuing our discussion of how to improve our temperature model, I did some reading in grapevine canopy and berry temperature, especially compared to the temperature data that we have---measured air temperature. \\
@@ -58,6 +104,28 @@ Here's how this could matter to our model:
 \section{Lizzie's early-August thoughts}
 
 I think the sine curve is not so bad. If we want to improve we could consider a spline (or something similar) {\bf to capture weather fronts,} which is our main issue (to me, at least, from looking at the residuals). I would also like to {\bf add a baseline long-term trend} since most locations are getting warmer with climate change. Even if we don't see it here I'd be interested in having it in the model soon-ish as we would want it in most models. 
+
+Mike's reply (4 August 2020):
+
+\begin{quote}
+The challenge is in accurately modeling the splines.  People use splines/GAMs/etc as black boxes and take for granted that they work, but using them in a more principled way is much more challenging.  See for example \url{https://rss.onlinelibrary.wiley.com/doi/full/10.1111/j.1467-9868.2011.00777.x} the kind of work needed to establish spine priors that accurate capture domain expertise about the possible interpolation functions.  In practice we might be able to sneak around some of the troubles with heuristics but it will definitely take some work.\\
+
+What we'll really need to implement the splines properly is information about what the splines are trying to capture. \\
+- What are the time scales for weather fronts and other features that we want the splines to capture? Hours?  Days?  Weeks?\\
+- How much can those features influence the temperature?  1C?  5C?  10C?\\
+- How should we relate the recorded temperature to the local temperature around each plant?  How much meaningful spatial and temporal variation is there between temperature measurements?  I think a lot of this is taken for granted when people model Wang-Engels as contributions per day where all of this variation gets averaged out to a single contribution that correlates with the recorded temperature.
+\end{quote}
+
+And he continued on 5 August 2020:
+
+\begin{quote}
+...how are the temperature measurements related to the energy input of the plants?  Is there appreciable measurement error?  Is there appreciable variation in where and when the measurements are made and the local environment around each plant?  If the plant is integrating energy then how does that integral relate to the measurement at a single time during the day?  Does that relationship change with season and geography?\\
+
+We can add fudge factors and the like but the more phenomenological of a story we have the better prior models we can impose.  My hunch is that the actual phenological transitions aren't super well identified and so any substantial variation in the temperatures will be degenerate with the energy accumulation model, but we'll have to bear that out.\\
+
+One thing that might be worth trying -- since we're moved to a survival approach the hazard function doesn't need to be as continuous as the in the threshold/Wang-Engels model, so it might be possible to replace the hazard integral (and the need to carefully interpolate) with a hazard sum without breaking the gradients.  I'll have to play around with this once I'm settled in with my new machine and caught up on everything I've missed.
+\end{quote}
+
 
 \section{Overview of options considered}
 

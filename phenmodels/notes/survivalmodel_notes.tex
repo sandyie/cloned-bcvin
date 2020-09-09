@@ -1,0 +1,224 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\renewcommand{\baselinestretch}{1.1}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{hyperref}
+
+\def\labelitemi{--}
+\parindent=0pt
+
+\begin{document}
+\bibliographystyle{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/styles/besjournals}
+\renewcommand{\refname}{\CHead{}}
+
+\emph{About this file:} It's Lizzie's attempt to keep notes (from emails etc.) and thoughts organized.\\
+
+{\bf Why use survival models for plant phenology?} This comes from Mike Betancourt's email on 9 June 2020:\\
+
+The Wang-Engel model (and its ilk) is a threshold model — it presumes 
+that phenological transitions are deterministic.  Once the latent forcing 
+\begin{equation*}
+f(t) = \int_{0}^{t} dt' C(T(t'))
+\end{equation*}
+where C is the Wang-Engels function, T is temperature, and t is time,
+passes a threshold the transition always happens immediately.  The 
+statistical model assumes that variation comes from the unmodeled 
+heterogeneity in the threshold for each plot/vine/tree/unit/etc.\\
+
+The deterministic nature of the threshold is what makes the model so
+tricky to implement generatively.  We need to compare the observed 
+transition time to the expected transition time; the expected transition 
+time is deterministic conditioned on the parameters and the temperature 
+time series, but requires the integration (or summation) and inversion.\\
+
+Another approach is to consider the phenological transition as not 
+deterministic but rather \emph{stochastic}.  In other words as the latent 
+forcing increases the \emph{probability} of transitioning increases but there’s 
+no finite forcing for which the transition is guaranteed to always happen.
+In practice, however, a probability sufficiently close to one will be a 
+practical guarantee for all intents and purposes.\\
+
+In this case the probability of not transitioning by time t is given by the 
+survival function
+
+\begin{equation*}
+S(t) = exp( - \int_{0}^{t} dt' C(T(t’)) )
+\end{equation*}
+
+where C could be the same Wang-Engels function only without a 
+normalization restricting it to be less than or equal to one.  At t = 0
+the survival function is 1 and as time, and the latent forcing, increases
+the survival function decreases monotonically.
+
+The likelihood is then just
+
+\begin{center}
+\begin{equation*}
+\pi(y | \theta)\\
+= P[\mbox{not transitioning until time} t] * \pi(\mbox{transitioning at exactly time} t)\\
+= S(t) * [- dS/dt(t) ]\\
+= S(t) * C(T(t))
+\end{equation*}
+\end{center}
+
+In other words because we only have to compute a latent probability
+and not a deterministic threshold we don’t need the expensive inversion 
+step needed in the previous model.\\
+
+This is otherwise known as a survival model---a pretty well-studied 
+approach in epidemiology and related fields---and can also be 
+interpreted as the outcome of a continuous time hidden Markov 
+model, connecting it to the discrete time hidden Markov models we
+were discussing.\\
+
+The survival model approach still requires interpolating temperatures
+to compute the integral needed for the survival function but because 
+it doesn’t require an inversion it’s straightforward to implement in Stan.
+In terms of predictions there shouldn’t be much difference between the 
+two, modulo issues of unmodeled censoring in the observed data that 
+would have different consequences for the two approaches.  The biggest 
+question for considering the survival model approach is  whether or not 
+the phenology field would be okay with the change from a deterministic 
+threshold transition to a probabilistic one.\\
+
+Below from 15 July 2020 email:\\
+ 
+In the original Wang and Engel model a phenology transition is a deterministic 
+event that occurs when the integrated Wang an Engels units pass some threshold,
+
+\begin{equation*}
+\int dt WE(T(t)) = \mbox{threshold}
+\end{equation*}
+
+where t is time and T is temperature.  This can be also be interpreted as
+
+\begin{equation*}
+\int dt WE(T(t)) / \mbox{threshold} = 1.
+\end{equation*}
+
+In a survival model a phenology transition is not deterministic.  Instead as the 
+integrated Wang and Engel units increase the probability of not transitioning 
+decreases towards zero.  The probability of not transitioning up to some time
+is given by the survival function
+
+\begin{equation*}
+exp( - \gamma \int dt WE(T(t) ))
+\end{equation*}
+
+gamma plays a similar role as the threshold in the deterministic model,
+scaling the integrated Wang and Engels units to the right magnitude.\\
+
+In fact if one approximates the stochastic survival process as being deterministic 
+after the survival probability decreases to some $p_{thresh}$ then the transition
+occurs when
+\begin{equation*}
+exp( - \gamma \int dt WE(T(t)) ) = p_{thresh}
+\gamma \int dt WE(T(t))  = - log(p_{thresh})
+\end{equation*}
+
+or
+\begin{equation*}
+( \gamma / - log(p_{thresh}) ) \int dt WE(T(t)) = 1,
+\end{equation*}
+
+from which we can identify 
+\begin{equation*}
+\mbox{threshold} = - log(p_{thresh}) / \gamma.
+\end{equation*}
+
+Incidentally this is how I converted the prior on threshold to a prior on gamma.\\
+
+% Hazard is a rate so it has to have units of inverse time. 
+
+Mike sent a first version of this model in mid June. But the numerical integrator was slow, ``the numerical integrator seems to be quite slow which limits the scaling of the model. I think that to speed things up we’ll have to play with the numerical integrator to  optimize performance.  Another possibly would be to model the aggregated energy directly with something like an \href{https://en.wikipedia.org/wiki/I-spline}{I-spline}.'' Mike fixed this issue by early July though:
+
+\begin{quote}
+The reason why the numerical integrator was being so problematic 
+was that the linear interpolation let to cusps in the integrand that 
+messed things up. \\
+
+As a proof of principle I assumed that the temperatures followed a
+sinusoidal behavior in which case things behave much better.  With 
+Lizzie's priors everything behaves reasonably well, although the 
+numerical integration is still pretty expensive---it takes about an 
+hour to run 10 observations.  Possible speeds ups would come 
+from computing the integrations in parallel, not integrating from 
+day 1, and reusing the same intergral (i.e. integrating from day 1
+to first observed transition then integrating from that transition to 
+the next one, etc, and adding things up).\\
+
+The biggest limitation right now is the temperature model---I'm 
+guessing that the sinusoid is drastically oversmoothing.  Based 
+on your all domain expertise we could build up a better model 
+with additional Fourier components, splines, or the like.
+\end{quote}
+
+This means we needed to think on the temperature model! You can check out tempmodels.pdf (in temperature folder) for more on that.\\
+
+
+Issues with the Wang \& Engel:
+Mike says, ``One thing that I’ve learned so far is that the WE model is pretty non identified. By changing the WE threshold (which sort of becomes gamma in my model) and $T_{min}$, $T_{opt}$, and $T_{max}$ in the right way you can explain the same transition time multiple ways.  The question is how much we can actually constrain those parameters scientifically to well-pose the model!''\\
+
+Right now (September 2020), we're surviving on priors, Mike wrote, it fits ``largely because of the relatively strong prior densities.  If those 
+were loosened up at all then the model would fit very differently.''\\
+
+We should think hard if we can get at these values from other angles (again, Mike on 12 July 2020), ``The other thing to consider is how $T_{min}$, $T_{opt}$, and $T_{max}$  and gamma might  manifest in other observable phenomena that would allow us to pin them  down without just resorting to prior information that may be limited due to  long running assumptions in the literature.  Even it’s just something like  $T_{min}$, $T_{opt}$, and $T_{max}$ t vary from plant to plant but gamma doesn’t, in  which case the heterogeneity might be enough to separate out the various effects.''
+
+% In reply to this Lizzie wrote: This is what Iñaki and I are arguing over via the priors, I keep thinking 'come on, we know these numbers always show up around here in our models, etc.' and Iñaki is secretly thinking this is a novel opportunity for him to test whether our assumptions are wrong and our numbers canalized by our models.
+
+% And Mike replied: From a pure scientific/statistical perspective I’d probably be more on Iñaki’s side here, but it is much more work and harder to publish.  This might be better considered an end goal with the immediate analyzes focused on first formalizing around the  current assumptions so that we’re in a good place to loosen them.
+
+
+\end{document}
+
+\emph{References}
+\bibliography{/Users/Lizzie/Documents/EndnoteRelated/Bibtex/LizzieMainMinimal}
+
+
+% More from Mike's email on 15 July 2020:
+
+> (b) Why the 4 in the gamma?
+
+That’s left over from the Wang and Engels formula.
+
+> (c) Why is log hazard in inverse days? (I assume there is math I am not following.)
+
+Hazard is a rate so it has to have units of inverse time. 
+
+> (d) We have assumed it's okay that we both get an exception error with the gamma_tune.stan.
+>
+> Error in new_CppObject_xp(fields$.module, fields$.pointer, ...) :
+>   Exception: Exception: inv_gamma_cdf: Scale parameter is 0, but must be > 0!  (in 'modelcf87417b171_gamma_tune' at line 19)
+>   (in 'modelcf87417b171_gamma_tune' at line 52)
+>
+> It gives the same answers used for rgamma in simu_inits, hence our assumption that this is fine.
+
+That should be fine so long as the algebraic solver finishes and returns a
+reasonable answer.  The hardest part with using algebraic solvers is finding
+good enough initial conditions that everything stays numerically stable!
+
+> (e) Not terribly important but I have never seen a model speed up so much during iterations (my Stan models never do this), so am wondering why this happens? Does it speed up once it finds the typical set, or does it just find an easier part of it to zip through or …?
+
+The numerical integrator can be very slow when the integrand wiggles too
+much.  Before the Markov chains have a chance to settle into the typical 
+set the parameters lead to pretty wiggly WE(T(t)).  Note that I also had to
+set the temperature reconstruction parameters pretty tightly so that things
+would initialize reasonably well.
+
+% Email with Geoff on 13 July 2020:
+
+Yes, gamma is a threshold of some sort. If you look at "fit_pheno_survival_sine.stan" on line 48, you can see where it comes into play. Basically he's generating x with a WE-type function (line 47), then seems to be mapping x onto a smooth function where gamma is the maximum value.
+
+You can sort of approximate what's going on by creating this R function and plotting the results across a range of x values:
+why_gamma <- function(gamma, x) gamma * 4 * x * (1 -x)
+values <- why_gamma(4, seq(0, 1, length.out = 100))
+plot(values)
+
+Why he's mapping x onto a separate function is unclear to me. I also don't know what the number 4 does in the equation.
+
+I asked: Where does the 1.3862943 come from (survival stan file)?
+ 
+This is log(4). As you saw, the number 4 appears on line 48 as part of this smooth function. So this is just that on the log scale.
