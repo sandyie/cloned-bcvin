@@ -1,7 +1,5 @@
-#source("C:/Ecology Lab/R/bcvin_git/bcvin/analyses/climate_projections/functions_externaldrive.R")
-
-#for dell 
-source("C:/Users/adamfong/Desktop/Ecology Lab/R/bcvin_git/analyses/climate_projections/functions_externaldrive.R")
+ 
+source("functions_externaldrive.R")
 
 library(raster)
 library(tidyverse)
@@ -10,8 +8,6 @@ library(tmaptools)
 library(rgdal)
 library(leaflet)
 library(htmlwidgets)
-
-
 
 #############################################
 ####   Maps of BCVin   ####
@@ -25,8 +21,8 @@ library(htmlwidgets)
 # (4) Extreme lows in dormancy to budburst perioF: tmin_03 & tmin_04, tmin_12_03
 
 
-variable_list <- list.files("F:/climate_projection_data/bcvin_raster/anomaly", pattern = ".asc")
-setwd("F:/climate_projection_data/bcvin_raster/anomaly")
+variable_list <- list.files("../../../../climate_projection_data/bcvin_raster/anomaly", pattern = ".asc")
+setwd("../../../../climate_projection_data/bcvin_raster/anomaly")
 
 mw_hw_objects <- lapply(variable_list, raster)
 mw_hw_objects_names <- substr(variable_list, 0 , length(variable_list)) %>%
@@ -40,8 +36,8 @@ for ( i in 1:length(mw_hw_objects_names)){
   )
 }
 
-combined_list <- list.files("F:/climate_projection_data/bcvin_raster/combined", pattern = c(".asc"))
-setwd("F:/climate_projection_data/bcvin_raster/combined")
+combined_list <- list.files("../../../../climate_projection_data/bcvin_raster/combined", pattern = ".asc")
+setwd("../../../../climate_projection_data/bcvin_raster/combined")
 
 combined_objects <- lapply(combined_list, raster)
 combined_objects_names <- substr(combined_list, 0, length(combined_list)) %>%
@@ -55,8 +51,9 @@ for ( i in 1:length(combined_objects_names)){
   )
 }
 
-setwd("F:/climate_projection_data/bcvin_raster/historical")
-historical_list <- list.files(getwd(), pattern = ".asc", full.names = FALSE)
+historical_list <- list.files("../../../../climate_projection_data/bcvin_raster/historical", pattern = ".asc")
+setwd("../../../../climate_projection_data/bcvin_raster/historical")
+
 historical_objects <- lapply(historical_list, raster)
 historical_objects_names <- substr(historical_list, 0, length(historical_list)) %>%
   lapply(. , str_remove, pattern = ".asc") %>%

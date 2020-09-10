@@ -1090,17 +1090,17 @@ plot_histogram_allmembers <- function(myDescriptiveVariable, plotStyle){ #tested
   }
   
   else if(str_detect(myDescriptiveVariable, "tmax") == TRUE){ 
-    lab = "Temperature (°C)"
+    lab = "Temperature (C)"
     plotTitle = ""
     nbins = 14
   }
   else if(str_detect(myDescriptiveVariable, "tmin") == TRUE){
-    lab = "Temperature (°C)"
+    lab = "Temperature (C)"
     plotTitle = ""
     nbins = 14
   }
   else if(str_detect(myDescriptiveVariable, "mat")){
-    lab = "Temperature (°C)"
+    lab = "Temperature (C)"
     plotTitle = ""
     nbins = 14
     
