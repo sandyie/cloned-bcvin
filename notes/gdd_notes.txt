@@ -2,7 +2,7 @@ Notes about GDD for the bcvin work.
 Started 16 Aug 2020. Mira Garner.
 
 14 Aug 2020
-Scott Carlson told April that Arterra uses a base temperature of 10.3 degrees C for their GDD calculations. 
+Scott Carlson told April that Arterra uses a base temperature of 10.3 degrees C for their GDD calculations.
 
 31 Aug 2020
 Mike Watson also uses 10.3 degrees C for GDD calculations at Dark Horse.
@@ -10,3 +10,5 @@ Mike Watson also uses 10.3 degrees C for GDD calculations at Dark Horse.
 4 Sept 2020
 Nelson uses 10 degrees C for the base temperature for GDD calculations at Nk'Mip.
 
+13 Sept 2020
+Pat and Carl use 10 degrees C for the GDD because it is the most commonly used base temperature for grapes globally so their values can be compared with other research.
