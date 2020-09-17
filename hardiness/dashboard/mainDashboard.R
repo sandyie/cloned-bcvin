@@ -10,15 +10,21 @@
 #         * would be best if the data from 2012 up to last year was saved in a .csv that could be called rather than scraped - this should decrease loading time
 
 library(tidyverse)
-setwd("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/analyses/CarlModelMay2020")
+if(length(grep("faith", getwd())>0)) { 
+  setwd("~/Documents/github/bcvin/bcvin/hardiness/analyses/CarlModelMay2020") 
+} else setwd("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/analyses/CarlModelMay2020")
 source("helpfulFunctions.R")
 source("magicNumbers.R")
 source("IFstatements.R")
-source("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/dashboard/moreFunctions.R")
+if(length(grep("faith", getwd())>0)) { 
+  source("~/Documents/github/bcvin/bcvin/hardiness/dashboard/moreFunctions.R") 
+} else source("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/dashboard/moreFunctions.R")
 
 
 ###Loading and preparing data for the model. 
-setwd("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/analyses/input")
+if(length(grep("faith", getwd())>0)) { 
+  setwd("~/Documents/github/bcvin/bcvin/hardiness/analyses/input") 
+} else setwd("C:/Ecology Lab/R/bcvin_git/bcvin/hardiness/analyses/input")
 
 climate1981to2010 <- read_csv("climhist_19812010.csv", col_names = FALSE)
 
