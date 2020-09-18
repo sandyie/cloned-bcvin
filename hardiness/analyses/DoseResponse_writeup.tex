@@ -68,7 +68,7 @@ We expected different sites to vary in their maximum hardiness because the model
 
 Winegrapes have been domesticated for many thousands of years, and over that time growers have cultivated a wide range of varieties (genetically unique variants) with different physiological and ecological characteristics. Winegrape varieties consequently vary a lot in many of their traits. Although the exact mechanisms behind winegrape winter hardiness are unknown, winter hardiness seems to vary across varieties \cite{Mills2006,Ferguson2014,Kovaleski2018a}. Winegrapes may have different rates of change of winter hardiness\cite{Kovaleski2018a,Ferguson2014} and different maximum hardiness values \cite{Ferguson2014}. We included a hierarchical effect of variety on both maximum hardiness and the rate of change of hardiness so we could assess how variable variety specific winter hardiness is. \\
 
-We built our dose response model in a Bayesian framework using Stan \textbf{cite stan version} in R \textbf{cite rstan and r}. An essential part of modeling using Bayesian methods is the choice of prior expectations on each parameter value. Our priors are specified in Equation \ref{modelWithPriors}, and were generally chosen to encompass all possible parameter combinations according to our current physiological understanding of winegrape hardiness. The exception to this is parameter $c$, minimum winter hardiness. Our data did not span the full range of the sigmoid curve relationship of winter hardiness to air temperature; we lack data on minimum hardiness. This is a problem for model estimating. An estimation of minimum hardiness of winegrapes was taken from a selection of sources: -3\textdegree C \cite{Ferguson2011}, -1.2\textdegree C \cite{Ferguson2014} \textbf{more sources}. We fed this estimation into the model as a prior constrained closely around -2\textdegree C.  
+We built our dose response model in a Bayesian framework using Stan \textbf{cite stan version} in R \textbf{cite rstan and r}. An essential part of modeling using Bayesian methods is the choice of prior expectations on each parameter value. Our priors are specified in Equation \ref{modelWithPriors}, and were generally chosen to encompass all possible parameter combinations according to our current physiological understanding of winegrape hardiness. The exception to this is parameter $c$, minimum winter hardiness. Our data did not span the full range of the sigmoid curve relationship of winter hardiness to air temperature; we lack data on minimum hardiness. This is a common problem with winter hardiness measured using the electric pulse method because of teh way water acts - \textbf{need more info on this}. This is a problem for model estimating. An estimation of minimum hardiness of winegrapes was taken from a selection of sources: -3\textdegree C \cite{Ferguson2011}, -1.2\textdegree C \cite{Ferguson2014} \textbf{more sources}. We fed this estimation into the model as a prior constrained closely around -2\textdegree C.  
 
 \begin{equation}
 \label{modelWithPriors}
@@ -140,7 +140,7 @@ I used Stan's generate quantities block with fixed parameters to undertake the p
 \end{figure}
 
 \subsection{Retrodictive Checks}
-The model fits without any warning messages or the need for alterations to the fitting settings (adapt delta, tree-depth etc.). It runs with 2000 warm up steps and then 1000 iterations. The model generally does a good job I think of fitting to the data - most observed points fall withing the 89\% HPDI of the model predictions once hierarchical variation is considered \ref{fig:predWithReal}. There are some points though where the model overestimates hardiness. Most notably is a set of measurements at an air temperature of around -2\textdegree C that are obviously above the 89\%HPDI.  This cluster is also evident in when we plot the predicted values against the observed values (Figure \ref{fig:predAgainstReal}). These measurements come from a particularly cold day in November 2014 (Figure \ref{fig:2014Plot}).    
+The model fits without any warning messages or the need for alterations to the fitting settings (adapt delta, tree-depth etc.). It runs with 2000 warm up steps and then 1000 iterations. The model generally does a good job I think of fitting to the data - most observed points fall withing the 89\% HPDI of the model predictions once hierarchical variation is considered (Figure \ref{fig:predWithReal}). There are some points though where the model overestimates hardiness. Most notably is a set of measurements at an air temperature of around -2\textdegree C that are obviously above the 89\%HPDI.  This cluster is also evident in when we plot the predicted values against the observed values (Figure \ref{fig:predAgainstReal}). These measurements come from a particularly cold day in November 2014 (Figure \ref{fig:2014Plot}).    
 
 \begin{figure}
   \includegraphics[scale = 0.5]{PredWithReal.png}
@@ -266,6 +266,130 @@ Site differences - how do these compare to our (Carl's) knowledge of the geograp
 
 
 Compare relative importance of variety and site for growers adapting to climate change. \\
+
+\section{Brainstorming notes from September 2020}
+
+General paper theme: How has climate already affected winegrape growing in relation to winter hardiness? How will it change more in the future? \\
+
+\subsection{Who cares?}
+
+Growers care about winter hardiness because crop losses are a big problem and popular commercial varieties are less cold hardy than the varieties that are crossed with other grape species. How much will growers choice of variety effect the response they need to climate change? \\
+
+Ecologists care because understanding potential shifts in climate niches. (aside - this is also my climate analysis angle). 
+\begin{itemize}
+  \item Cold winters are a barrier to further spread north  
+  \item Winegrapes are a crop not a wild species, but ecologists should still be interested because we have so much understanding and information about how winegrapes react to climate. They are fairly well understood physiologically. We can maybe extrapolate results from winegrapes to wild species or communities. 
+  \item We can evaluate within species variation in response to climate change because we have different varieties within winegrapes. These varieties can be quite different.   
+\end{itemize}
+
+\subsection{paper of two halves}
+
+I think the paper will have two halves
+\begin{enumerate}
+  \item Focus on the model developed using Carl's Okanagan winter hardiness data. What does it tell us about winter hardiness in winegrapes? Does what we learn from it fit in to what we already know? 
+  \begin{itemize}
+    \item Site and variety have a similar effect on maximum hardiness. 
+    \item No effect of variety on rate of change. BUT my model is not good at dealing with nuances of acclimation and deacclimation (unless I try adding this in?) and it is not good with sudden spring or autumn cold snaps. This might be where varietal differences come into play.   
+      \item describe how the model is built, although priors info should probably go in the supplementary material.
+  \item Maybe include the fact that the model predicts new data pretty well.  
+  \end{itemize}
+  \item What can we find out by applying the model to climate data?
+  \begin{itemize}
+    \item Input historical (and future?) climate data from the Okanagan (and further afield?) 
+    \item How do extreme winter temperatures change over time?
+    \item How does the predicted winter hardiness of winegrape change with changing winter temperatures?
+    \item How often did minimum winter air temperatures drop below predicted hardiness?
+    \item should I use mean temperatures to get hardiness, but examine minimum daily temperatures to assess potential damage?   
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Random thoughts}
+
+When I look at the plot of mean air temperatures and winter hardiness it looks like vines are always much hardier than they need to be, so are never under threat. But what does this plot look like if I instead focus on minimum daily temperatures? Do vines immediately die if the air temperatures drops below hardiness, or does it need to be that cold for quite a while? \\
+
+How much van the various viticultural practices increase air temperature/save crops?\\
+
+\subsection{Vague plan for intro}
+
+Big picture - Climate change 
+\begin{itemize}
+  \item Climate change is changing where things grow (cite loads of references) 
+  \item We therefore expect geographical shifts in the location of species' climactic niches
+  \item These shifts may be different for different species, so community composition will probably change. This could be (and is- cite?) leading to disruption of interspecies interactions. So conservation implications. Also potential food security and economic implications because crops may need to be grow in different locations
+  \item A less well studies aspect is the potential response variability within species to climate change. Potentially important in relation to retaining genetic diversity and helping populations adapt to changing conditions. ALso could have consequences for other aspects of species fitness if changes favour one phenotype over another. 
+\end{itemize}
+
+Narrow in a bit - Focus on plant winter hardiness because...
+\begin{itemize}
+  \item Cold damage can kill or severely damage plant tissue
+  \item Cold is a limiting factor on the Northern (in Northern hemisphere) range of many plants
+  \item Cold is likely to be changing a lot with climate change and how quickly it is changing will affect many species. Could allow species to move north (cite evidence for this)
+  \item Also, unlike with heat, plants can gain and lose a lot of tolerance to cold so we need to consider their responses to warming as well as the temperature. Cold hardiness is plastic through the season. An increase in winter temperatures won't necessarily translate into niche shifts if plants also lose their winter hardiness. 
+\end{itemize}
+
+More narrow - focus on Winegrapes
+\begin{itemize}
+  \item A good model organism for asking questions about climate change and winter hardiness
+  \item Important economic crop, so lots of interest in how it will react to climate change
+  \item Lots of data and information at the species and phenotype (variety) level 
+  \item Winegrapes are sensitive to climactic variation, especially for high quality grapes 
+  \item Also we know winegrapes' winter hardiness varies in response to air temperatures - cite winegrape hardiness papers and give brief intro. Winegrapes acclimate to cold temperatures in the autumn, gaining potentially 20\textdegree C of protection using supercooled something (look up). Although we are not sure of the exact mechanisms involved in acclimation and deacclimation. We also expect some differences between varieties, but not sure exactly. Just maximum hardiness, rate of change, or both? Cite literature. 
+  \item There is a lot of interest in winter hardiness among growers because they can manage cold temperatures using fans and stuff but these are expensive. So need to match vines to areas that will rarely if ever drop colder than the vines hardiness.  
+  \item Lots of interest in new winegrape growing regions as winters warm, especially on the Northern edges of current regions (i.e. Canada and some USA) 
+\end{itemize}
+
+Why focus on the Okanagan region?
+\begin{itemize}
+  \item A very Northern region, so at extreme edge of climactic niche
+  \item Historical problems with cold temperatures, and documented changes recently 
+  \item Data on climate available for a few decades
+  \item Also have good hardiness data for multiple sites, years and varieties
+\end{itemize}
+
+\subsection{Plan if I get extra region's data}
+
+I could change the hierarchical level site to be region so I can see if some regions are different. If I do this maybe I will keep the more specific site model for the Okanagan as well? Or include site and region in the same model? Also try and include acc and deacc? \\
+
+Are there any interesting differences between regions? For example are one region's vines more cold tolerant? What might influence this? I should think of some hypothesis. Do temperatures fluctuate within or between days more in one region than another? Would that increase or degrease hardiness?\\
+
+When I look at the historical data/model output do I see differences in how increasingly suitable regions are getting?  Does this info match what we are seeing from the industry? How could I get this information - from sales databases or growers or word of mouth? For example I expect growers shifts tn less hardy winegrape varieties recently to make sense in the light of my model predictions. Maybe I can look into the other regions to and make educated guesses before seeing the model results?   \\
+
+\subsection{Plan if I don't get extra region's data}
+
+Maybe still include Washington State data to prove my model is good? I guess I should ask them if that is ok?\\
+
+Focus only on the Okanagan Valley.\\
+
+What is my ecological question here?\\
+
+Still have two parts:
+\begin{enumerate}
+  \item Describe the model and what it tells us
+  \item What does my model say about changes in the Okanagan valley specifically 
+  \begin{itemize}
+    \item run the model on historical climate data and for each time point plot air temp and predicted hardiness with confidence intervals. (if extra data do this for each location). Then see how often minimum and mean air temperatures that day fell into dangerous territory (within or below confidence intervals of model). Do this for each variety and location and see what is interesting. For example I expect fewer days of cold danger for more cold tolerant varieties. 
+    \item I would like to use weather stations from different areas of the Valley so I can see how variable things are within a region. 
+    \item Do areas with fewer cold danger days match where we see less hardy varieties been introduced sooner?  
+    \item What data could I use to show the changes in winegrape plantings over the lats few decades? Does Carl have this, or could I ask Arterra and Quail's Gate?
+    \item I expect fewer days of cold danger we get nearer to the present day. To begin with I expect lots of cold danger days because growers could not grow this varieties. Now I expect very few problem days because growers are growing the less cold tolerant varieties. 
+    \item Will the deciding factor for where to grow what varieties be in autumn freezes, spring freezes or winter maximum cold? I can only look at the last option in this analysis, but need to not forget the importance of ass and deacc.  
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Discussion point ideas}
+
+Why does my model find an effect of variety on maximum hardiness but not rate of change of hardiness? Think about physiology and also look at other hardiness papers. \\
+
+Variety level variation has a similar effect as site variation. So growers can influence the threat of winter hardiness a similar amount be picking a warm site as by selecting a hardier variety. These two might act synergisticaly if growers pick both a warm site and a hardy variety. I should think about this some more. \\
+
+Winter maximum hardiness not the only thing to consider. Spring/autumn frosts. Discuss strengths and weakness of dynamic models. \\
+
+Phenological shifts - will varieties veraise at the right time with the right berry qualities? Does budburst date relate to maximum winter hardiness, or do growers need to consider that separately? I think Carl said they dont relate, but some literature (\cite{Ferguson2014} or \cite{Kovaleski2018a} maybe?) suggested that they should. 
+
+How do my results relate to species distribution modeling and conservation planning? \\
+
+Cold hardiness in my data from Carl was always quite a lot above mean 2 day temp. Does thsi mean grapes are overly cautious or might hey be prepared for large temperature fluctuations within the day? \\
+
 
 \bibliographystyle{/home/faith/Documents/Bibtex/styles/besjournals/besjournals}
 
