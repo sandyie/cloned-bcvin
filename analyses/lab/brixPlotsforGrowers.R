@@ -2,7 +2,7 @@
 ## By Lizzie ##
 
 ##Edited by Faith Sep 8th to make plots for growers, and saved as a new R script. 
-
+## Edited by Geoff Sep 23rd to include updated inputs
 
 # housekeeping
 rm(list=ls()) # remove everything currently held in the R memory
@@ -15,17 +15,15 @@ if(length(grep("Lizzie", getwd())>0)) {
   setwd("/home/faith/Documents/github/bcvin/bcvin/analyses/lab") 
 } else setwd("~/Documents/git/ospree/analyses")
 
+## Load library
 library(ggplot2)
 
-d1 <- read.csv("..//input/lab/brix_25Aug_FJ.csv")
-d2 <- read.csv("..//input/lab/brix_25Aug_GL.csv")
-d3 <- read.csv("..//input/lab/brix_25Aug_PA.csv")
-d4 <- read.csv("..//input/lab/brix_25Aug_misc.csv")
+## Read data
+d <- read.csv("../input/lab/brix_working_all.csv", header = TRUE, stringsAsFactors = FALSE)
 
-vineInfo <- read.csv("/home/faith/Documents/github/bcvin/bcvin/analyses/input/lab/plantsInfo_working.csv")
+vineInfo <- read.csv("../input/lab/plantsInfo_working.csv")
 
-d <- rbind(d4, d3, d2, d1) 
-
+## Quality checks
 checkme <- subset(d, vineyard=="")
 unique(checkme$brix)
 
@@ -34,7 +32,6 @@ d <- subset(d, vineyard!="")
 unique(d$vineyard)
 
 d$vineyard[which(d$vineyard=="Dark Horse")] <- "DarkHorse"
-d$vineyard[which(d$vineyard=="Quail's Gate")] <- "QuailsGate"
 d$vineyard[which(d$vineyard=="Quails Gate Estate")] <- "QuailsGate"
 
 table(d$vineyard)
