@@ -2,7 +2,10 @@ Here is a information on the Quail's Gate data and list of the cleaning tasks th
 
 Cleaned Quailsgate Phenology data in analyses/cleaning/quailsgate
 ----------------------------------------------------------------------
-quailsGatePhenology.csv is teh combined clean data for the timing of various ohenological events in the Quails Gate vineyards 2001 to 2016. 
+quailsGatePhenology.csv is the combined clean data for the timing of various ohenological events in the Quails Gate vineyards 2001 to 2016. 
+
+PhenologyData2001to2012.csv - clean data, but only between 2001 ans 2012. 
+
 
 Files found in the data/quailsgate folder 
 ----------------------------------------------
