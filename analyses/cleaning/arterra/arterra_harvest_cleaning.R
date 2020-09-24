@@ -1,8 +1,7 @@
 # Arterra_Harvest phenological data cleaning script (15 Nov 2019, Mira Garner)
 
-rm(list = ls())
 options(stringsAsFactors = FALSE)
-setwd("~/Documents/git/bcvin/analyses/cleaning")
+setwd("~/Documents/git/bcvin/analyses/cleaning/arterra")
 art_harvest <- read.csv("~/Documents/git/bcvin/analyses/input/arterra/Arterra_Harvest.csv")
 
 library(reshape2)

@@ -1,8 +1,7 @@
 # Arterra_Bloom phenological data cleaning script (15 Nov 2019, Mira Garner)
 
-rm(list = ls())
 options(stringsAsFactors = FALSE)
-setwd("~/Documents/git/bcvin/analyses/cleaning")
+setwd("~/Documents/git/bcvin/analyses/cleaning/arterra")
 #setwd("C:\\Users\\Faith Jones\\Documents\\ubc\\github\\bcvin\\analyses")# Faiths working directory
 art_bloom <- read.csv("~/Documents/git/bcvin/analyses/input/arterra/Arterra_Bloom.csv")
 #art_bloom <- read.csv("C:\\Users\\Faith Jones\\Documents\\ubc\\github\\bcvin\\analyses\\input\\arterra\\Arterra_Bloom.csv")
