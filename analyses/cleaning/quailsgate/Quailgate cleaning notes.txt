@@ -1,7 +1,11 @@
 Here is a information on the Quail's Gate data and list of the cleaning tasks that need doing for the data.
 
-Files
------
+Cleaned Quailsgate Phenology data in analyses/cleaning/quailsgate
+----------------------------------------------------------------------
+quailsGatePhenology.csv is teh combined clean data for the timing of various ohenological events in the Quails Gate vineyards 2001 to 2016. 
+
+Files found in the data/quailsgate folder 
+----------------------------------------------
 
 Viticulture Summary History (up to 2008)
 * this is the summary of what wines were grown where, how much they produced and how much they cost
@@ -93,3 +97,5 @@ nektar/qg_phenology2017_19
 2019May23_Full/2018_Ferment info
 * fermentation information for the 2018 grapes, like how much and what was added into the grape mix, and what tanks things were
   put in 
+  
+
