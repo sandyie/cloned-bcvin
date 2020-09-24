@@ -4,9 +4,8 @@ rm(list = ls())
 options(stringsAsFactors = FALSE)
 setwd("~/Documents/git/bcvin/analyses/cleaning")
 #setwd("C:\\Users\\Faith Jones\\Documents\\ubc\\github\\bcvin\\analyses")# Faiths working directory
-art_bloom <- read.csv("~/Documents/git/bcvin/analyses/input/Arterra_Bloom.csv")
+art_bloom <- read.csv("~/Documents/git/bcvin/analyses/input/arterra/Arterra_Bloom.csv")
 #art_bloom <- read.csv("C:\\Users\\Faith Jones\\Documents\\ubc\\github\\bcvin\\analyses\\input\\arterra\\Arterra_Bloom.csv")
-#FJ note - I dont think Mira's filepath will work now because teh CVS files have been moved in to an artera "folder"
 
 
 library(reshape2)

@@ -3,7 +3,7 @@
 rm(list = ls())
 options(stringsAsFactors = FALSE)
 setwd("~/Documents/git/bcvin/analyses/cleaning")
-art_harvest <- read.csv("~/Documents/git/bcvin/analyses/input/Arterra_Harvest.csv")
+art_harvest <- read.csv("~/Documents/git/bcvin/analyses/input/arterra/Arterra_Harvest.csv")
 
 library(reshape2)
 library(dplyr)
