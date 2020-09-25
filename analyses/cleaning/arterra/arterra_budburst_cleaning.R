@@ -2,7 +2,7 @@
 
 rm(list = ls())
 options(stringsAsFactors = FALSE)
-setwd("~/Documents/git/bcvin/analyses/cleaning")
+setwd("~/Documents/git/bcvin/analyses/cleaning/arterra")
 art_bud <- read.csv("~/Documents/git/bcvin/analyses/input/arterra/Arterra_Budbreak.csv")
 
 library(reshape2)
@@ -49,16 +49,16 @@ clean_art_bud <- select(bud3, c("company", "vineyard", "block", "variety", "year
 ###### 
 
 # remove entries with no data for day
-clean_art_bud <- subset(clean_art_bud, is.na(clean_art_bud$day) == FALSE)
+#clean_art_bud <- subset(clean_art_bud, is.na(clean_art_bud$day) == FALSE)
 
 # replace month names with numbers (names must match format of month.abb constant)
-clean_art_bud$month <- match(clean_art_bud$month, month.abb)
+#clean_art_bud$month <- match(clean_art_bud$month, month.abb)
 
 # create a date column
-clean_art_bud$dates <- paste(clean_art_bud$year, clean_art_bud$month, clean_art_bud$day, sep="-")
+#clean_art_bud$dates <- paste(clean_art_bud$year, clean_art_bud$month, clean_art_bud$day, sep="-")
 
 # extract day of year
-clean_art_bud$dayofyear <- strftime(strptime(clean_art_bud$dates,format="%Y-%m-%d"), format = "%j")
+#clean_art_bud$dayofyear <- strftime(strptime(clean_art_bud$dates,format="%Y-%m-%d"), format = "%j")
 
 # save working copy to temporary folder
-write.csv(file = "../output/temporary/arterra_bud_clean.csv", x = clean_art_bud, row.names = FALSE)
+#write.csv(file = "../output/temporary/arterra_bud_clean.csv", x = clean_art_bud, row.names = FALSE)

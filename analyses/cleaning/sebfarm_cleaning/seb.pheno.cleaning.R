@@ -51,3 +51,5 @@ head(seb3)
 clean.seb <- select(seb3, c("company", "vineyard", "block", "variety", "event", "year", "month", "day", "notes"))
 
 head(clean.seb)
+
+write.csv(clean.seb, "../cleaning/sebfarm_cleaning/seb_pheno_clean.csv")
