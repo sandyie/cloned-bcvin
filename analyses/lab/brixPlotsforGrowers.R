@@ -51,10 +51,18 @@ head(d)
 dInfo <- merge(d, vineInfo[,c(1,4)], by = "plantID")
 head(dInfo)
 
-#plots for Quail's Gate
+#split by sampling date
+#---------------------------
+dInfoAug <- dInfo[dInfo$date_sampled %in% c("2020/08/25", "2020/08/26", "2020/08/27"),]
+dInfoSep9to15 <- dInfo[dInfo$date_sampled %in% c("2020/09/09", "2020/09/9", "2020/09/10", "2020/09/14", "2020/09/15"),]
+table(dInfoSep9to15[,c("date_brix", "vineyard")])#Checking that these data represent a single time point per vineyard 
+plot(dInfoSep9to15$date_sampled ~ dInfoSep9to15$vineyard)
+
+
+#plots for Quail's Gate - August dates 
 #-----------------------------
 unique(dInfo$vineyard)
-qgData2 <- dInfo[dInfo$vineyard %in% c("Mannhardt", "QuailsGate"), ]
+qgData2 <- dInfoAug[dInfoAug$vineyard %in% c("Mannhardt", "QuailsGate"), ]
 head(qgData2)
 
 
@@ -92,11 +100,57 @@ png("figures/QGMain26AugBrix.png", width = 1000, height = 700)
 qgmainPlot
 dev.off()
 
-#Plots for Artera
+
+#plots for Quail's Gate - September 9-15th dates 
+#-----------------------------
+unique(dInfoSep9to15$vineyard)
+qgData2Sep915 <- dInfoSep9to15[dInfoSep9to15$vineyard %in% c("Mannhardt", "QuailsGate"), ]
+head(qgData2Sep915)
+
+
+ggplot(qgData2Sep915, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    facet_wrap(~ vineyard)
+
+manData2 <- qgData2Sep915[qgData2Sep915$vineyard == "Mannhardt",]
+qgData2 <- qgData2Sep915[qgData2Sep915$vineyard == "QuailsGate",]
+
+manPlot2 <- ggplot(manData2, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count")+ 
+    facet_wrap(~ variety)+ 
+    ggtitle("Mannhardt Brix September 14-15 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/Mannhardt15SepBrix.png", width = 800, height = 500)
+manPlot2
+dev.off()
+
+qgData2 <- qgData2[!is.na(qgData2$row),]
+
+qgmainPlot2 <- ggplot(qgData2, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count") + 
+    facet_wrap(~ variety)+ 
+    ggtitle("Quail's Gate Brix September 14 2020") +
+    theme(text = element_text(size = 20))+ scale_x_continuous(
+  breaks=c(12,14,16, 18, 20, 22, 24))
+
+png("figures/QGMain15SepBrix.png", width = 1000, height = 700)
+qgmainPlot2
+dev.off()
+
+
+
+
+#Plots for Artera - August 
 #-------------------------------
 
 unique(dInfo$vineyard)
-aData <- dInfo[dInfo$vineyard %in% c("DarkHorse", "NKMIP", "McIntyre"), ]
+aData <- dInfoAug[dInfoAug$vineyard %in% c("DarkHorse", "NKMIP", "McIntyre"), ]
 head(aData)
 
 aData <- aData[!is.na(aData$row),]
@@ -150,4 +204,67 @@ mcPlot <- ggplot(mcData, aes(x=brix, group=block , fill=block)) +
 
 png("figures/McIntyre25AugBrix.png", width = 800, height = 500)
 mcPlot
+dev.off()
+
+
+
+
+#Plots for Artera - Sep9-15
+#-------------------------------
+
+unique(dInfo$vineyard)
+aData2 <- dInfoSep9to15[dInfoSep9to15$vineyard %in% c("DarkHorse", "NKMIP", "McIntyre"), ]
+head(aData2)
+
+aData2 <- aData2[!is.na(aData2$row),]
+unique(aData2$block)
+aData[aData2$block == "1",]
+
+ggplot(aData2, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    facet_wrap(~ variety)
+
+nkData2 <- aData2[aData2$vineyard == "NKMIP",]
+dhData2 <- aData2[aData2$vineyard == "DarkHorse",]
+mcData2 <- aData2[aData2$vineyard == "McIntyre",]
+
+nkPlot2<- ggplot(nkData2, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count")+ 
+    facet_wrap(~ variety)+
+    scale_x_continuous(labels = scales::number_format(accuracy = 1))+ 
+    ggtitle("NK'MIP Brix September 10 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/NKMIP10SepBrix.png", width = 800, height = 500)
+nkPlot2
+dev.off()
+
+
+dhPlot2 <- ggplot(dhData2, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count") + 
+    facet_wrap(~ variety)+
+    scale_x_continuous(labels = scales::number_format(accuracy = 1))+ 
+    ggtitle("Dark Horse Brix September 10 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/DarkHorse10SepBrix.png", width = 800, height = 500)
+dhPlot2
+dev.off()
+
+mcPlot2 <- ggplot(mcData2, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count")+ 
+    facet_wrap(~ variety)+
+    scale_x_continuous(labels = scales::number_format(accuracy = 1))+ 
+    ggtitle("McIntyre Brix September 9 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/McIntyre9SepBrix.png", width = 800, height = 500)
+mcPlot2
 dev.off()
