@@ -40,6 +40,7 @@ d[which(d$variety == "Shiraz" & d$date_sampled == "2020/08/26"), "date_sampled"]
 ### Fix wrong sampling dates (transposition)
 d[which(d$variety == "Chardonnay" & d$date_sampled == "2020/09/11"), "date_sampled"] <- c("2020/09/09")
 d[which(d$variety == "Chardonnay" & d$date_brix == "2020/09/09"), "date_brix"] <- c("2020/09/11")
+d[which(d$plantID %in% c(768, 814)), "vineyard"] <- c("QuailsGate")
 
 ## Make time series plot for each variety
 ### list of varieties
