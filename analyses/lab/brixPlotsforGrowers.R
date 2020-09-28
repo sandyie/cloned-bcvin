@@ -33,6 +33,8 @@ unique(d$vineyard)
 
 d$vineyard[which(d$vineyard=="Dark Horse")] <- "DarkHorse"
 d$vineyard[which(d$vineyard=="Quails Gate Estate")] <- "QuailsGate"
+d[which(d$plantID == 768), "vineyard"] <- c("QuailsGate")
+d[which(d$plantID == 768), "vineyard"] <- c("QuailsGate")
 
 table(d$vineyard)
 
