@@ -21,7 +21,7 @@
 The Wang-Engel model (and its ilk) is a threshold model — it presumes 
 that phenological transitions are deterministic.  Once the latent forcing 
 \begin{equation*}
-f(t) = \int_{0}^{t} dt' C(T(t'))
+f(t) = \int_{0}^{t} C(T(t)) dt
 \end{equation*}
 where C is the Wang-Engels function, T is temperature, and t is time,
 passes a threshold the transition always happens immediately.  The 
@@ -45,7 +45,7 @@ In this case the probability of not transitioning by time t is given by the
 survival function
 
 \begin{equation*}
-S(t) = exp( - \int_{0}^{t} dt' C(T(t’)) )
+S(t) = exp( - \int_{0}^{t} C(T(t)) dt)
 \end{equation*}
 
 where C could be the same Wang-Engels function only without a 
@@ -57,10 +57,9 @@ The likelihood is then just
 
 \begin{center}
 \begin{equation*}
-\pi(y | \theta)\\
-= P[\mbox{not transitioning until time} t] * \pi(\mbox{transitioning at exactly time} t)\\
-= S(t) * [- dS/dt(t) ]\\
-= S(t) * C(T(t))
+\pi(y | \theta)
+= P[\mbox{not transitioning until time} t] \times \pi(\mbox{transitioning at exactly time} t)
+= S(t) \times C(T(t))
 \end{equation*}
 \end{center}
 
@@ -90,13 +89,13 @@ In the original Wang and Engel model a phenology transition is a deterministic
 event that occurs when the integrated Wang an Engels units pass some threshold,
 
 \begin{equation*}
-\int dt WE(T(t)) = \mbox{threshold}
+\int WE(T(t)) dt = \mbox{threshold}
 \end{equation*}
 
 where t is time and T is temperature.  This can be also be interpreted as
 
 \begin{equation*}
-\int dt WE(T(t)) / \mbox{threshold} = 1.
+\frac{\int WE(T(t)) dt} {\mbox{threshold}} = 1.
 \end{equation*}
 
 In a survival model a phenology transition is not deterministic.  Instead as the 
@@ -105,7 +104,7 @@ decreases towards zero.  The probability of not transitioning up to some time
 is given by the survival function
 
 \begin{equation*}
-exp( - \gamma \int dt WE(T(t) ))
+exp( - \gamma \int WE(T(t) dt))
 \end{equation*}
 
 gamma plays a similar role as the threshold in the deterministic model,
@@ -115,18 +114,18 @@ In fact if one approximates the stochastic survival process as being determinist
 after the survival probability decreases to some $p_{thresh}$ then the transition
 occurs when
 \begin{equation*}
-exp( - \gamma \int dt WE(T(t)) ) = p_{thresh}
-\gamma \int dt WE(T(t))  = - log(p_{thresh})
+exp( - \gamma \int WE(T(t)) dt) = p_{thresh}
+\gamma \int WE(T(t)) dt = - log(p_{thresh})
 \end{equation*}
 
 or
 \begin{equation*}
-( \gamma / - log(p_{thresh}) ) \int dt WE(T(t)) = 1,
+( \frac{\gamma}{-log(p_{thresh})} ) \int WE(T(t)) dt = 1,
 \end{equation*}
 
 from which we can identify 
 \begin{equation*}
-\mbox{threshold} = - log(p_{thresh}) / \gamma.
+\mbox{threshold} = \frac{-log(p_{thresh})}{\gamma}.
 \end{equation*}
 
 Incidentally this is how I converted the prior on threshold to a prior on gamma.\\
