@@ -31,8 +31,6 @@ d$vineyard[which(d$vineyard == "Quails Gate Estate")] <- "QuailsGate"
 d$labMember[which(d$labMember == "Geoff")] <- "GL"
 ## Replace fj with FJ
 d$labMember[which(d$labMember == "fj")] <- "FJ"
-## Standardize dates
-d[which(d$date_sampled == "2020/09/9"), "date_sampled"] <- c("2020/09/09")
 
 ## Clean errors
 ### Fix wrong sampling dates (entry error)
@@ -67,7 +65,7 @@ for(i in 1:length(varieties)){
          yaxt = "n",
          cex.lab = 1.2,
          cex.axis = 1.4)
-    axis(side = 1, at = seq.Date(xlim[1], xlim[2], by = 3), labels = seq.Date(xlim[1], xlim[2], by = 3), tcl = -.5)
+    axis(side = 1, at = seq.Date(xlim[1], xlim[2], by = 5), labels = seq.Date(xlim[1], xlim[2], by = 5), tcl = -.5)
     axis(side = 2, at = seq(ylim[1], ylim[2], by = 5), tcl = -.5, las = 1)
     temp.vineyards <- unique(temp$vineyard)
     legend("bottomright", inset = 0.05, col = c(cbbPalette[1:length(temp.vineyards)]), pch = 16, legend = temp.vineyards)
@@ -124,9 +122,4 @@ for(i in 1:length(varieties)){
     }
 }
 dev.off()
-
-
-
-
-
 
