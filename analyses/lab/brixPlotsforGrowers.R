@@ -34,7 +34,9 @@ unique(d$vineyard)
 d$vineyard[which(d$vineyard=="Dark Horse")] <- "DarkHorse"
 d$vineyard[which(d$vineyard=="Quails Gate Estate")] <- "QuailsGate"
 d[which(d$plantID == 768), "vineyard"] <- c("QuailsGate")
-d[which(d$plantID == 768), "vineyard"] <- c("QuailsGate")
+d[which(d$plantID == 814), "vineyard"] <- c("QuailsGate") # mistaken input vineyard is Mannhardt 
+d[which(d$plantID == 896), "vineyard"] <- c("Mannhardt") # mistaken input vineyard is dark horse 
+
 
 table(d$vineyard)
 
@@ -55,9 +57,11 @@ head(dInfo)
 
 #split by sampling date
 #---------------------------
+unique(dInfo$date_sampled)
 dInfoAug <- dInfo[dInfo$date_sampled %in% c("2020/08/25", "2020/08/26", "2020/08/27"),]
 dInfoSep9to15 <- dInfo[dInfo$date_sampled %in% c("2020/09/09", "2020/09/9", "2020/09/10", "2020/09/14", "2020/09/15"),]
-table(dInfoSep9to15[,c("date_brix", "vineyard")])#Checking that these data represent a single time point per vineyard 
+dInfoSep22to29 <- dInfo[dInfo$date_sampled %in% c("2020/09/22", "2020/09/23", "2020/09/29"),]
+table(dInfoSep22to29[,c("date_sampled", "vineyard")])#Checking that these data represent a single time point per vineyard 
 plot(dInfoSep9to15$date_sampled ~ dInfoSep9to15$vineyard)
 
 
@@ -147,6 +151,48 @@ dev.off()
 
 
 
+
+#plots for Quail's Gate - September 22-29 dates 
+#-----------------------------
+unique(dInfoSep22to29$vineyard)
+qgData2Sep2229 <- dInfoSep22to29[dInfoSep22to29$vineyard %in% c("Mannhardt", "QuailsGate"), ]
+head(qgData2Sep2229)
+
+
+ggplot(qgData2Sep2229, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    facet_wrap(~ vineyard)
+
+manData3 <- qgData2Sep2229[qgData2Sep2229$vineyard == "Mannhardt",]
+qgData3 <- qgData2Sep2229[qgData2Sep2229$vineyard == "QuailsGate",]
+
+manPlot3 <- ggplot(manData3, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count")+ 
+    facet_wrap(~ variety)+ 
+    ggtitle("Mannhardt Brix September 29 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/Mannhardt29SepBrix.png", width = 800, height = 500)
+manPlot3
+dev.off()
+
+qgData3 <- qgData3[!is.na(qgData3$row),]
+
+qgmainPlot3 <- ggplot(qgData3, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count") + 
+    facet_wrap(~ variety)+ 
+    ggtitle("Quail's Gate Brix September 29 2020") +
+    theme(text = element_text(size = 20))+ scale_x_continuous(
+  breaks=c(16,18, 20, 22, 24, 26, 28))
+
+png("figures/QGMain29SepBrix.png", width = 1000, height = 700)
+qgmainPlot3
+dev.off()
 
 #Plots for Artera - August 
 #-------------------------------
@@ -269,4 +315,69 @@ mcPlot2 <- ggplot(mcData2, aes(x=brix, group=block , fill=block)) +
 
 png("figures/McIntyre9SepBrix.png", width = 800, height = 500)
 mcPlot2
+dev.off()
+
+
+
+
+
+#Plots for Artera - Sep22-23
+#-------------------------------
+
+unique(dInfo$vineyard)
+aData2223 <- dInfoSep22to29[dInfoSep22to29$vineyard %in% c("DarkHorse", "NKMIP", "McIntyre"), ]
+head(aData2223)
+
+aData2223 <- aData2223[!is.na(aData2223$row),]
+unique(aData2223$block)
+aData2223[aData2223$block == "1",]
+
+ggplot(aData2223, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    facet_wrap(~ variety)
+
+nkData2223 <- aData2223[aData2223$vineyard == "NKMIP",]
+dhData2223 <- aData2223[aData2223$vineyard == "DarkHorse",]
+mcData2223 <- aData2223[aData2223$vineyard == "McIntyre",]
+
+nkPlot2223<- ggplot(nkData2223, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count")+ 
+    facet_wrap(~ variety)+
+    scale_x_continuous(labels = scales::number_format(accuracy = 1))+ 
+    ggtitle("NK'MIP Brix September 22 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/NKMIP22SepBrix.png", width = 800, height = 500)
+nkPlot2223
+dev.off()
+
+
+
+dhPlot2223 <- ggplot(dhData2223, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count") + 
+    facet_wrap(~ variety)+
+    scale_x_continuous(labels = scales::number_format(accuracy = 1))+ 
+    ggtitle("Dark Horse Brix September 22 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/DarkHorse22SepBrix.png", width = 800, height = 500)
+dhPlot2223
+dev.off()
+
+mcPlot2223 <- ggplot(mcData2223, aes(x=brix, group=block , fill=block)) +
+    geom_histogram(position = "identity", alpha = 0.1, aes(colour = block)) + 
+    theme_classic() +
+    labs (x = "Brix value (degrees)", y = "Count")+ 
+    facet_wrap(~ variety)+
+    scale_x_continuous(labels = scales::number_format(accuracy = 1))+ 
+    ggtitle("McIntyre Brix September 23 2020") +
+    theme(text = element_text(size = 20))
+
+png("figures/McIntyre23SepBrix.png", width = 800, height = 500)
+mcPlot2223
 dev.off()
