@@ -35,11 +35,16 @@ q$block[which(q$vineyard == "Banducci" & q$block == "Banducci")] <- "0"
 q$block[which(q$vineyard == "")] <- "0"
 q$vineyard[which(q$vineyard == "")] <- "Illig"
 
+# west point has entries for block "5 & 6". Copying into a new dataframe to duplicate and then changing the duplicated to block 6 and the original to block 5 then rbind block 6 set to full dataset.
+wp <- q[which(q$vineyard == "&"),]
+q$block[which(q$vineyard == "&")] <- 5 #fix block numbers first
+q$vineyard[which(q$vineyard == "&")] <- "WestPoint"
+wp$block[which(wp$vineyard == "&")] <- 6
+wp$vineyard[which(wp$vineyard == "&")] <- "WestPoint"
 
-#q[which(q$vineyard == "&"),] <- "WestPoint" #fix block numbers first
+q2 <- rbind(q, wp)
 
-
-q <- q[which(!is.na(q$vineyard)),]
+q2 <- q2[which(!is.na(q2$vineyard)),]
 
 
 #<<DATA>>$Asset.Identifier <- sub(" ", "_", <<DATA>>$Asset.Identifier) #to replace space
@@ -50,12 +55,13 @@ q <- q[which(!is.na(q$vineyard)),]
 
 # split date into columns: year, month, day
 ###Question: which date is right?? Diff btwn TaskDate and DateOfObs
-breakdate <- strsplit(as.character(q$Date.of.Observation), "-", fixed=TRUE)
-q$day <- unlist(lapply(breakdate, function(x) x[1]))
-q$month <- unlist(lapply(breakdate, function(x) x[2]))
-q$year <- unlist(lapply(breakdate, function(x) x[3]))
+breakdate <- strsplit(as.character(q2$Date.of.Observation), "-", fixed=TRUE)
+q2$day <- unlist(lapply(breakdate, function(x) x[1]))
+q2$month <- unlist(lapply(breakdate, function(x) x[2]))
+q2$year <- unlist(lapply(breakdate, function(x) x[3]))
 
 # add column for event - what do stages mean?
+colnames(q2)[colnames(q2) == "Stage"] <- "event" # has "1", "2", "3", "NA" so need to decode this...
 
 # add column for value (percent flowering - again, stages?)
 # for "flowering" = 80%
