@@ -2,7 +2,7 @@
 # Initial Setup
 ############################################################
 
-setwd("~/Documents/git/projects/vinmisc/bcvin/wangengelJune2020/pheno_survival_sine")
+setwd("~/Documents/git/projects/vinmisc/bcvin/phenmodels/analyses/pheno_survival_sine")
 
 library(rstan)
 rstan_options(auto_write = TRUE)            # Cache compiled Stan programs
@@ -213,4 +213,16 @@ lines(input_data$temp_time, cred[5,], col=c_dark, lwd=2)
 for (n in 1:filtered_data$N) {
   abline(v=filtered_data$obs_tran_time[n], col="white", lty=1, lwd=2)
   abline(v=filtered_data$obs_tran_time[n], col="black", lty=1, lwd=1)
+}
+
+if(FALSE){
+# Try the new spline model ...
+dataspline <- list(N_obs = 100,
+                   x = input_data$temp_rec[1:100],
+                   N_knots = 5,
+                   knots = seq(10, 90, length.out = 5))
+
+fit <- stan(file='spline_prior.stan',
+            data=dataspline,
+            seed=19389932, chains = 4)
 }
